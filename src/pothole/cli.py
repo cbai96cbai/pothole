@@ -8,8 +8,10 @@ from zoneinfo import ZoneInfo
 import typer
 
 from pothole.config import Settings
+from pothole.repair.validate import failed, load_batches
 from pothole.socrata import batches
 from pothole.socrata.client import Socrata, SourceRejected, SourceUnavailable
+from pothole.spec import engine
 from pothole.spec.model import PipelineSpec
 from pothole.store import db, load
 
@@ -84,3 +86,20 @@ def load_command(
     typer.echo(f"rows {result.rows} pages {result.pages} cursor {result.cursor}")
     for check in result.checks:
         typer.echo(f"{check.level:4} {check.name}: {check.detail}")
+
+@app.command("check-spec")
+def check_spec(
+    spec: Annotated[Path, typer.Option(help="The pipeline spec to run.")],
+    batches_dir: Annotated[Path, typer.Option("--batches", help="Folder of <date>.jsonl.gz.")],
+) -> None:
+    """Run the spec on every recorded batch; exit 1 when any check fails."""
+    pipeline = PipelineSpec.load(spec)
+    bad = 0
+    for batch in load_batches(batches_dir):
+        fails = failed(engine.run(pipeline, batch.rows, [], batch.now).checks)
+        typer.echo(f"{batch.name}: {'FAIL' if fails else 'ok'}")
+        for res in fails:
+            typer.echo(f"  {res.name}: {res.detail}")
+        bad += bool(fails)
+    if bad:
+        raise typer.Exit(1)
