@@ -1,0 +1,64 @@
+{
+  "repairer": "baseline",
+  "split": "test",
+  "cases": 30,
+  "repair_success": {
+    "correct": 12,
+    "of": 12,
+    "rate": 1.0
+  },
+  "issue_accuracy": {
+    "correct": 12,
+    "of": 12,
+    "rate": 1.0
+  },
+  "no_change_accuracy": {
+    "correct": 3,
+    "of": 3,
+    "rate": 1.0
+  },
+  "detection_coverage": {
+    "detected": 30,
+    "of": 30,
+    "rate": 1.0
+  },
+  "per_family": {
+    "comma_thousands": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6
+    },
+    "latlon_swapped": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6
+    },
+    "null_flood": {
+      "expected": "issue",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6
+    },
+    "source_empty": {
+      "expected": "issue",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6
+    },
+    "spike": {
+      "expected": "no_change",
+      "cases": 3,
+      "correct": 3,
+      "detected": 3
+    },
+    "benign_field": {
+      "expected": "nothing",
+      "cases": 3,
+      "correct": 3,
+      "detected": 3
+    }
+  },
+  "failures": []
+}
