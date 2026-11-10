@@ -1,0 +1,45 @@
+source:
+  domain: data.cityofnewyork.us
+  dataset: erm2-nwe9
+  key: unique_key
+  window_days: 90
+columns:
+  - {name: unique_key, source: unique_key, type: text, required: true}
+  - {name: created_date, source: created_date, type: timestamp, required: true, format: "%Y-%m-%dT%H:%M:%S.%f"}
+  - {name: closed_date, source: closed_date, type: timestamp, format: "%Y-%m-%dT%H:%M:%S.%f"}
+  - {name: agency, source: agency, type: text, required: true}
+  - {name: complaint_type, source: complaint_type, type: text, required: true}
+  - {name: descriptor, source: descriptor, type: text}
+  - {name: location_type, source: location_type, type: text}
+  - {name: incident_zip, source: incident_zip, type: text}
+  - {name: status, source: status, type: text, required: true}
+  - {name: community_board, source: community_board, type: text}
+  - name: borough
+    source: borough
+    type: text
+    required: true
+    values:
+      BROOKLYN: Brooklyn
+      QUEENS: Queens
+      MANHATTAN: Manhattan
+      BRONX: Bronx
+      STATEN ISLAND: Staten Island
+      Unspecified: Unspecified
+  - {name: latitude, source: latitude, type: float, format: plain}
+  - {name: longitude, source: longitude, type: float, format: plain}
+  - {name: x_coordinate_state_plane, source: x_coordinate_state_plane, type: int, format: plain}
+  - {name: y_coordinate_state_plane, source: y_coordinate_state_plane, type: int, format: plain}
+  - {name: open_data_channel_type, source: open_data_channel_type, type: text}
+checks:
+  schema: true
+  freshness_max_hours: 72
+  volume: {weeks: 4, low: 0.5, high: 2.0}
+  null_rate_max:
+    latitude: 0.2
+    longitude: 0.2
+  ranges:
+    latitude: [40.49, 40.92]
+    longitude: [-74.27, -73.68]
+  created_not_future: true
+  closed_not_before_created: true
+  unique_key: true

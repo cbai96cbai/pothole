@@ -3,9 +3,9 @@
   "split": "dev",
   "cases": 42,
   "repair_success": {
-    "correct": 14,
+    "correct": 11,
     "of": 18,
-    "rate": 0.7778
+    "rate": 0.6111
   },
   "issue_accuracy": {
     "correct": 12,
@@ -38,7 +38,7 @@
     "borough_recoding": {
       "expected": "patch",
       "cases": 6,
-      "correct": 6,
+      "correct": 3,
       "detected": 6
     },
     "field_dropped": {
@@ -97,6 +97,33 @@
     {
       "id": "renamed_field-5",
       "family": "renamed_field",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "borough_recoding-2",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "borough_recoding-3",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "borough_recoding-4",
+      "family": "borough_recoding",
       "expected": "patch",
       "detected": true,
       "action": "issue",

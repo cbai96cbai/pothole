@@ -23,8 +23,9 @@ def test_spike_control_trips_only_volume(case: Case, spec: PipelineSpec):
         c.name for c in catalog.run_engine(spec, rows, case.batch_seen).checks if c.level == "fail"
     ]
     assert failed == ["volume"]
-    assert len(rows) == 5000
-    assert sum(r["unique_key"].startswith("S") for r in rows) == 3000
+    factor = faults.SPIKE_FACTORS[case.variant]
+    assert len(rows) == round(2000 * factor)
+    assert sum(r["unique_key"].startswith("S") for r in rows) == len(rows) - 2000
 
 
 @pytest.mark.parametrize("case", [c for c in ALL if c.family == "benign_field"], ids=lambda c: c.id)

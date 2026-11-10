@@ -3,9 +3,9 @@
   "split": "test",
   "cases": 30,
   "repair_success": {
-    "correct": 12,
+    "correct": 6,
     "of": 12,
-    "rate": 1.0
+    "rate": 0.5
   },
   "issue_accuracy": {
     "correct": 12,
@@ -32,7 +32,7 @@
     "latlon_swapped": {
       "expected": "patch",
       "cases": 6,
-      "correct": 6,
+      "correct": 0,
       "detected": 6
     },
     "null_flood": {
@@ -60,5 +60,60 @@
       "detected": 3
     }
   },
-  "failures": []
+  "failures": [
+    {
+      "id": "latlon_swapped-0",
+      "family": "latlon_swapped",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "latlon_swapped-1",
+      "family": "latlon_swapped",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "latlon_swapped-2",
+      "family": "latlon_swapped",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "latlon_swapped-3",
+      "family": "latlon_swapped",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "latlon_swapped-4",
+      "family": "latlon_swapped",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "latlon_swapped-5",
+      "family": "latlon_swapped",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    }
+  ]
 }

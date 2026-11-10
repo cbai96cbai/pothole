@@ -21,7 +21,7 @@ RENAMES = [
     ("status", "case_status"),
     ("borough", "boro"),
     ("created_date", "created_at"),
-    ("status", "request_status"),
+    ("complaint_type", "issue_category"),
 ]
 DATE_CHANGES: list[tuple[tuple[str, ...], str]] = [
     (BOTH_DATES, "%Y-%m-%dT%H:%M:%S"),
@@ -29,7 +29,7 @@ DATE_CHANGES: list[tuple[tuple[str, ...], str]] = [
     (BOTH_DATES, "%m/%d/%Y %I:%M:%S %p"),
     (BOTH_DATES, "%m/%d/%Y %H:%M:%S"),
     (("created_date",), "%m/%d/%Y %I:%M:%S %p"),
-    (("created_date",), "%Y-%m-%d %H:%M:%S"),
+    (("closed_date",), "%Y-%m-%d %H:%M:%S"),
 ]
 _TITLE = {
     "BROOKLYN": "Brooklyn",
@@ -40,11 +40,11 @@ _TITLE = {
 }
 BOROUGH_RECODINGS: list[dict[str, str]] = [
     _TITLE,
-    {"BROOKLYN": "BK", "QUEENS": "QN", "MANHATTAN": "MN", "BRONX": "BX", "STATEN ISLAND": "SI"},
-    {"BROOKLYN": "Brooklyn", "QUEENS": "Queens"},
-    {"BRONX": "BX", "STATEN ISLAND": "SI"},
     {k: k.lower() for k in _TITLE},
-    {"BROOKLYN": "BKLYN", "QUEENS": "QNS", "MANHATTAN": "MANH", "STATEN ISLAND": "STATEN IS"},
+    {"BROOKLYN": "BK", "QUEENS": "QN", "MANHATTAN": "MN", "BRONX": "BX", "STATEN ISLAND": "SI"},
+    {"BROOKLYN": "K", "QUEENS": "Q", "MANHATTAN": "M", "BRONX": "X", "STATEN ISLAND": "R"},
+    {"MANHATTAN": "1", "BRONX": "2", "BROOKLYN": "3", "QUEENS": "4", "STATEN ISLAND": "5"},
+    {k: k + " " for k in _TITLE},
 ]
 DROPPED: list[tuple[str, ...]] = [
     ("agency",),
@@ -62,18 +62,19 @@ NULL_FLOODS = [
     ("created_date", 0.2),
     ("status", 0.8),
 ]
+X, Y = "x_coordinate_state_plane", "y_coordinate_state_plane"
 COMMA_FIELDS: list[tuple[tuple[str, ...], float]] = [
-    (("x_coordinate_state_plane",), 1.0),
-    (("y_coordinate_state_plane",), 1.0),
-    (("x_coordinate_state_plane", "y_coordinate_state_plane"), 1.0),
-    (("x_coordinate_state_plane",), 0.5),
-    (("y_coordinate_state_plane",), 0.5),
-    (("x_coordinate_state_plane", "y_coordinate_state_plane"), 0.5),
+    ((X,), 1.0),
+    ((Y,), 1.0),
+    ((X,), 0.6),
+    ((Y,), 0.3),
+    ((X, Y), 0.8),
+    ((X, Y), 0.1),
 ]
 PARTIAL_KEEP = 0.3
 PARTIAL_MODES = ["random", "head", "tail", "random", "head", "tail"]
 EMPTY_KEEP = [0, 1, 2, 5, 10, 25]
-SPIKE_FACTOR = 2.5
+SPIKE_FACTORS = [2.5, 3, 4, 2.5, 3, 4, 2.5, 3, 4]
 BENIGN_FIELDS = [
     ("priority_flag", "N"),
     ("channel_detail", "phone"),
@@ -168,7 +169,7 @@ def _empty(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
 
 def _spike(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
     extra: list[Row] = []
-    for n in range(round(len(rows) * (SPIKE_FACTOR - 1))):
+    for n in range(round(len(rows) * (SPIKE_FACTORS[f.variant] - 1))):
         row = dict(rng.choice(rows))
         row["unique_key"] = f"S{n}"
         if ":id" in row:

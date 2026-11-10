@@ -12,18 +12,6 @@ from pothole.spec.checks import CheckResult
 from pothole.spec.model import DATE_FORMATS, NUMBER_FORMATS, Column, PipelineSpec
 
 MATCH_RATIO = 0.8
-ABBREVIATIONS = {
-    "BK": "BROOKLYN",
-    "BKLYN": "BROOKLYN",
-    "QN": "QUEENS",
-    "QNS": "QUEENS",
-    "MN": "MANHATTAN",
-    "MAN": "MANHATTAN",
-    "MANH": "MANHATTAN",
-    "BX": "BRONX",
-    "SI": "STATEN ISLAND",
-    "STATEN IS": "STATEN ISLAND",
-}
 # Failures that follow from another one (a date that cannot be read is also not fresh).
 _FOLLOW_ON = ("freshness", "created_not_future", "closed_not_before_created", "null_rate:")
 _VOLUME = re.compile(r"^(\d+) rows .*allowed (\S+) to (\S+)$")
@@ -83,37 +71,18 @@ def _formatted(spec: PipelineSpec, check: CheckResult, rows: list[dict[str, Any]
 
 
 def _recoded(spec: PipelineSpec, check: CheckResult, rows: list[dict[str, Any]]) -> list[Op]:
+    """Map a raw value to an allowed one only when they match ignoring case and outer spaces."""
     col = spec.column(check.name.split(":", 1)[1])
-    known = {k.upper(): v for k, v in (col.values or {}).items()}
+    allowed = col.values or {}
+    known = {k.strip().casefold(): v for k, v in allowed.items()}
+    known |= {v.strip().casefold(): v for v in allowed.values()}
     out: list[Op] = []
-    for raw in sorted({r[col.source] for r in rows if r.get(col.source)} - set(col.values or {})):
-        key = raw.strip().upper()
-        value = known.get(ABBREVIATIONS.get(key, key))
+    for raw in sorted({r[col.source] for r in rows if r.get(col.source)} - set(allowed)):
+        value = known.get(raw.strip().casefold())
         if value is None:
             raise _Unfixable(f"{col.name}: {raw!r} matches no listed value")
         out.append(ops.AddValueMapping(column=col.name, raw=raw, value=value))
     return out
-
-
-def _swapped(spec: PipelineSpec, rows: list[dict[str, Any]]) -> list[Op]:
-    lat, lon = spec.column("latitude"), spec.column("longitude")
-    (lat_lo, lat_hi), (lon_lo, lon_hi) = (
-        spec.checks.ranges["latitude"],
-        spec.checks.ranges["longitude"],
-    )
-    in_lat = [float(r[lon.source]) for r in rows if r.get(lon.source)]
-    in_lon = [float(r[lat.source]) for r in rows if r.get(lat.source)]
-    if (
-        in_lat
-        and in_lon
-        and all(lat_lo <= v <= lat_hi for v in in_lat)
-        and all(lon_lo <= v <= lon_hi for v in in_lon)
-    ):
-        return [
-            ops.MapField(column="latitude", source=lon.source),
-            ops.MapField(column="longitude", source=lat.source),
-        ]
-    raise _Unfixable("latitude and longitude are out of range and not simply swapped")
 
 
 def _derive(
@@ -123,7 +92,6 @@ def _derive(
     fields: dict[str, str],
 ) -> list[Op]:
     out: list[Op] = []
-    names = [c.name for c in failed]
     for check in failed:
         name = check.name
         if name == "schema":
@@ -132,13 +100,20 @@ def _derive(
             out += _formatted(spec, check, rows)
         elif name.startswith("values:"):
             out += _recoded(spec, check, rows)
-        elif name.startswith("range:"):
-            if name == "range:latitude" and "range:longitude" in names:
-                out += _swapped(spec, rows)
-            elif name != "range:longitude" or "range:latitude" not in names:
-                raise _Unfixable(f"{name} fails on its own")
         elif not name.startswith(_FOLLOW_ON):
             raise _Unfixable(f"{name}: values are missing or repeated in the source")
+    return out
+
+
+def _failing_columns(spec: PipelineSpec, failed: list[CheckResult]) -> set[str]:
+    """Columns a failed check names: by check name, or by source field for the schema check."""
+    by_source = {c.source: c.name for c in spec.columns}
+    out: set[str] = set()
+    for check in failed:
+        if check.name == "schema":
+            out |= {by_source[s.strip()] for s in check.detail.rsplit(": ", 1)[1].split(",")}
+        elif ":" in check.name:
+            out.add(check.name.split(":", 1)[1])
     return out
 
 
@@ -158,6 +133,15 @@ def repair(
         edits = _derive(spec, [c for c in failed if c.name != "volume"], sample_rows, source_fields)
         if not edits:
             return _issue("no rule applies to the failed checks")
+        allowed = _failing_columns(spec, failed)
+        stray = [e.column for e in edits if e.column not in allowed]
+        if stray:
+            raise _Unfixable(f"{stray} has no failed check")
+        stray = [
+            e.source for e in edits if isinstance(e, ops.MapField) and e.source not in source_fields
+        ]
+        if stray:
+            raise _Unfixable(f"the source does not send {stray}")
         patched = ops.apply(spec, edits)
     except (_Unfixable, ops.ForbiddenEdit) as err:
         return _issue(str(err))

@@ -21,7 +21,7 @@ from pothole.spec.model import PipelineSpec
 ROOT = Path(__file__).parents[3]
 CATALOG = ROOT / "data" / "drills" / "catalog.json"
 BATCH_DIR = ROOT / "fixtures" / "batches"
-SPEC_PATH = ROOT / "pipelines" / "311.yaml"
+SPEC_PATH = BATCH_DIR / "spec.yaml"  # the spec the batches were recorded under
 SAMPLE_ROWS = 200
 JUDGED_DAYS = 3
 RULE = (

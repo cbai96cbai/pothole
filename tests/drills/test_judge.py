@@ -30,7 +30,11 @@ def test_a_correct_patch_is_accepted(cases: dict[str, Case], spec: PipelineSpec)
 
 def test_judge_rejects_weakened_check(cases: dict[str, Case], spec: PipelineSpec):
     case = cases["latlon_swapped-0"]
-    outcome = _baseline_outcome(case, spec)
+    swap = [
+        ops.MapField(column="latitude", source="longitude"),
+        ops.MapField(column="longitude", source="latitude"),
+    ]
+    outcome = _with_regression(case, spec, swap)
     patched = ops.apply(spec, outcome.ops)
     assert judge.judge_patched(case, patched, outcome, spec).correct
     weaker = patched.model_copy(
