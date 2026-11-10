@@ -15,6 +15,7 @@ dependencies = [
     "pyarrow>=26.0.1",
     "pydantic>=2.14.2",
     "pyyaml>=6.0.3",
+    "scipy>=1.18.1",
     "tiktoken>=0.14.0",
     "typer>=0.29.0",
     "types-pyyaml>=6.0.12.20261103",
@@ -56,5 +57,5 @@ markers = [
 ]
 
 [[tool.mypy.overrides]]
-module = ["pyarrow", "pyarrow.*"]
+module = ["pyarrow", "pyarrow.*", "scipy", "scipy.*"]
 ignore_missing_imports = true

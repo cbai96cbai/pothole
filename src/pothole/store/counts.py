@@ -1,20 +1,12 @@
 """Daily counts from the raw window, by New York created date."""
 
-from dataclasses import dataclass
 from datetime import date
 
 import pyarrow as pa
 
+from pothole.analyst.universe import Universe
 from pothole.spec.normalise import board
 from pothole.store.db import RAW, Connection
-
-
-@dataclass(frozen=True)
-class Universe:
-    """The analyst's frozen set: complaint types and (borough, district number) pairs."""
-
-    complaint_types: frozenset[str]
-    boards: frozenset[tuple[str, int]]
 
 
 def daily_totals(con: Connection) -> dict[date, int]:

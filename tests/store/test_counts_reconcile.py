@@ -2,9 +2,9 @@ from datetime import date
 
 from store_fake import NOW, FakeSocrata, make_row
 
+from pothole.analyst.universe import Universe
 from pothole.spec.model import PipelineSpec
 from pothole.store import counts, db, load, reconcile
-from pothole.store.counts import Universe
 
 
 def test_counts_regenerated_match_rows(con, spec: PipelineSpec) -> None:
