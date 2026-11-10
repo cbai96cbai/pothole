@@ -13,3 +13,4 @@ web/dist
 .superpowers/
 CLAUDE.md
 .claude/
+web/src/data/

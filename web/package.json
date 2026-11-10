@@ -1,0 +1,26 @@
+{
+  "name": "pothole-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && vite build",
+    "check-routes": "tsx scripts/check-routes.tsx"
+  },
+  "dependencies": {
+    "maplibre-gl": "5.9.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "@types/react": "18.3.31",
+    "@types/react-dom": "18.3.7",
+    "@vitejs/plugin-react": "4.7.0",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vite": "7.3.2"
+  }
+}
