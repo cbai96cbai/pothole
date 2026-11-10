@@ -6,8 +6,8 @@ from pathlib import Path
 
 TESTS = Path(__file__).parent
 # read the live spec: the parse check and the regression collector (which gets the path from
-# each case file). test_sink and the site fixture only use the path as a location inside a
-# scratch repository.
+# each case file). test_sink and the site fixture only WRITE to that path inside a
+# scratch repository (the site fixture copies the pinned spec there).
 ALLOWED = {
     "spec/test_live_spec.py",
     "regression/test_cases.py",

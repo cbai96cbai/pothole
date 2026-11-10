@@ -89,7 +89,7 @@ def make(root: Path, *, with_agent: bool = False) -> Path:
     busy = AnalystDay(date(2026, 11, 6), 1460, 3, [finding(), finding("unfinished")])
     (analyst / "2026-11-06.json").write_text(json.dumps(to_json(busy)))
     (root / SPEC_PATH).parent.mkdir()
-    shutil.copy(REAL / SPEC_PATH, root / SPEC_PATH)
+    shutil.copy(REAL / "fixtures" / "batches" / "spec.yaml", root / SPEC_PATH)  # pinned copy
     shutil.copy(REAL / "data" / "universe.json", root / "data")
     for name in ("backtest", "delay", "null_simulation"):
         shutil.copy(REAL / "data" / f"{name}.json", root / "data")
