@@ -6,15 +6,15 @@
   ],
   "days_tested": 30,
   "flags_per_day": {
-    "min": 1,
-    "median": 7.0,
+    "min": 0,
+    "median": 2.0,
     "max": 55
   },
   "days": [
     {
       "day": "2026-10-07",
       "series_tested": 1465,
-      "cleared_the_bar": 39,
+      "cleared_the_bar": 29,
       "top": [
         {
           "borough": "Queens",
@@ -23,7 +23,7 @@
           "observed": 18,
           "expected": 0.25,
           "ratio": 72.0,
-          "q": 1.311837482492455e-13
+          "q": 3.001660391572118e-11
         },
         {
           "borough": "Brooklyn",
@@ -32,14 +32,14 @@
           "observed": 17,
           "expected": 0.5,
           "ratio": 34.0,
-          "q": 3.1933635861177146e-11
+          "q": 3.353649844075865e-08
         }
       ]
     },
     {
       "day": "2026-10-08",
       "series_tested": 1468,
-      "cleared_the_bar": 11,
+      "cleared_the_bar": 3,
       "top": [
         {
           "borough": "Bronx",
@@ -48,7 +48,7 @@
           "observed": 19,
           "expected": 1.0,
           "ratio": 19.0,
-          "q": 0.0021423238502322087
+          "q": 0.02441837717586513
         },
         {
           "borough": "Queens",
@@ -57,14 +57,14 @@
           "observed": 32,
           "expected": 1.88,
           "ratio": 17.07,
-          "q": 3.5002948088695574e-17
+          "q": 1.574979349935589e-07
         }
       ]
     },
     {
       "day": "2026-10-09",
       "series_tested": 1463,
-      "cleared_the_bar": 15,
+      "cleared_the_bar": 7,
       "top": [
         {
           "borough": "Queens",
@@ -73,7 +73,7 @@
           "observed": 10,
           "expected": 0.62,
           "ratio": 16.0,
-          "q": 0.00038852073673891895
+          "q": 0.005590721084903748
         },
         {
           "borough": "Queens",
@@ -82,14 +82,14 @@
           "observed": 10,
           "expected": 0.75,
           "ratio": 13.33,
-          "q": 0.01457875525030403
+          "q": 0.0026997957214583124
         }
       ]
     },
     {
       "day": "2026-10-10",
       "series_tested": 1454,
-      "cleared_the_bar": 5,
+      "cleared_the_bar": 2,
       "top": [
         {
           "borough": "Brooklyn",
@@ -98,7 +98,7 @@
           "observed": 12,
           "expected": 0.62,
           "ratio": 19.2,
-          "q": 5.405876922995716e-06
+          "q": 0.00031273480450539276
         },
         {
           "borough": "Brooklyn",
@@ -107,34 +107,15 @@
           "observed": 29,
           "expected": 2.25,
           "ratio": 12.89,
-          "q": 4.87034615372084e-09
+          "q": 0.00189594119769565
         }
       ]
     },
     {
       "day": "2026-10-11",
       "series_tested": 1452,
-      "cleared_the_bar": 3,
-      "top": [
-        {
-          "borough": "Queens",
-          "board": 2,
-          "complaint_type": "Noise - Commercial",
-          "observed": 26,
-          "expected": 4.0,
-          "ratio": 6.5,
-          "q": 1.0592711500571674e-07
-        },
-        {
-          "borough": "Queens",
-          "board": 2,
-          "complaint_type": "Noise - Residential",
-          "observed": 30,
-          "expected": 11.88,
-          "ratio": 2.53,
-          "q": 0.0212912528059724
-        }
-      ]
+      "cleared_the_bar": 0,
+      "top": []
     },
     {
       "day": "2026-10-13",
@@ -148,7 +129,7 @@
           "observed": 43,
           "expected": 5.0,
           "ratio": 8.6,
-          "q": 3.0879380187482306e-07
+          "q": 6.168855317945166e-06
         },
         {
           "borough": "Queens",
@@ -157,24 +138,15 @@
           "observed": 20,
           "expected": 2.5,
           "ratio": 8.0,
-          "q": 4.4620206260776046e-07
+          "q": 0.008628211073083982
         }
       ]
     },
     {
       "day": "2026-10-14",
       "series_tested": 1464,
-      "cleared_the_bar": 2,
+      "cleared_the_bar": 1,
       "top": [
-        {
-          "borough": "Brooklyn",
-          "board": 16,
-          "complaint_type": "Noise - Street/Sidewalk",
-          "observed": 14,
-          "expected": 2.12,
-          "ratio": 6.59,
-          "q": 0.0016325160240193983
-        },
         {
           "borough": "Manhattan",
           "board": 1,
@@ -182,7 +154,7 @@
           "observed": 16,
           "expected": 2.62,
           "ratio": 6.1,
-          "q": 0.0008064496206637179
+          "q": 0.004875014303781581
         }
       ]
     },
@@ -192,13 +164,13 @@
       "cleared_the_bar": 5,
       "top": [
         {
-          "borough": "Bronx",
-          "board": 1,
-          "complaint_type": "Street Light Condition",
-          "observed": 15,
-          "expected": 1.75,
-          "ratio": 8.57,
-          "q": 0.015570982087250454
+          "borough": "Queens",
+          "board": 9,
+          "complaint_type": "Encampment",
+          "observed": 10,
+          "expected": 0.88,
+          "ratio": 11.43,
+          "q": 0.012709306366442063
         },
         {
           "borough": "Staten Island",
@@ -207,14 +179,14 @@
           "observed": 34,
           "expected": 4.12,
           "ratio": 8.24,
-          "q": 8.750678295969577e-10
+          "q": 0.004797822028777109
         }
       ]
     },
     {
       "day": "2026-10-16",
       "series_tested": 1464,
-      "cleared_the_bar": 4,
+      "cleared_the_bar": 2,
       "top": [
         {
           "borough": "Bronx",
@@ -223,7 +195,7 @@
           "observed": 89,
           "expected": 5.62,
           "ratio": 15.82,
-          "q": 1.1820126559386978e-20
+          "q": 3.563821163669571e-06
         },
         {
           "borough": "Manhattan",
@@ -232,14 +204,14 @@
           "observed": 16,
           "expected": 2.62,
           "ratio": 6.1,
-          "q": 0.00040322481033185895
+          "q": 0.02497878392093384
         }
       ]
     },
     {
       "day": "2026-10-17",
       "series_tested": 1457,
-      "cleared_the_bar": 54,
+      "cleared_the_bar": 52,
       "top": [
         {
           "borough": "Manhattan",
@@ -248,7 +220,7 @@
           "observed": 19,
           "expected": 0.38,
           "ratio": 50.67,
-          "q": 1.3081249082570399e-09
+          "q": 1.5960087901057953e-09
         },
         {
           "borough": "Brooklyn",
@@ -257,7 +229,7 @@
           "observed": 31,
           "expected": 0.62,
           "ratio": 49.6,
-          "q": 1.0947116231750784e-22
+          "q": 7.386240580096643e-13
         }
       ]
     },
@@ -273,7 +245,7 @@
           "observed": 41,
           "expected": 0.38,
           "ratio": 109.33,
-          "q": 4.3139540215934763e-23
+          "q": 7.312971939442534e-22
         },
         {
           "borough": "Brooklyn",
@@ -282,39 +254,20 @@
           "observed": 25,
           "expected": 0.5,
           "ratio": 50.0,
-          "q": 1.7257271314873645e-16
+          "q": 2.8807159829322206e-11
         }
       ]
     },
     {
       "day": "2026-10-20",
       "series_tested": 1465,
-      "cleared_the_bar": 11,
-      "top": [
-        {
-          "borough": "Brooklyn",
-          "board": 7,
-          "complaint_type": "HEAT/HOT WATER",
-          "observed": 16,
-          "expected": 1.38,
-          "ratio": 11.64,
-          "q": 6.850728085189229e-05
-        },
-        {
-          "borough": "Bronx",
-          "board": 3,
-          "complaint_type": "HEAT/HOT WATER",
-          "observed": 48,
-          "expected": 5.62,
-          "ratio": 8.53,
-          "q": 0.0035359434567203327
-        }
-      ]
+      "cleared_the_bar": 0,
+      "top": []
     },
     {
       "day": "2026-10-21",
       "series_tested": 1462,
-      "cleared_the_bar": 23,
+      "cleared_the_bar": 5,
       "top": [
         {
           "borough": "Bronx",
@@ -323,23 +276,23 @@
           "observed": 65,
           "expected": 2.62,
           "ratio": 24.76,
-          "q": 5.0503369592907946e-17
+          "q": 0.00011244308351259584
         },
         {
-          "borough": "Manhattan",
-          "board": 2,
+          "borough": "Queens",
+          "board": 6,
           "complaint_type": "HEAT/HOT WATER",
-          "observed": 20,
-          "expected": 1.62,
-          "ratio": 12.31,
-          "q": 2.910764138730921e-05
+          "observed": 34,
+          "expected": 2.75,
+          "ratio": 12.36,
+          "q": 0.046209311460239544
         }
       ]
     },
     {
       "day": "2026-10-22",
       "series_tested": 1462,
-      "cleared_the_bar": 38,
+      "cleared_the_bar": 2,
       "top": [
         {
           "borough": "Brooklyn",
@@ -348,7 +301,7 @@
           "observed": 24,
           "expected": 1.0,
           "ratio": 24.0,
-          "q": 4.718304785981797e-07
+          "q": 0.0027769688044525288
         },
         {
           "borough": "Brooklyn",
@@ -357,14 +310,14 @@
           "observed": 11,
           "expected": 0.5,
           "ratio": 22.0,
-          "q": 0.005823320833001894
+          "q": 0.03885131036642475
         }
       ]
     },
     {
       "day": "2026-10-23",
       "series_tested": 1467,
-      "cleared_the_bar": 47,
+      "cleared_the_bar": 24,
       "top": [
         {
           "borough": "Brooklyn",
@@ -373,7 +326,7 @@
           "observed": 36,
           "expected": 0.12,
           "ratio": 288.0,
-          "q": 4.206724351889237e-31
+          "q": 1.1331122210754813e-22
         },
         {
           "borough": "Queens",
@@ -382,14 +335,14 @@
           "observed": 30,
           "expected": 0.62,
           "ratio": 48.0,
-          "q": 1.3001270219351485e-21
+          "q": 1.389854104771293e-08
         }
       ]
     },
     {
       "day": "2026-10-24",
       "series_tested": 1456,
-      "cleared_the_bar": 14,
+      "cleared_the_bar": 3,
       "top": [
         {
           "borough": "Bronx",
@@ -398,23 +351,23 @@
           "observed": 21,
           "expected": 1.62,
           "ratio": 12.92,
-          "q": 2.6471016838835234e-07
+          "q": 0.00033321158010972944
         },
         {
-          "borough": "Staten Island",
-          "board": 1,
-          "complaint_type": "HEAT/HOT WATER",
+          "borough": "Bronx",
+          "board": 3,
+          "complaint_type": "DOOR/WINDOW",
           "observed": 19,
-          "expected": 1.62,
-          "ratio": 11.69,
-          "q": 0.0028421808702790746
+          "expected": 2.0,
+          "ratio": 9.5,
+          "q": 0.005472754136923541
         }
       ]
     },
     {
       "day": "2026-10-25",
       "series_tested": 1447,
-      "cleared_the_bar": 3,
+      "cleared_the_bar": 1,
       "top": [
         {
           "borough": "Staten Island",
@@ -423,23 +376,14 @@
           "observed": 13,
           "expected": 0.88,
           "ratio": 14.86,
-          "q": 3.871836094972587e-05
-        },
-        {
-          "borough": "Queens",
-          "board": 5,
-          "complaint_type": "Water Maintenance",
-          "observed": 10,
-          "expected": 1.38,
-          "ratio": 7.27,
-          "q": 0.04473578210336025
+          "q": 0.02918219309669892
         }
       ]
     },
     {
       "day": "2026-10-26",
       "series_tested": 1468,
-      "cleared_the_bar": 11,
+      "cleared_the_bar": 9,
       "top": [
         {
           "borough": "Bronx",
@@ -448,7 +392,7 @@
           "observed": 320,
           "expected": 4.88,
           "ratio": 65.64,
-          "q": 7.35339541804337e-33
+          "q": 8.008501231420038e-50
         },
         {
           "borough": "Brooklyn",
@@ -457,24 +401,15 @@
           "observed": 12,
           "expected": 0.88,
           "ratio": 13.71,
-          "q": 1.327988577212758e-05
+          "q": 0.0024311440359659096
         }
       ]
     },
     {
       "day": "2026-10-27",
       "series_tested": 1467,
-      "cleared_the_bar": 6,
+      "cleared_the_bar": 1,
       "top": [
-        {
-          "borough": "Brooklyn",
-          "board": 17,
-          "complaint_type": "Noise",
-          "observed": 10,
-          "expected": 1.5,
-          "ratio": 6.67,
-          "q": 0.01493217753173739
-        },
         {
           "borough": "Brooklyn",
           "board": 12,
@@ -482,14 +417,14 @@
           "observed": 39,
           "expected": 5.88,
           "ratio": 6.64,
-          "q": 1.7077475099562383e-09
+          "q": 0.0008266430992098957
         }
       ]
     },
     {
       "day": "2026-10-28",
       "series_tested": 1463,
-      "cleared_the_bar": 4,
+      "cleared_the_bar": 2,
       "top": [
         {
           "borough": "Queens",
@@ -498,23 +433,23 @@
           "observed": 17,
           "expected": 1.12,
           "ratio": 15.11,
-          "q": 6.350945164335655e-08
+          "q": 0.00013187626105710707
         },
         {
-          "borough": "Brooklyn",
-          "board": 13,
-          "complaint_type": "Water Maintenance",
-          "observed": 13,
-          "expected": 1.5,
-          "ratio": 8.67,
-          "q": 0.00029926690683239554
+          "borough": "Manhattan",
+          "board": 7,
+          "complaint_type": "Encampment",
+          "observed": 49,
+          "expected": 9.88,
+          "ratio": 4.96,
+          "q": 0.0077045272019402675
         }
       ]
     },
     {
       "day": "2026-10-29",
       "series_tested": 1464,
-      "cleared_the_bar": 3,
+      "cleared_the_bar": 2,
       "top": [
         {
           "borough": "Brooklyn",
@@ -523,23 +458,23 @@
           "observed": 16,
           "expected": 1.62,
           "ratio": 9.85,
-          "q": 9.10498081923406e-06
+          "q": 0.048836841432083763
         },
         {
-          "borough": "Brooklyn",
-          "board": 13,
-          "complaint_type": "Street Light Condition",
+          "borough": "Manhattan",
+          "board": 11,
+          "complaint_type": "Noise - Commercial",
           "observed": 14,
-          "expected": 1.62,
-          "ratio": 8.62,
-          "q": 0.009950203375374164
+          "expected": 1.5,
+          "ratio": 9.33,
+          "q": 0.048836841432083763
         }
       ]
     },
     {
       "day": "2026-10-30",
       "series_tested": 1465,
-      "cleared_the_bar": 9,
+      "cleared_the_bar": 4,
       "top": [
         {
           "borough": "Brooklyn",
@@ -548,7 +483,7 @@
           "observed": 16,
           "expected": 1.38,
           "ratio": 11.64,
-          "q": 0.0010645466987006349
+          "q": 0.02358318339958948
         },
         {
           "borough": "Manhattan",
@@ -557,14 +492,14 @@
           "observed": 10,
           "expected": 1.5,
           "ratio": 6.67,
-          "q": 0.008521040056089309
+          "q": 0.02358318339958948
         }
       ]
     },
     {
       "day": "2026-10-31",
       "series_tested": 1455,
-      "cleared_the_bar": 19,
+      "cleared_the_bar": 13,
       "top": [
         {
           "borough": "Staten Island",
@@ -573,7 +508,7 @@
           "observed": 49,
           "expected": 2.75,
           "ratio": 17.82,
-          "q": 1.48313707056849e-27
+          "q": 8.339129219252164e-05
         },
         {
           "borough": "Bronx",
@@ -582,39 +517,30 @@
           "observed": 27,
           "expected": 2.25,
           "ratio": 12.0,
-          "q": 9.47323513395623e-06
+          "q": 3.4543503605992924e-05
         }
       ]
     },
     {
       "day": "2026-11-01",
       "series_tested": 1446,
-      "cleared_the_bar": 8,
+      "cleared_the_bar": 1,
       "top": [
         {
           "borough": "Manhattan",
-          "board": 4,
-          "complaint_type": "Water Maintenance",
-          "observed": 11,
-          "expected": 0.88,
-          "ratio": 12.57,
-          "q": 0.00011516399379790128
-        },
-        {
-          "borough": "Staten Island",
           "board": 2,
-          "complaint_type": "Water Maintenance",
-          "observed": 17,
-          "expected": 1.75,
-          "ratio": 9.71,
-          "q": 1.744664081011692e-06
+          "complaint_type": "Noise - Residential",
+          "observed": 44,
+          "expected": 8.62,
+          "ratio": 5.1,
+          "q": 0.0006274167592819375
         }
       ]
     },
     {
       "day": "2026-11-02",
       "series_tested": 1468,
-      "cleared_the_bar": 4,
+      "cleared_the_bar": 2,
       "top": [
         {
           "borough": "Brooklyn",
@@ -623,89 +549,60 @@
           "observed": 17,
           "expected": 2.12,
           "ratio": 8.0,
-          "q": 2.3538602922517888e-05
+          "q": 0.036835593917999426
         },
         {
-          "borough": "Bronx",
-          "board": 9,
-          "complaint_type": "Noise",
-          "observed": 12,
-          "expected": 2.0,
-          "ratio": 6.0,
-          "q": 0.007540642066003116
+          "borough": "Brooklyn",
+          "board": 6,
+          "complaint_type": "Illegal Parking",
+          "observed": 141,
+          "expected": 53.88,
+          "ratio": 2.62,
+          "q": 0.036835593917999426
         }
       ]
     },
     {
       "day": "2026-11-03",
       "series_tested": 1464,
-      "cleared_the_bar": 2,
-      "top": [
-        {
-          "borough": "Queens",
-          "board": 3,
-          "complaint_type": "Street Light Condition",
-          "observed": 13,
-          "expected": 1.75,
-          "ratio": 7.43,
-          "q": 0.003952065525410286
-        },
-        {
-          "borough": "Manhattan",
-          "board": 5,
-          "complaint_type": "Encampment",
-          "observed": 55,
-          "expected": 15.62,
-          "ratio": 3.52,
-          "q": 0.003952065525410286
-        }
-      ]
+      "cleared_the_bar": 0,
+      "top": []
     },
     {
       "day": "2026-11-04",
       "series_tested": 1464,
-      "cleared_the_bar": 3,
+      "cleared_the_bar": 2,
       "top": [
         {
-          "borough": "Staten Island",
-          "board": 2,
-          "complaint_type": "Water Maintenance",
-          "observed": 25,
-          "expected": 4.88,
-          "ratio": 5.13,
-          "q": 6.1182860184881e-05
+          "borough": "Brooklyn",
+          "board": 3,
+          "complaint_type": "Illegal Parking",
+          "observed": 58,
+          "expected": 19.38,
+          "ratio": 2.99,
+          "q": 0.007737578366524845
         },
         {
-          "borough": "Queens",
-          "board": 1,
-          "complaint_type": "Noise - Vehicle",
-          "observed": 13,
-          "expected": 2.88,
-          "ratio": 4.52,
-          "q": 0.023410012942163022
+          "borough": "Brooklyn",
+          "board": 8,
+          "complaint_type": "Illegal Parking",
+          "observed": 72,
+          "expected": 26.0,
+          "ratio": 2.77,
+          "q": 0.007737578366524845
         }
       ]
     },
     {
       "day": "2026-11-05",
       "series_tested": 1468,
-      "cleared_the_bar": 1,
-      "top": [
-        {
-          "borough": "Brooklyn",
-          "board": 3,
-          "complaint_type": "Illegal Parking",
-          "observed": 62,
-          "expected": 28.38,
-          "ratio": 2.19,
-          "q": 0.0004556712660896871
-        }
-      ]
+      "cleared_the_bar": 0,
+      "top": []
     },
     {
       "day": "2026-11-06",
       "series_tested": 1463,
-      "cleared_the_bar": 4,
+      "cleared_the_bar": 2,
       "top": [
         {
           "borough": "Brooklyn",
@@ -714,7 +611,7 @@
           "observed": 47,
           "expected": 2.62,
           "ratio": 17.9,
-          "q": 1.8779178064568195e-07
+          "q": 2.184494552000454e-07
         },
         {
           "borough": "Queens",
@@ -723,25 +620,15 @@
           "observed": 20,
           "expected": 3.25,
           "ratio": 6.15,
-          "q": 0.0024821927488328345
+          "q": 0.0031163087025060563
         }
       ]
     },
     {
       "day": "2026-11-07",
       "series_tested": 1452,
-      "cleared_the_bar": 1,
-      "top": [
-        {
-          "borough": "Bronx",
-          "board": 7,
-          "complaint_type": "Noise - Residential",
-          "observed": 76,
-          "expected": 37.62,
-          "ratio": 2.02,
-          "q": 0.0003186523904151101
-        }
-      ]
+      "cleared_the_bar": 0,
+      "top": []
     }
   ]
 }

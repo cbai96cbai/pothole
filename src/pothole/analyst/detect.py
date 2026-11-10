@@ -1,18 +1,20 @@
 """The detector: which district-and-complaint-type counts are unusually high on one day.
 
 Per series, the previous 8 same weekdays inside the window (federal holidays left out) give a
-baseline y1..y8. Dispersion phi = max(1, sample variance / mean) rescales counts to y/phi; the
-rate's posterior is Gamma(sum(y/phi) + 0.5, 8), so the predictive for observed/phi is negative
-binomial with r = shape and p = 8/9, and it carries the baseline's own uncertainty. The p-value is
-P(X >= observed/phi). Benjamini-Hochberg at q = 0.05 runs over every series tested that day; a
-candidate also needs observed >= 10 and observed/expected >= 2. A series without 8 baseline days
-in the window, or with a baseline mean of 0, is not tested.
+baseline with mean mu and sample variance v. The spread is shared by complaint type: over every
+series of the type tested that day, k = sum(mu^2) / sum(max(v - mu, 0)), clamped to [0.5, 1e6].
+The predictive count for a series is negative binomial with mean mu and variance
+(mu + mu^2 / k) * (1 + 1/8), the last factor being the baseline's own uncertainty; the p-value is
+P(X >= observed) on the integer count. Benjamini-Hochberg at q = 0.05 runs over every series
+tested that day; a candidate also needs observed >= 10 and observed / mu >= 2. A series without
+8 baseline days in the window, or with a baseline mean of 0, is not tested.
 """
 
 import json
 import statistics
 from dataclasses import dataclass
 from datetime import date, timedelta
+from functools import cached_property
 from pathlib import Path
 
 import numpy as np
@@ -31,8 +33,7 @@ FDR = 0.05
 MIN_OBSERVED = 10
 MIN_RATIO = 2.0
 SENT_ON = 2  # the investigator takes this many, largest ratio first
-POSTERIOR_RATE = float(BASELINE_DAYS)
-PREDICTIVE_P = POSTERIOR_RATE / (POSTERIOR_RATE + 1)
+K_RANGE = (0.5, 1e6)  # 1e6 is Poisson for practical purposes
 CALIBRATION_PATH = Path(__file__).parents[3] / "data" / "calibration.json"
 
 Key = tuple[str, int, str]  # borough, district number, complaint type
@@ -59,6 +60,12 @@ class Panel:
     start: date
     keys: list[Key]
     matrix: NDArray[np.int64]
+
+    @cached_property
+    def type_ids(self) -> NDArray[np.intp]:
+        """Each series' complaint type as a small integer, equal types equal."""
+        names = sorted({k[2] for k in self.keys})
+        return np.array([names.index(k[2]) for k in self.keys], dtype=np.intp)
 
     @property
     def days(self) -> int:
@@ -109,13 +116,27 @@ def baseline_columns(panel: Panel, i: int) -> list[int] | None:
     return found if len(found) == BASELINE_DAYS else None
 
 
-def predictive_tail(baseline: Floats, observed: Floats) -> Floats:
-    """P(X >= observed/phi) for each row of `baseline` (rows x 8) against its own observed."""
-    mean = baseline.mean(axis=1)
-    phi = np.maximum(1.0, baseline.var(axis=1, ddof=1) / mean)
-    shape = (baseline / phi[:, None]).sum(axis=1) + 0.5
-    x = observed / phi
-    return np.asarray(nbinom.sf(np.ceil(x) - 1, shape, PREDICTIVE_P), dtype=np.float64)
+def type_dispersion(mean: Floats, var: Floats, types: NDArray[np.intp]) -> Floats:
+    """k per complaint type (indexed by type id) from the baselines of the series tested."""
+    size = int(types.max()) + 1
+    top = np.bincount(types, weights=mean**2, minlength=size)
+    excess = np.bincount(types, weights=np.maximum(var - mean, 0.0), minlength=size)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        k = np.where(excess > 0, top / excess, K_RANGE[1])
+    return np.clip(k, *K_RANGE)
+
+
+def predictive_params(mean: Floats, k: Floats) -> tuple[Floats, Floats]:
+    """(r, p) of the negative binomial with the given mean and variance (mu + mu^2/k)(1 + 1/8)."""
+    variance = (mean + mean**2 / k) * (1 + 1 / BASELINE_DAYS)
+    r = mean**2 / (variance - mean)
+    return r, r / (r + mean)
+
+
+def predictive_tail(mean: Floats, k: Floats, observed: Floats) -> Floats:
+    """P(X >= observed) under the predictive."""
+    r, p = predictive_params(mean, k)
+    return np.asarray(nbinom.sf(observed - 1, r, p), dtype=np.float64)
 
 
 def benjamini_hochberg(p: Floats) -> Floats:
@@ -141,9 +162,12 @@ def evaluate(panel: Panel, day: date) -> Evaluation | None:
     usable = np.flatnonzero(baseline.mean(axis=1) > 0)
     if len(usable) == 0:
         return None
+    base = baseline[usable]
+    mean, var = base.mean(axis=1), base.var(axis=1, ddof=1)
+    k = type_dispersion(mean, var, panel.type_ids[usable])[panel.type_ids[usable]]
     observed = panel.matrix[usable, i]
-    p = predictive_tail(baseline[usable], observed.astype(np.float64))
-    return Evaluation(usable, observed, baseline[usable].mean(axis=1), p, benjamini_hochberg(p))
+    p = predictive_tail(mean, k, observed.astype(np.float64))
+    return Evaluation(usable, observed, mean, p, benjamini_hochberg(p))
 
 
 def _flagged(panel: Panel, ev: Evaluation, day: date) -> list[Candidate]:
