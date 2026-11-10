@@ -174,9 +174,13 @@ def tally_github_command(
 ) -> None:
     """Charge every scheduled GitHub run attempt that may have used AI to the build tally, once."""
     from pothole.budget.tally import Tally
-    from pothole.tallygithub import tally_github
+    from pothole.tallygithub import RunListTruncated, tally_github
 
-    done = tally_github(repo, since.date(), records, Tally())
+    try:
+        done = tally_github(repo, since.date(), records, Tally())
+    except RunListTruncated as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
     typer.echo(
         f"admitted {len(done.admitted)} ({len(done.without_record)} with no committed record), "
         f"already {len(done.already)}, AI off {len(done.ai_off)}"

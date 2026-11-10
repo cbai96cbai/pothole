@@ -1,4 +1,5 @@
 import json
+from collections.abc import Callable
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
@@ -8,7 +9,7 @@ import yaml
 
 from pothole import runrecord
 from pothole.budget.tally import Tally
-from pothole.tallygithub import Admitted, tally_github
+from pothole.tallygithub import Admitted, RunListTruncated, tally_github
 
 ROOT = Path(__file__).parents[1]
 
@@ -104,3 +105,41 @@ def test_workflow_matches_the_plan() -> None:
     assert script.index("git config user.name") < script.index("git commit")
     assert script.index("git config user.email") < script.index("git pull --rebase")
     assert script.count("git pull --rebase") == 2 and script.count("git push") == 2
+
+
+def paged_gh(total: int, limits: list[int]) -> "Callable[[list[str]], str]":
+    """A `gh` that has `total` scheduled runs, newest first, and returns at most --limit of them."""
+    runs = [
+        {
+            "databaseId": 1000 - i, "status": "completed", "conclusion": "success",
+            "event": "schedule", "attempt": 1, "createdAt": "2026-11-10T11:17:00Z",
+        }
+        for i in range(total)
+    ]  # fmt: skip
+
+    def gh(args: list[str]) -> str:
+        limit = int(args[args.index("--limit") + 1])
+        limits.append(limit)
+        assert args[args.index("--created") + 1] == ">=2026-11-10"
+        return json.dumps(runs[:limit])
+
+    return gh
+
+
+def test_a_listing_longer_than_one_page_is_counted_in_full(tmp_path: Path) -> None:
+    limits: list[int] = []
+    path = tmp_path / "runs.jsonl"
+    for i in range(450):  # every run has a committed record saying AI was off: none is charged
+        runrecord.append(path, record(str(1000 - i), False))
+    tally = Tally(tmp_path / "spend.jsonl")
+    done = tally_github("o/r", date(2026, 11, 10), path, tally, paged_gh(450, limits))
+    assert len(done.ai_off) == 450 and limits == [200, 400, 800]  # asked again until not full
+
+
+def test_a_listing_that_may_be_cut_short_stops_the_tally_instead_of_under_counting(
+    tmp_path: Path,
+) -> None:
+    tally = Tally(tmp_path / "spend.jsonl")
+    with pytest.raises(RunListTruncated, match="older runs may be missing"):
+        tally_github("o/r", date(2026, 11, 10), tmp_path / "runs.jsonl", tally, paged_gh(10**5, []))
+    assert tally.total() == 0  # nothing was charged from a list that might be incomplete

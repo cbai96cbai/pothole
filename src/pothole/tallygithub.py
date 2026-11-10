@@ -5,6 +5,10 @@ whatever its conclusion (success, failure, cancelled, timed out), unless that at
 record says AI was off. A run with no committed record, as after a crash, is charged. A re-run
 keeps its run id and raises the attempt number, so each attempt is its own charge (idempotent by
 run id and attempt). Manual dispatches never use the model and are not listed here.
+
+The tally never under-counts silently: the listing is asked for with a limit, and while it comes
+back full the limit is doubled and it is asked for again, back to `since`; if it is still full at
+MAX_RUNS the tally stops with an error rather than count a list that may be cut short.
 """
 
 import json
@@ -13,6 +17,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
+from typing import Any
 
 from pothole import runrecord
 from pothole.budget.envelope import run_envelope
@@ -20,6 +25,12 @@ from pothole.budget.tally import Tally
 
 Runner = Callable[[list[str]], str]
 SCHEDULE = "schedule"
+FIRST_LIMIT = 200
+MAX_RUNS = 6400
+
+
+class RunListTruncated(RuntimeError):
+    """`gh run list` still came back full at the largest limit: older runs may be missing."""
 
 
 def gh_runner(args: list[str]) -> str:
@@ -37,6 +48,28 @@ class Admitted:
     without_record: list[str] = field(default_factory=list)  # charged, no committed record
 
 
+def _listing(repo: str, since: date, run: Runner) -> list[dict[str, Any]]:
+    """Every run of the daily workflow created on or after `since`, however many there are."""
+    limit = FIRST_LIMIT
+    while True:
+        out = run(
+            [
+                "gh", "run", "list", "--repo", repo, "--workflow", "daily.yml",
+                "--created", f">={since.isoformat()}", "--limit", str(limit),
+                "--json", "databaseId,conclusion,status,createdAt,event,attempt",
+            ]
+        )  # fmt: skip
+        listed: list[dict[str, Any]] = json.loads(out)
+        if len(listed) < limit:
+            return listed
+        if limit >= MAX_RUNS:
+            raise RunListTruncated(
+                f"gh run list returned {len(listed)} runs at its largest limit: "
+                "older runs may be missing, so the tally was not changed"
+            )
+        limit = min(limit * 2, MAX_RUNS)
+
+
 def tally_github(
     repo: str,
     since: date,
@@ -44,27 +77,13 @@ def tally_github(
     tally: Tally,
     run: Runner = gh_runner,
 ) -> Admitted:
-    out = run(
-        [
-            "gh",
-            "run",
-            "list",
-            "--repo",
-            repo,
-            "--workflow",
-            "daily.yml",
-            "--limit",
-            "200",
-            "--json",
-            "databaseId,conclusion,status,createdAt,event,attempt",
-        ]  # fmt: skip
-    )
+    listed = _listing(repo, since, run)
     seen: dict[tuple[str, int], list[runrecord.RunRecord]] = {}
     for r in runrecord.read(records):
         seen.setdefault((r.run_id, r.attempt), []).append(r)
     amount = run_envelope()
     result = Admitted()
-    for item in sorted(json.loads(out), key=lambda i: i["databaseId"]):
+    for item in sorted(listed, key=lambda i: i["databaseId"]):
         if item["event"] != SCHEDULE or item["status"] != "completed":
             continue
         if date.fromisoformat(item["createdAt"][:10]) < since:
