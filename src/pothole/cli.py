@@ -1,6 +1,8 @@
 """Command line: `pothole <command>`."""
 
 import json
+import os
+import uuid
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Annotated, Any
@@ -9,7 +11,10 @@ from zoneinfo import ZoneInfo
 import typer
 
 from pothole.analyst import null_simulation
+from pothole.analyst.finding import to_json
 from pothole.config import Settings
+from pothole.dailyai import Sink
+from pothole.repair.sink import GitHubSink, LocalSink
 from pothole.repair.validate import failed, load_batches
 from pothole.socrata import batches
 from pothole.socrata.client import Socrata, SourceRejected, SourceUnavailable
@@ -113,3 +118,71 @@ def null_simulation_command() -> None:
     """Measure how often the detector flags something on simulated days with no events."""
     body = null_simulation.run()
     typer.echo(json.dumps(body["share_of_days_with_a_candidate"]))
+
+
+def _sink(settings: Settings, repo: Path) -> Sink:
+    """Pull requests and issues on GitHub when the workflow's token is there, else files."""
+    token, slug = os.environ.get("GITHUB_TOKEN"), os.environ.get("GITHUB_REPOSITORY")
+    if token and slug:
+        return GitHubSink(slug, token, repo)
+    return LocalSink(settings.state / "sink")
+
+
+@app.command("daily")
+def daily_command(
+    repo: Annotated[Path, typer.Option(help="The repository checkout to read and write.")] = Path(
+        "."
+    ),
+    site_dir: Annotated[Path | None, typer.Option(help="Where the site data goes.")] = None,
+) -> None:
+    """The daily run. Model steps run only when AI_ENABLED=true."""
+    from pothole import daily
+    from pothole.budget.envelope import EnvelopeExceeded
+    from pothole.budget.tally import Tally
+    from pothole.llm.client import LLMClient
+
+    settings = Settings.from_env()
+    ai = os.environ.get("AI_ENABLED") == "true"
+    if ai and not (settings.azure_endpoint and settings.azure_api_key):
+        typer.echo("AI_ENABLED is true but the Azure endpoint or key is not set", err=True)
+        raise typer.Exit(1)
+    on_github = os.environ.get("GITHUB_ACTIONS") == "true"
+    repo = repo.resolve()
+    env = daily.Env(
+        repo=repo,
+        state=settings.state,
+        socrata=Socrata(token=settings.socrata_app_token),
+        sink=_sink(settings, repo),
+        client=LLMClient(settings) if ai else None,
+        ai_enabled=ai,
+        tally=Tally() if ai and not on_github else None,
+        run_id=os.environ.get("GITHUB_RUN_ID") or uuid.uuid4().hex,
+        site_dir=site_dir,
+    )
+    try:
+        record = daily.run(env)
+    except EnvelopeExceeded as exc:
+        typer.echo(f"refusing to run: {exc}", err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(json.dumps(to_json(record), sort_keys=True))
+
+
+@app.command("tally-github")
+def tally_github_command(
+    repo: Annotated[str, typer.Option(help="owner/name on GitHub.")] = "cbai96cbai/pothole",
+    since: Annotated[datetime, typer.Option(formats=["%Y-%m-%d"], help="First day to count.")] = (
+        datetime(2026, 11, 10)
+    ),
+    records: Annotated[Path, typer.Option(help="The committed run records.")] = Path(
+        "data/runs.jsonl"
+    ),
+) -> None:
+    """Admit each finished GitHub run that had AI enabled into the build tally, once."""
+    from pothole.budget.tally import Tally
+    from pothole.tallygithub import tally_github
+
+    done = tally_github(repo, since.date(), records, Tally())
+    typer.echo(
+        f"admitted {len(done.admitted)}, already {len(done.already)}, "
+        f"no committed record {len(done.no_record)}"
+    )

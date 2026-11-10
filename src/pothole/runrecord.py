@@ -54,6 +54,7 @@ class RunRecord:
     analyst_day: str | None = None
     ai_cost: str = "0"
     generation: str | None = None
+    ai_enabled: bool = False  # the run was allowed to call the model
 
     def __post_init__(self) -> None:
         if self.status not in STATUSES:
