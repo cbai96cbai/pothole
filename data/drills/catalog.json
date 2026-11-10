@@ -1,0 +1,1013 @@
+{
+  "rule": "seed = crc32('<family>:<variant>'). The six recorded days are shuffled by random.Random('pothole-drills:<family>'); variant v is seen on day v mod 6 of that order; three of the other five days, drawn by random.Random(seed) and sorted, are judged.",
+  "cases": [
+    {
+      "id": "renamed_field-0",
+      "family": "renamed_field",
+      "variant": 0,
+      "seed": 3162718268,
+      "batch_seen": "2026-11-03",
+      "batch_judged": [
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "renamed_field-1",
+      "family": "renamed_field",
+      "variant": 1,
+      "seed": 3414454442,
+      "batch_seen": "2026-11-05",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-06"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "renamed_field-2",
+      "family": "renamed_field",
+      "variant": 2,
+      "seed": 1384980752,
+      "batch_seen": "2026-11-06",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-07"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "renamed_field-3",
+      "family": "renamed_field",
+      "variant": 3,
+      "seed": 629805446,
+      "batch_seen": "2026-11-02",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-06"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "renamed_field-4",
+      "family": "renamed_field",
+      "variant": 4,
+      "seed": 3152970789,
+      "batch_seen": "2026-11-07",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-05"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "renamed_field-5",
+      "family": "renamed_field",
+      "variant": 5,
+      "seed": 3437868211,
+      "batch_seen": "2026-11-04",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-05"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "date_format-0",
+      "family": "date_format",
+      "variant": 0,
+      "seed": 959939318,
+      "batch_seen": "2026-11-06",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-07"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "date_format-1",
+      "family": "date_format",
+      "variant": 1,
+      "seed": 1311814240,
+      "batch_seen": "2026-11-04",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "date_format-2",
+      "family": "date_format",
+      "variant": 2,
+      "seed": 3610895322,
+      "batch_seen": "2026-11-03",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-05",
+        "2026-11-06"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "date_format-3",
+      "family": "date_format",
+      "variant": 3,
+      "seed": 2688471884,
+      "batch_seen": "2026-11-02",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-05",
+        "2026-11-06"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "date_format-4",
+      "family": "date_format",
+      "variant": 4,
+      "seed": 1046103791,
+      "batch_seen": "2026-11-07",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-05",
+        "2026-11-06"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "date_format-5",
+      "family": "date_format",
+      "variant": 5,
+      "seed": 1230861945,
+      "batch_seen": "2026-11-05",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "borough_recoding-0",
+      "family": "borough_recoding",
+      "variant": 0,
+      "seed": 4089695057,
+      "batch_seen": "2026-11-07",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "borough_recoding-1",
+      "family": "borough_recoding",
+      "variant": 1,
+      "seed": 2227502023,
+      "batch_seen": "2026-11-04",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-07"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "borough_recoding-2",
+      "family": "borough_recoding",
+      "variant": 2,
+      "seed": 500017789,
+      "batch_seen": "2026-11-05",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "borough_recoding-3",
+      "family": "borough_recoding",
+      "variant": 3,
+      "seed": 1791662827,
+      "batch_seen": "2026-11-06",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-05"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "borough_recoding-4",
+      "family": "borough_recoding",
+      "variant": 4,
+      "seed": 4105047880,
+      "batch_seen": "2026-11-02",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-05",
+        "2026-11-07"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "borough_recoding-5",
+      "family": "borough_recoding",
+      "variant": 5,
+      "seed": 2208907230,
+      "batch_seen": "2026-11-03",
+      "batch_judged": [
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-07"
+      ],
+      "expected_action": "patch",
+      "split": "dev"
+    },
+    {
+      "id": "comma_thousands-0",
+      "family": "comma_thousands",
+      "variant": 0,
+      "seed": 1957571112,
+      "batch_seen": "2026-11-07",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-05"
+      ],
+      "expected_action": "patch",
+      "split": "test"
+    },
+    {
+      "id": "comma_thousands-1",
+      "family": "comma_thousands",
+      "variant": 1,
+      "seed": 61414078,
+      "batch_seen": "2026-11-05",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-06"
+      ],
+      "expected_action": "patch",
+      "split": "test"
+    },
+    {
+      "id": "comma_thousands-2",
+      "family": "comma_thousands",
+      "variant": 2,
+      "seed": 2594196228,
+      "batch_seen": "2026-11-03",
+      "batch_judged": [
+        "2026-11-04",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "expected_action": "patch",
+      "split": "test"
+    },
+    {
+      "id": "comma_thousands-3",
+      "family": "comma_thousands",
+      "variant": 3,
+      "seed": 3987176338,
+      "batch_seen": "2026-11-04",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-05",
+        "2026-11-06"
+      ],
+      "expected_action": "patch",
+      "split": "test"
+    },
+    {
+      "id": "comma_thousands-4",
+      "family": "comma_thousands",
+      "variant": 4,
+      "seed": 1942220337,
+      "batch_seen": "2026-11-02",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "expected_action": "patch",
+      "split": "test"
+    },
+    {
+      "id": "comma_thousands-5",
+      "family": "comma_thousands",
+      "variant": 5,
+      "seed": 80010919,
+      "batch_seen": "2026-11-06",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-05"
+      ],
+      "expected_action": "patch",
+      "split": "test"
+    },
+    {
+      "id": "latlon_swapped-0",
+      "family": "latlon_swapped",
+      "variant": 0,
+      "seed": 238026934,
+      "batch_seen": "2026-11-06",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-07"
+      ],
+      "expected_action": "patch",
+      "split": "test"
+    },
+    {
+      "id": "latlon_swapped-1",
+      "family": "latlon_swapped",
+      "variant": 1,
+      "seed": 2033659936,
+      "batch_seen": "2026-11-03",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-07"
+      ],
+      "expected_action": "patch",
+      "split": "test"
+    },
+    {
+      "id": "latlon_swapped-2",
+      "family": "latlon_swapped",
+      "variant": 2,
+      "seed": 3762184602,
+      "batch_seen": "2026-11-05",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "expected_action": "patch",
+      "split": "test"
+    },
+    {
+      "id": "latlon_swapped-3",
+      "family": "latlon_swapped",
+      "variant": 3,
+      "seed": 2537115916,
+      "batch_seen": "2026-11-02",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-06"
+      ],
+      "expected_action": "patch",
+      "split": "test"
+    },
+    {
+      "id": "latlon_swapped-4",
+      "family": "latlon_swapped",
+      "variant": 4,
+      "seed": 157140143,
+      "batch_seen": "2026-11-07",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-05"
+      ],
+      "expected_action": "patch",
+      "split": "test"
+    },
+    {
+      "id": "latlon_swapped-5",
+      "family": "latlon_swapped",
+      "variant": 5,
+      "seed": 2119889977,
+      "batch_seen": "2026-11-04",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-06"
+      ],
+      "expected_action": "patch",
+      "split": "test"
+    },
+    {
+      "id": "field_dropped-0",
+      "family": "field_dropped",
+      "variant": 0,
+      "seed": 598249339,
+      "batch_seen": "2026-11-02",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "expected_action": "issue",
+      "split": "dev"
+    },
+    {
+      "id": "field_dropped-1",
+      "family": "field_dropped",
+      "variant": 1,
+      "seed": 1420804077,
+      "batch_seen": "2026-11-04",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-05",
+        "2026-11-06"
+      ],
+      "expected_action": "issue",
+      "split": "dev"
+    },
+    {
+      "id": "field_dropped-2",
+      "family": "field_dropped",
+      "variant": 2,
+      "seed": 3450269271,
+      "batch_seen": "2026-11-06",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-07"
+      ],
+      "expected_action": "issue",
+      "split": "dev"
+    },
+    {
+      "id": "field_dropped-3",
+      "family": "field_dropped",
+      "variant": 3,
+      "seed": 3131170497,
+      "batch_seen": "2026-11-07",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-06"
+      ],
+      "expected_action": "issue",
+      "split": "dev"
+    },
+    {
+      "id": "field_dropped-4",
+      "family": "field_dropped",
+      "variant": 4,
+      "seed": 616909666,
+      "batch_seen": "2026-11-05",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-07"
+      ],
+      "expected_action": "issue",
+      "split": "dev"
+    },
+    {
+      "id": "field_dropped-5",
+      "family": "field_dropped",
+      "variant": 5,
+      "seed": 1405254644,
+      "batch_seen": "2026-11-03",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-06"
+      ],
+      "expected_action": "issue",
+      "split": "dev"
+    },
+    {
+      "id": "partial_load-0",
+      "family": "partial_load",
+      "variant": 0,
+      "seed": 4050146118,
+      "batch_seen": "2026-11-05",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-06"
+      ],
+      "expected_action": "issue",
+      "split": "dev"
+    },
+    {
+      "id": "partial_load-1",
+      "family": "partial_load",
+      "variant": 1,
+      "seed": 2255446992,
+      "batch_seen": "2026-11-02",
+      "batch_judged": [
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06"
+      ],
+      "expected_action": "issue",
+      "split": "dev"
+    },
+    {
+      "id": "partial_load-2",
+      "family": "partial_load",
+      "variant": 2,
+      "seed": 526791274,
+      "batch_seen": "2026-11-06",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-05",
+        "2026-11-07"
+      ],
+      "expected_action": "issue",
+      "split": "dev"
+    },
+    {
+      "id": "partial_load-3",
+      "family": "partial_load",
+      "variant": 3,
+      "seed": 1751188220,
+      "batch_seen": "2026-11-07",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-06"
+      ],
+      "expected_action": "issue",
+      "split": "dev"
+    },
+    {
+      "id": "partial_load-4",
+      "family": "partial_load",
+      "variant": 4,
+      "seed": 4127561567,
+      "batch_seen": "2026-11-04",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "expected_action": "issue",
+      "split": "dev"
+    },
+    {
+      "id": "partial_load-5",
+      "family": "partial_load",
+      "variant": 5,
+      "seed": 2164434889,
+      "batch_seen": "2026-11-03",
+      "batch_judged": [
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-07"
+      ],
+      "expected_action": "issue",
+      "split": "dev"
+    },
+    {
+      "id": "null_flood-0",
+      "family": "null_flood",
+      "variant": 0,
+      "seed": 1804651762,
+      "batch_seen": "2026-11-05",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-07"
+      ],
+      "expected_action": "issue",
+      "split": "test"
+    },
+    {
+      "id": "null_flood-1",
+      "family": "null_flood",
+      "variant": 1,
+      "seed": 479722596,
+      "batch_seen": "2026-11-06",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-05"
+      ],
+      "expected_action": "issue",
+      "split": "test"
+    },
+    {
+      "id": "null_flood-2",
+      "family": "null_flood",
+      "variant": 2,
+      "seed": 2241768926,
+      "batch_seen": "2026-11-03",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-07"
+      ],
+      "expected_action": "issue",
+      "split": "test"
+    },
+    {
+      "id": "null_flood-3",
+      "family": "null_flood",
+      "variant": 3,
+      "seed": 4070153544,
+      "batch_seen": "2026-11-07",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-06"
+      ],
+      "expected_action": "issue",
+      "split": "test"
+    },
+    {
+      "id": "null_flood-4",
+      "family": "null_flood",
+      "variant": 4,
+      "seed": 1828522219,
+      "batch_seen": "2026-11-04",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "expected_action": "issue",
+      "split": "test"
+    },
+    {
+      "id": "null_flood-5",
+      "family": "null_flood",
+      "variant": 5,
+      "seed": 469383293,
+      "batch_seen": "2026-11-02",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-07"
+      ],
+      "expected_action": "issue",
+      "split": "test"
+    },
+    {
+      "id": "source_empty-0",
+      "family": "source_empty",
+      "variant": 0,
+      "seed": 4236800734,
+      "batch_seen": "2026-11-03",
+      "batch_judged": [
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06"
+      ],
+      "expected_action": "issue",
+      "split": "test"
+    },
+    {
+      "id": "source_empty-1",
+      "family": "source_empty",
+      "variant": 1,
+      "seed": 2341421640,
+      "batch_seen": "2026-11-05",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-07"
+      ],
+      "expected_action": "issue",
+      "split": "test"
+    },
+    {
+      "id": "source_empty-2",
+      "family": "source_empty",
+      "variant": 2,
+      "seed": 310776818,
+      "batch_seen": "2026-11-07",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04"
+      ],
+      "expected_action": "issue",
+      "split": "test"
+    },
+    {
+      "id": "source_empty-3",
+      "family": "source_empty",
+      "variant": 3,
+      "seed": 1702962020,
+      "batch_seen": "2026-11-06",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-05",
+        "2026-11-07"
+      ],
+      "expected_action": "issue",
+      "split": "test"
+    },
+    {
+      "id": "source_empty-4",
+      "family": "source_empty",
+      "variant": 4,
+      "seed": 4226135751,
+      "batch_seen": "2026-11-02",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-07"
+      ],
+      "expected_action": "issue",
+      "split": "test"
+    },
+    {
+      "id": "source_empty-5",
+      "family": "source_empty",
+      "variant": 5,
+      "seed": 2363655761,
+      "batch_seen": "2026-11-04",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-05",
+        "2026-11-07"
+      ],
+      "expected_action": "issue",
+      "split": "test"
+    },
+    {
+      "id": "spike-0",
+      "family": "spike",
+      "variant": 0,
+      "seed": 2124913193,
+      "batch_seen": "2026-11-03",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-05"
+      ],
+      "expected_action": "no_change",
+      "split": "dev"
+    },
+    {
+      "id": "spike-1",
+      "family": "spike",
+      "variant": 1,
+      "seed": 161524415,
+      "batch_seen": "2026-11-07",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-05"
+      ],
+      "expected_action": "no_change",
+      "split": "dev"
+    },
+    {
+      "id": "spike-2",
+      "family": "spike",
+      "variant": 2,
+      "seed": 2427058949,
+      "batch_seen": "2026-11-02",
+      "batch_judged": [
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "expected_action": "no_change",
+      "split": "dev"
+    },
+    {
+      "id": "spike-3",
+      "family": "spike",
+      "variant": 3,
+      "seed": 3886992275,
+      "batch_seen": "2026-11-06",
+      "batch_judged": [
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-07"
+      ],
+      "expected_action": "no_change",
+      "split": "dev"
+    },
+    {
+      "id": "spike-4",
+      "family": "spike",
+      "variant": 4,
+      "seed": 2043305520,
+      "batch_seen": "2026-11-05",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-07"
+      ],
+      "expected_action": "no_change",
+      "split": "dev"
+    },
+    {
+      "id": "spike-5",
+      "family": "spike",
+      "variant": 5,
+      "seed": 248344230,
+      "batch_seen": "2026-11-04",
+      "batch_judged": [
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "expected_action": "no_change",
+      "split": "dev"
+    },
+    {
+      "id": "spike-6",
+      "family": "spike",
+      "variant": 6,
+      "seed": 2546220828,
+      "batch_seen": "2026-11-03",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-05",
+        "2026-11-07"
+      ],
+      "expected_action": "no_change",
+      "split": "test"
+    },
+    {
+      "id": "spike-7",
+      "family": "spike",
+      "variant": 7,
+      "seed": 3770879882,
+      "batch_seen": "2026-11-07",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04"
+      ],
+      "expected_action": "no_change",
+      "split": "test"
+    },
+    {
+      "id": "spike-8",
+      "family": "spike",
+      "variant": 8,
+      "seed": 1887179291,
+      "batch_seen": "2026-11-02",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-06"
+      ],
+      "expected_action": "no_change",
+      "split": "test"
+    },
+    {
+      "id": "benign_field-0",
+      "family": "benign_field",
+      "variant": 0,
+      "seed": 3315855890,
+      "batch_seen": "2026-11-04",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-07"
+      ],
+      "expected_action": "nothing",
+      "split": "dev"
+    },
+    {
+      "id": "benign_field-1",
+      "family": "benign_field",
+      "variant": 1,
+      "seed": 2997142148,
+      "batch_seen": "2026-11-03",
+      "batch_judged": [
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "expected_action": "nothing",
+      "split": "dev"
+    },
+    {
+      "id": "benign_field-2",
+      "family": "benign_field",
+      "variant": 2,
+      "seed": 732795710,
+      "batch_seen": "2026-11-07",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-06"
+      ],
+      "expected_action": "nothing",
+      "split": "dev"
+    },
+    {
+      "id": "benign_field-3",
+      "family": "benign_field",
+      "variant": 3,
+      "seed": 1554686888,
+      "batch_seen": "2026-11-02",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-07"
+      ],
+      "expected_action": "nothing",
+      "split": "dev"
+    },
+    {
+      "id": "benign_field-4",
+      "family": "benign_field",
+      "variant": 4,
+      "seed": 3268294155,
+      "batch_seen": "2026-11-05",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-06"
+      ],
+      "expected_action": "nothing",
+      "split": "dev"
+    },
+    {
+      "id": "benign_field-5",
+      "family": "benign_field",
+      "variant": 5,
+      "seed": 3049850525,
+      "batch_seen": "2026-11-06",
+      "batch_judged": [
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-07"
+      ],
+      "expected_action": "nothing",
+      "split": "dev"
+    },
+    {
+      "id": "benign_field-6",
+      "family": "benign_field",
+      "variant": 6,
+      "seed": 750802727,
+      "batch_seen": "2026-11-04",
+      "batch_judged": [
+        "2026-11-03",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "expected_action": "nothing",
+      "split": "test"
+    },
+    {
+      "id": "benign_field-7",
+      "family": "benign_field",
+      "variant": 7,
+      "seed": 1539794865,
+      "batch_seen": "2026-11-03",
+      "batch_judged": [
+        "2026-11-02",
+        "2026-11-04",
+        "2026-11-05"
+      ],
+      "expected_action": "nothing",
+      "split": "test"
+    },
+    {
+      "id": "benign_field-8",
+      "family": "benign_field",
+      "variant": 8,
+      "seed": 3413670432,
+      "batch_seen": "2026-11-07",
+      "batch_judged": [
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06"
+      ],
+      "expected_action": "nothing",
+      "split": "test"
+    }
+  ]
+}
