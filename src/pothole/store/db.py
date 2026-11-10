@@ -2,15 +2,17 @@
 
 raw holds one row per source key: the spec's columns cast by the engine, then `_updated_at`
 (UTC), `_created_at` (UTC, the first arrival's `:created_at`, never overwritten) and `_id`.
-meta holds the cursor, the generation and `last_success` as text.
+meta holds the cursor, the generation, `last_success` and `spec_digest` as text.
 """
 
+import hashlib
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 import duckdb
 import pyarrow as pa
+import yaml
 
 from pothole.spec import engine
 from pothole.spec.checks import CheckResult
@@ -67,16 +69,30 @@ def select_clause(spec: PipelineSpec) -> str:
     return ", ".join([*(c.source for c in spec.columns), *SYSTEM_FIELDS])
 
 
+def spec_digest(spec: PipelineSpec) -> str:
+    """sha256 of the part of the spec that decides what a stored row holds: the source and the
+    columns (names, source fields, types, formats, value mappings). The checks do not change a
+    stored row, so editing them never rebuilds the window."""
+    body = {
+        "source": spec.source.model_dump(mode="json"),
+        "columns": [c.model_dump(mode="json") for c in spec.columns],
+    }
+    return hashlib.sha256(yaml.safe_dump(body, sort_keys=True).encode()).hexdigest()
+
+
 def ensure_raw(con: Connection, spec: PipelineSpec) -> bool:
-    """Create raw to fit the spec. A table of another shape is dropped, with the cursor, so the
-    window loads again in full; returns True then."""
+    """Create raw to fit the spec. Stored rows are always the product of the live spec: a table
+    of another shape, or one built by a spec with another digest (a changed format or value
+    mapping leaves the shape alone), or one with no digest recorded, is dropped with the cursor,
+    so the window loads again in full from the source; returns True then."""
     want = [(c.name, _SQL_TYPE[c.type]) for c in spec.columns] + list(_EXTRA)
     have = con.execute(
         "SELECT column_name, data_type FROM information_schema.columns "
         "WHERE table_name = ? ORDER BY ordinal_position",
         [RAW],
     ).fetchall()
-    if [tuple(r) for r in have] == want:
+    digest = spec_digest(spec)
+    if [tuple(r) for r in have] == want and get_meta(con, "spec_digest") == digest:
         return False
     rebuilt = bool(have)
     columns = ", ".join(f"{quote(n)} {t}" for n, t in want)
@@ -89,6 +105,7 @@ def ensure_raw(con: Connection, spec: PipelineSpec) -> bool:
                 "DELETE FROM meta WHERE key IN ('cursor_ts', 'cursor_id', 'load_in_progress')"
             )
         con.execute(f"CREATE TABLE {RAW} ({columns}, PRIMARY KEY ({key}))")
+        set_meta(con, "spec_digest", digest)
         con.commit()
     except BaseException:
         con.rollback()
