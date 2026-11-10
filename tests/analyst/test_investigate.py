@@ -210,3 +210,41 @@ def test_a_repeated_tool_call_id_is_a_tool_error(db: Path) -> None:
     f = go(model, db)
     assert "already used" in f.trace[1]["tool_results"][0]["content"]
     assert [e.tool for e in f.evidence] == ["weather"]
+
+
+@pytest.mark.parametrize("source", ["weather", "events"])
+def test_a_source_failure_is_reported_and_stops_the_remaining_candidates(
+    db: Path, source: str
+) -> None:
+    failures: list[tuple[str, str]] = []
+
+    def broken(*_: object) -> object:
+        raise TimeoutError("slow")
+
+    def report(label: str, exc: Exception) -> None:
+        failures.append((label, type(exc).__name__))
+
+    first = [reply(tool_call(source, {}, "t1")), reply(tool_call("series", {}, "t2"))]
+    model = Scripted([*first, reply(submit(OK, ["t2"])), *first, reply(submit(OK, ["t2"]))])
+    cands = [candidate(12.0, 3), candidate(9.0, 2)]
+    result = investigate.day(
+        db, cands, model, analysed=cands[0].day, tested=100, cleared=2,  # type: ignore[arg-type]
+        weather_for=broken if source == "weather" else weather_for,
+        events_for=broken if source == "events" else events_for,
+        on_source_failure=report, stop=lambda: bool(failures),
+    )  # fmt: skip
+    assert [f.board for f in result.findings] == [3]  # the second candidate was not started
+    assert result.skipped_reason == investigate.STOPPED and len(model.script) == 3
+    assert failures and {label for label, _ in failures} == {source}
+    assert failures[0][1] == "TimeoutError"
+
+
+def test_without_a_source_failure_both_candidates_are_investigated(db: Path) -> None:
+    script = [reply(tool_call("weather", {}, "w1")), reply(submit(OK, ["w1"]))] * 2
+    cands = [candidate(12.0, 3), candidate(9.0, 2)]
+    result = investigate.day(
+        db, cands, Scripted(script), analysed=cands[0].day, tested=100, cleared=2,  # type: ignore[arg-type]
+        weather_for=weather_for, events_for=events_for,
+        on_source_failure=lambda *_: None, stop=lambda: False,
+    )  # fmt: skip
+    assert [f.board for f in result.findings] == [3, 2] and result.skipped_reason is None

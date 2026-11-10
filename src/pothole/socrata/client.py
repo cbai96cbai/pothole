@@ -26,18 +26,31 @@ class SourceUnavailable(Exception):
 
 
 class SourceRejected(Exception):
-    """The source refused the request (4xx other than 429); the message is its own error text."""
+    """The source refused the request (4xx other than 429); the message is its own error text.
+
+    `code` is the source's own error code when it sent one, such as `query.soql.no-such-column`."""
+
+    def __init__(self, message: str, code: str | None = None) -> None:
+        super().__init__(message)
+        self.code = code
+
+    @property
+    def names_missing_column(self) -> bool:
+        """The query named a field the dataset no longer has: a schema change, not an outage."""
+        return "no-such-column" in (self.code or "") or "no such column" in str(self).lower()
 
 
-def _error_text(response: httpx.Response) -> str:
+def _error_body(response: httpx.Response) -> tuple[str, str | None]:
+    """The error text and the source's error code (`errorCode` or `code`) when it sent them."""
     try:
         body = response.json()
         if isinstance(body, dict) and body.get("message"):
-            code = body.get("errorCode")
-            return f"{body['message']} ({code})" if code else str(body["message"])
+            code = body.get("errorCode") or body.get("code")
+            text = f"{body['message']} ({code})" if code else str(body["message"])
+            return text, str(code) if code else None
     except ValueError:
         pass
-    return response.text[:500] or f"HTTP {response.status_code}"
+    return response.text[:500] or f"HTTP {response.status_code}", None
 
 
 class Socrata:
@@ -61,7 +74,8 @@ class Socrata:
                 if status < 400:
                     return response
                 if status != 429 and status < 500:
-                    raise SourceRejected(f"{dataset}: HTTP {status}: {_error_text(response)}")
+                    text, code = _error_body(response)
+                    raise SourceRejected(f"{dataset}: HTTP {status}: {text}", code)
                 last = f"HTTP {status}"
             log.warning("socrata call failed", extra={"dataset": dataset, "attempt": attempt + 1})
         raise SourceUnavailable(f"{dataset}: {last} after {len(BACKOFF_S) + 1} tries")

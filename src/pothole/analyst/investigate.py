@@ -48,6 +48,8 @@ UNFINISHED = "The investigation did not finish; only the counts are shown."
 log = get_logger(__name__)
 WeatherFor = Callable[[date], Weather]
 EventsFor = Callable[[str, int, date], list[Event]]
+STOPPED = "A source failed during the investigation: the other candidates were counted only"
+SourceFailed = Callable[[str, Exception], None]
 
 
 def slug(text: str) -> str:
@@ -215,13 +217,17 @@ def run(
     max_calls: int = MAX_CALLS,
     weather_for: WeatherFor | None = None,
     events_for: EventsFor | None = None,
+    on_source_failure: SourceFailed | None = None,
 ) -> Finding:
-    """Investigate one candidate against the store at `db`."""
+    """Investigate one candidate against the store at `db`. `on_source_failure(label, exc)` is
+    told of every failed weather or events lookup before the failure goes on."""
     box = Toolbox(
         db,
         candidate,
-        weather_for or weather_client.daily,
-        events_for or (lambda b, n, d: events_client.on(b, n, d)),
+        _watched("weather", weather_for or weather_client.daily, on_source_failure),
+        _watched(
+            "events", events_for or (lambda b, n, d: events_client.on(b, n, d)), on_source_failure
+        ),
     )
     try:
         state = _Run(candidate, box, client, limits, max_calls)
@@ -260,6 +266,20 @@ def run(
         box.close()
 
 
+def _watched[**P, R](label: str, fn: Callable[P, R], report: SourceFailed | None) -> Callable[P, R]:
+    if report is None:
+        return fn
+
+    def call(*args: P.args, **kwargs: P.kwargs) -> R:
+        try:
+            return fn(*args, **kwargs)
+        except Exception as exc:
+            report(label, exc)
+            raise
+
+    return call
+
+
 def _part[T](notes: list[str], label: str, get: Callable[[], T], default: T) -> T:
     """One part of the finding. Whatever fails leaves its default and a note: the model calls
     are already paid for and the trace must not be lost."""
@@ -279,9 +299,16 @@ def day(
     analysed: date,
     tested: int,
     cleared: int,
+    stop: Callable[[], bool] | None = None,
     **kwargs: Any,
 ) -> AnalystDay:
-    """Investigate the top candidates by ratio. No candidates: no findings and no model call."""
+    """Investigate the top candidates by ratio. No candidates: no findings and no model call.
+    When `stop()` is true after a candidate, the rest are counted, not investigated, and the day
+    says so."""
     top = sorted(candidates, key=lambda c: (-c.ratio, c.borough, c.board, c.complaint_type))
-    findings = [run(c, db, client, **kwargs) for c in top[:SENT_ON]]
+    findings: list[Finding] = []
+    for c in top[:SENT_ON]:
+        if findings and stop is not None and stop():
+            return AnalystDay(analysed, tested, cleared, findings, skipped_reason=STOPPED)
+        findings.append(run(c, db, client, **kwargs))
     return AnalystDay(analysed, tested, cleared, findings)

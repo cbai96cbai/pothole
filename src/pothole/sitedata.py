@@ -226,8 +226,12 @@ def _write(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, indent=1, sort_keys=True) + "\n")
 
 
-def build(repo_root: Path, out_dir: Path, now: datetime | None = None) -> None:
-    runs = runrecord.read(repo_root / "data" / "runs.jsonl")
+def build(
+    repo_root: Path, out_dir: Path, now: datetime | None = None, pending: RunRecord | None = None
+) -> None:
+    """Write the site data. `pending` is a run's record not yet appended to the run file: the
+    site shows it as the newest run, so the record can be appended once the build has worked."""
+    runs = runrecord.read(repo_root / "data" / "runs.jsonl") + ([pending] if pending else [])
     days = _load_days(repo_root)
     index, findings = _findings(days)
     board = _board(runs, days)

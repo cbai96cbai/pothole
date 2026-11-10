@@ -1,16 +1,22 @@
 """One daily run: load, check, repair or drill, analyse, record, publish the site data.
 
-Order, and why: the envelope check comes first, before anything is loaded or paid for. A source
+Order: the envelope check comes first, before anything is loaded or paid for. A source
 outage or an incomplete load is recorded and filed as an issue; it never calls the model and never
 produces new analysis. Checks that fail go to the repair agent (only when AI is enabled), else to an
 issue. A Sunday with no failure and no real repair earlier that day runs one judged drill. The
-analyst works on the day two days back, only after a complete load. `last_success` is written by
-the load itself, after the whole window loaded and the checks ran.
+analyst works on the day two days back, only after a complete load (`last_success` is written by
+the load itself, after the whole window loaded and the checks ran).
 
-Every run that starts leaves a record. Any exception ends in a record
-with status `error` (the step, the exception's class and a cut, secret-free message, the cost so
-far), then the exception goes on and the job fails. That includes the envelope refusal, which
-happens before anything is loaded or paid for.
+Every run that starts leaves exactly one terminal record per (run id, attempt), appended last: the
+record is built, every step runs including the site build (which shows the record as the newest
+run), then the record is appended once. Any exception ends in a record with status `error` (the
+step, the exception's class and a cut, secret-free message, the cost so far) unless this attempt's
+record was already appended; then the exception goes on and the job fails (the envelope refusal
+included, which happens before anything is loaded or paid for).
+
+A source failure (reconcile, repair sample, weather or events lookup) bars every later model step.
+A source that rejects the load for a missing field is a schema change: diagnosed from a raw sample
+and sent to repair, not an outage. A day's analysis is written once and never again.
 """
 
 import uuid
@@ -23,7 +29,7 @@ from zoneinfo import ZoneInfo
 
 import pyarrow as pa
 
-from pothole import dailyai, runrecord, sitedata
+from pothole import dailyai, dailyrepair, runrecord, sitedata
 from pothole.analyst import detect, universe
 from pothole.analyst.finding import AnalystDay, to_json
 from pothole.analyst.holidays import is_holiday
@@ -37,12 +43,9 @@ from pothole.logs import get_logger
 from pothole.repair import render
 from pothole.repair.routing import route
 from pothole.repair.validate import failed
-from pothole.runrecord import CheckResult, RepairRecord, RunRecord, Status
-from pothole.socrata import meta
+from pothole.runrecord import CheckResult, RunRecord, Status
 from pothole.socrata.client import Socrata, SourceRejected, SourceUnavailable
-from pothole.socrata.recent import fetch_batch
 from pothole.spec import checks as spec_checks
-from pothole.spec import engine
 from pothole.spec.model import PipelineSpec
 from pothole.store import db, load, reconcile
 
@@ -93,52 +96,6 @@ def screen(table: pa.Table, uni: universe.Universe, day: date) -> AnalystDay | l
     return [len(ev.series), len(found), found]
 
 
-def _failing_sample(
-    env: Env, spec: PipelineSpec, now: datetime
-) -> tuple[list[dict[str, str]], dict[str, str]]:
-    """Yesterday's rows as the source sends them, and the source's fields."""
-    raw = fetch_batch(env.socrata, now.date() - timedelta(days=1))
-    rows = [{k: str(v) for k, v in r.items() if not k.startswith(":")} for r in raw]
-    fields = {f.name: f.type for f in meta.fields(env.socrata, spec.source.dataset)}
-    return rows, fields
-
-
-def _real_failure(
-    env: Env, spec: PipelineSpec, ai: LLMClient | None, failing: list[spec_checks.CheckResult],
-    now: datetime, spend: Spend,
-) -> RepairRecord:  # fmt: skip
-    day = now.date()
-    if ai is None:
-        reason = "Checks failed and AI is not enabled for this run; a person needs to look."
-        filed = env.sink.open_issue(reason, failing, day=day)
-        return RepairRecord("issue", False, filed.ref, None, False)
-    try:
-        rows, fields = _failing_sample(env, spec, now)
-    except (SourceUnavailable, SourceRejected) as exc:
-        filed = env.sink.open_issue(
-            f"The failing rows could not be fetched: {exc}", failing, day=day
-        )
-        return RepairRecord("issue", False, filed.ref, None, False)
-    again = failed(engine.run(spec, rows, [], now).checks)
-    if not again:
-        reason = (
-            "The checks failed on the window but not on yesterday's rows; a person should look."
-        )
-        filed = env.sink.open_issue(reason, failing, day=day)
-        return RepairRecord("issue", False, filed.ref, None, False)
-    return dailyai.real_repair(
-        env.sink, ai, spec, rows, again, fields, now, spend, DEFAULT_STEPS[0], env.repair_timeout_s
-    )
-
-
-def _real_repair_today(env: Env, day: date) -> bool:
-    today = day.isoformat()
-    return any(
-        r.repair is not None and not r.repair.drill and r.finished[:10] == today
-        for r in runrecord.read(env.data / "runs.jsonl")
-    )
-
-
 def _outage(env: Env, con: db.Connection, exc: Exception, now: datetime) -> Status:
     """Record why the load stopped: some pages committed (incomplete) or none (unavailable)."""
     status: Status = (
@@ -151,8 +108,8 @@ def _outage(env: Env, con: db.Connection, exc: Exception, now: datetime) -> Stat
     return status
 
 
-def _site(env: Env, now: datetime) -> None:
-    sitedata.build(env.repo, env.site_dir or env.repo / "web" / "src" / "data", now)
+def _site(env: Env, now: datetime, pending: RunRecord | None = None) -> None:
+    sitedata.build(env.repo, env.site_dir or env.repo / "web" / "src" / "data", now, pending)
 
 
 def run(env: Env) -> RunRecord:
@@ -173,7 +130,7 @@ def run(env: Env) -> RunRecord:
         message = describe(exc, progress.step)
         log.error("daily run failed", extra={"error": message})
         failure = _record(env, ai, spend, progress, "error", error=message)
-        if _append_error(env.data, failure, message):
+        if not progress.recorded and _append_error(env.data, failure, message):
             try:
                 _site(env, started.replace(tzinfo=None))
             except Exception as site_exc:  # the first failure is the one raised
@@ -221,6 +178,7 @@ def _record(
         "repair": p.repair,
         "analyst_day": p.analyst_day,
         "generation": p.generation,
+        "notes": list(p.notes),
         **over,
     }
     return RunRecord(
@@ -235,17 +193,51 @@ def _record(
     )
 
 
+def _analyse(
+    env: Env, con: db.Connection, ai: LLMClient | None, table: pa.Table, uni: universe.Universe,
+    analysed: date, spend: Spend, p: Progress,
+) -> tuple[AnalystDay, bool]:  # fmt: skip
+    """The day's analysis, and whether the store connection was closed for the investigator."""
+    screened = screen(table, uni, analysed)
+    if isinstance(screened, AnalystDay):
+        return screened, False
+    tested, cleared, found = screened
+    if not found:
+        return AnalystDay(analysed, tested, cleared, []), False
+    if ai is None:
+        note = (
+            f"A source failed earlier in this run ({p.source_failure}): the candidates were "
+            "counted, not investigated"
+            if env.ai_enabled
+            else "AI is not enabled: the candidates were counted, not investigated"
+        )
+        return AnalystDay(analysed, tested, cleared, [], skipped_reason=note), False
+    p.step = "investigation"
+    con.close()  # the investigator opens the store itself
+    watch = {"on_source_failure": p.fail_source, "stop": lambda: p.source_failure is not None}
+    return dailyai.investigate_day(
+        env.state / "raw.duckdb", found, ai, analysed, tested, cleared, spend,
+        (DEFAULT_STEPS[1], DEFAULT_STEPS[2]), env.investigate_timeout_s,
+        **{**env.investigator, **watch},
+    ), True  # fmt: skip
+
+
 def _run(env: Env, ai: LLMClient | None, spend: Spend, p: Progress) -> RunRecord:
     now = p.started.replace(tzinfo=None)
     day = now.date()
     p.step = "spec"
     spec = PipelineSpec.load(env.repo / render.SPEC_PATH)
 
+    def live() -> LLMClient | None:
+        """The model, unless a source failed earlier in this run."""
+        return None if p.source_failure else ai
+
     def finish(status: Status) -> RunRecord:
         p.step = "record and site"
         record = _record(env, ai, spend, p, status)
+        _site(env, now, pending=record)
         runrecord.append(env.data / "runs.jsonl", record)
-        _site(env, now)
+        p.recorded = True
         return record
 
     p.step = "open store"
@@ -256,6 +248,10 @@ def _run(env: Env, ai: LLMClient | None, spend: Spend, p: Progress) -> RunRecord
         try:
             result = load.incremental(con, env.socrata, spec, now, env.page_size)
         except (SourceUnavailable, SourceRejected) as exc:
+            if isinstance(exc, SourceRejected) and exc.names_missing_column:
+                p.step = "schema diagnosis"
+                if dailyrepair.schema_change(env, spec, live(), now, spend, p):
+                    return finish("checks_failed")  # the load did not finish: no analysis
             p.step = "outage report"
             return finish(_outage(env, con, exc, now))
         p.rows, p.pages, p.generation = result.rows, result.pages, result.generation
@@ -265,15 +261,17 @@ def _run(env: Env, ai: LLMClient | None, spend: Spend, p: Progress) -> RunRecord
             try:
                 reconcile.weekly(con, env.socrata, spec, now)
             except (SourceUnavailable, SourceRejected) as exc:
+                p.fail_source("weekly reconcile", exc)
                 log.warning("weekly reconcile skipped", extra={"error": str(exc)})
         failing = failed(result.checks)
+        drill_ai = live()
         if route(result.checks, None) == "agent":
             p.step = "repair"
-            p.repair = _real_failure(env, spec, ai, failing, now, spend)
-        elif day.weekday() == SUNDAY and ai is not None and not _real_repair_today(env, day):
+            p.repair = dailyrepair.real_failure(env, spec, live(), failing, now, spend, p)
+        elif day.weekday() == SUNDAY and drill_ai and not dailyrepair.real_repair_today(env, day):
             p.step = "drill"
             p.repair = dailyai.drill(
-                env.sink, ai, day, spend, DEFAULT_STEPS[0], env.repair_timeout_s
+                env.sink, drill_ai, day, spend, DEFAULT_STEPS[0], env.repair_timeout_s
             )
         p.step = "counts"
         uni = universe.load(env.data / "universe.json")
@@ -282,26 +280,13 @@ def _run(env: Env, ai: LLMClient | None, spend: Spend, p: Progress) -> RunRecord
         write_vintage(env.data, env.run_id, con, day)
         p.step = "analysis"
         p.analyst_day = analysed.isoformat()
-        screened = screen(table, uni, analysed)
-        if isinstance(screened, AnalystDay):
-            analyst = screened
+        path = env.data / "analyst" / f"{analysed.isoformat()}.json"
+        if path.exists():  # the day's analysis and its counts file are one pair, written once
+            p.notes.append(f"already analysed: {analysed.isoformat()} is not analysed again")
         else:
-            tested, cleared, found = screened
-            analyst = AnalystDay(analysed, tested, cleared, [])
-            if found and ai is not None:
-                p.step = "investigation"
-                con.close()
-                closed = True  # the investigator opens the store itself
-                analyst = dailyai.investigate_day(
-                    env.state / "raw.duckdb", found, ai, analysed, tested, cleared, spend,
-                    (DEFAULT_STEPS[1], DEFAULT_STEPS[2]), env.investigate_timeout_s,
-                    **env.investigator,
-                )  # fmt: skip
-            elif found:
-                note = "AI is not enabled: the candidates were counted, not investigated"
-                analyst = AnalystDay(analysed, tested, cleared, [], skipped_reason=note)
-        p.step = "analyst file"
-        write_json(env.data / "analyst" / f"{analysed.isoformat()}.json", to_json(analyst))
+            analyst, closed = _analyse(env, con, live(), table, uni, analysed, spend, p)
+            p.step = "analyst file"
+            write_json(path, to_json(analyst))
         return finish("checks_failed" if failing else "success")
     finally:
         if not closed:

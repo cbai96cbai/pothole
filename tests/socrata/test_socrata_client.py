@@ -142,3 +142,23 @@ def test_max_updated_at() -> None:
 def test_live_five_rows_of_311() -> None:
     rows = Socrata().query("erm2-nwe9", {"$limit": "5", "$select": "unique_key,created_date"})
     assert len(rows) == 5 and "unique_key" in rows[0]
+
+
+@respx.mock
+@pytest.mark.parametrize(
+    ("body", "missing"),
+    [
+        ({"message": "No such column: agency", "errorCode": "query.soql.no-such-column"}, True),
+        ({"message": "No such column: agency", "code": "query.soql.no-such-column"}, True),
+        ({"message": "No such column: agency"}, True),  # the wording alone
+        ({"message": "Could not parse SoQL", "errorCode": "query.soql.malformed"}, False),
+        ({"message": "Forbidden"}, False),
+    ],
+)
+def test_a_rejection_says_whether_it_names_a_missing_column(
+    body: dict[str, str], missing: bool
+) -> None:
+    respx.get(URL).mock(return_value=httpx.Response(400, json=body))
+    with pytest.raises(SourceRejected) as caught:
+        Socrata().query("abcd-1234", {})
+    assert caught.value.names_missing_column is missing

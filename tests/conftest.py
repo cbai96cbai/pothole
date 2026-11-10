@@ -52,7 +52,7 @@ def repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     from daily_kit import fields_of
     from webdata.site_repo import scratch_repo
 
-    from pothole import daily
+    from pothole.socrata import meta
 
-    monkeypatch.setattr(daily.meta, "fields", fields_of)
+    monkeypatch.setattr(meta, "fields", fields_of)
     return scratch_repo(tmp_path / "repo")

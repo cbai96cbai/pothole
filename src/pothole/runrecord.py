@@ -65,6 +65,7 @@ class RunRecord:
     ai_enabled: bool = False  # the run was allowed to call the model
     attempt: int = 1  # GitHub re-runs keep the run id and raise the attempt
     error: str | None = None  # an error run: "step: Class: message"
+    notes: list[str] = field(default_factory=list)  # what the run left undone, in plain words
 
     def __post_init__(self) -> None:
         if self.status not in STATUSES:

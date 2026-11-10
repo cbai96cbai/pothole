@@ -13,7 +13,7 @@ from daily_kit import SUNDAY, TUESDAY, env_for, window_rows
 from store.store_fake import outage_on
 from typer.testing import CliRunner
 
-from pothole import cli, daily, dailyai, runrecord
+from pothole import cli, daily, dailyai, dailyrepair, runrecord
 from pothole.dailyerror import describe
 
 
@@ -34,7 +34,7 @@ CASES = {
     "spec": Case("spec", patch_attr(daily.PipelineSpec, "load")),
     "load": Case("load", lambda mp: None),  # a non-source error from the source
     "reconcile": Case("weekly reconcile", patch_attr(daily.reconcile, "weekly"), now=SUNDAY),
-    "repair": Case("repair", patch_attr(daily, "_real_failure"), status=""),
+    "repair": Case("repair", patch_attr(dailyrepair, "real_failure"), status=""),
     "drill": Case("drill", patch_attr(dailyai, "drill"), now=SUNDAY, ai=True),
     "counts": Case("counts", patch_attr(daily, "refresh_counts")),
     "analysis": Case("analysis", patch_attr(daily, "screen")),

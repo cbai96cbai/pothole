@@ -25,7 +25,15 @@ class Progress:
     checks: list[CheckResult] = field(default_factory=list)
     repair: RepairRecord | None = None
     analyst_day: str | None = None
+    notes: list[str] = field(default_factory=list)
+    source_failure: str | None = None  # the first source failure: no later step may call the model
+    recorded: bool = False  # this attempt's one terminal record has been appended
     extra: dict[str, Any] = field(default_factory=dict)
+
+    def fail_source(self, label: str, exc: BaseException) -> None:
+        """Remember the first source failure of the run, without secrets (class and label only)."""
+        if self.source_failure is None:
+            self.source_failure = f"{label}: {type(exc).__name__}"
 
 
 def describe(exc: BaseException, step: str) -> str:
