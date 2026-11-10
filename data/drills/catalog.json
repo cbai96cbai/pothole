@@ -13,7 +13,11 @@
         "2026-11-07"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "column": "agency",
+        "new": "agency_code"
+      }
     },
     {
       "id": "renamed_field-1",
@@ -27,7 +31,11 @@
         "2026-11-06"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "column": "complaint_type",
+        "new": "complaint_type_name"
+      }
     },
     {
       "id": "renamed_field-2",
@@ -41,7 +49,11 @@
         "2026-11-07"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "column": "status",
+        "new": "case_status"
+      }
     },
     {
       "id": "renamed_field-3",
@@ -55,7 +67,11 @@
         "2026-11-06"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "column": "borough",
+        "new": "boro"
+      }
     },
     {
       "id": "renamed_field-4",
@@ -69,7 +85,11 @@
         "2026-11-05"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "column": "created_date",
+        "new": "created_at"
+      }
     },
     {
       "id": "renamed_field-5",
@@ -83,7 +103,11 @@
         "2026-11-05"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "column": "complaint_type",
+        "new": "issue_category"
+      }
     },
     {
       "id": "date_format-0",
@@ -97,7 +121,14 @@
         "2026-11-07"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "fields": [
+          "created_date",
+          "closed_date"
+        ],
+        "format": "%Y-%m-%dT%H:%M:%S"
+      }
     },
     {
       "id": "date_format-1",
@@ -111,7 +142,14 @@
         "2026-11-07"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "fields": [
+          "created_date",
+          "closed_date"
+        ],
+        "format": "%Y-%m-%d %H:%M:%S"
+      }
     },
     {
       "id": "date_format-2",
@@ -125,7 +163,14 @@
         "2026-11-06"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "fields": [
+          "created_date",
+          "closed_date"
+        ],
+        "format": "%m/%d/%Y %I:%M:%S %p"
+      }
     },
     {
       "id": "date_format-3",
@@ -139,7 +184,14 @@
         "2026-11-06"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "fields": [
+          "created_date",
+          "closed_date"
+        ],
+        "format": "%m/%d/%Y %H:%M:%S"
+      }
     },
     {
       "id": "date_format-4",
@@ -153,7 +205,13 @@
         "2026-11-06"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "fields": [
+          "created_date"
+        ],
+        "format": "%m/%d/%Y %I:%M:%S %p"
+      }
     },
     {
       "id": "date_format-5",
@@ -167,7 +225,13 @@
         "2026-11-07"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "fields": [
+          "closed_date"
+        ],
+        "format": "%Y-%m-%d %H:%M:%S"
+      }
     },
     {
       "id": "borough_recoding-0",
@@ -181,7 +245,16 @@
         "2026-11-04"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "recode": {
+          "BROOKLYN": "Brooklyn",
+          "QUEENS": "Queens",
+          "MANHATTAN": "Manhattan",
+          "BRONX": "Bronx",
+          "STATEN ISLAND": "Staten Island"
+        }
+      }
     },
     {
       "id": "borough_recoding-1",
@@ -195,7 +268,16 @@
         "2026-11-07"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "recode": {
+          "BROOKLYN": "brooklyn",
+          "QUEENS": "queens",
+          "MANHATTAN": "manhattan",
+          "BRONX": "bronx",
+          "STATEN ISLAND": "staten island"
+        }
+      }
     },
     {
       "id": "borough_recoding-2",
@@ -209,7 +291,16 @@
         "2026-11-07"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "recode": {
+          "BROOKLYN": "BK",
+          "QUEENS": "QN",
+          "MANHATTAN": "MN",
+          "BRONX": "BX",
+          "STATEN ISLAND": "SI"
+        }
+      }
     },
     {
       "id": "borough_recoding-3",
@@ -223,7 +314,16 @@
         "2026-11-05"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "recode": {
+          "BROOKLYN": "K",
+          "QUEENS": "Q",
+          "MANHATTAN": "M",
+          "BRONX": "X",
+          "STATEN ISLAND": "R"
+        }
+      }
     },
     {
       "id": "borough_recoding-4",
@@ -237,7 +337,16 @@
         "2026-11-07"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "recode": {
+          "MANHATTAN": "1",
+          "BRONX": "2",
+          "BROOKLYN": "3",
+          "QUEENS": "4",
+          "STATEN ISLAND": "5"
+        }
+      }
     },
     {
       "id": "borough_recoding-5",
@@ -251,7 +360,16 @@
         "2026-11-07"
       ],
       "expected_action": "patch",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "recode": {
+          "BROOKLYN": "BROOKLYN ",
+          "QUEENS": "QUEENS ",
+          "MANHATTAN": "MANHATTAN ",
+          "BRONX": "BRONX ",
+          "STATEN ISLAND": "STATEN ISLAND "
+        }
+      }
     },
     {
       "id": "comma_thousands-0",
@@ -265,7 +383,13 @@
         "2026-11-05"
       ],
       "expected_action": "patch",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "fields": [
+          "x_coordinate_state_plane"
+        ],
+        "share": 1.0
+      }
     },
     {
       "id": "comma_thousands-1",
@@ -279,7 +403,13 @@
         "2026-11-06"
       ],
       "expected_action": "patch",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "fields": [
+          "y_coordinate_state_plane"
+        ],
+        "share": 1.0
+      }
     },
     {
       "id": "comma_thousands-2",
@@ -293,7 +423,13 @@
         "2026-11-07"
       ],
       "expected_action": "patch",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "fields": [
+          "x_coordinate_state_plane"
+        ],
+        "share": 0.6
+      }
     },
     {
       "id": "comma_thousands-3",
@@ -307,7 +443,13 @@
         "2026-11-06"
       ],
       "expected_action": "patch",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "fields": [
+          "y_coordinate_state_plane"
+        ],
+        "share": 0.3
+      }
     },
     {
       "id": "comma_thousands-4",
@@ -321,7 +463,14 @@
         "2026-11-07"
       ],
       "expected_action": "patch",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "fields": [
+          "x_coordinate_state_plane",
+          "y_coordinate_state_plane"
+        ],
+        "share": 0.8
+      }
     },
     {
       "id": "comma_thousands-5",
@@ -335,7 +484,14 @@
         "2026-11-05"
       ],
       "expected_action": "patch",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "fields": [
+          "x_coordinate_state_plane",
+          "y_coordinate_state_plane"
+        ],
+        "share": 0.1
+      }
     },
     {
       "id": "latlon_swapped-0",
@@ -349,7 +505,8 @@
         "2026-11-07"
       ],
       "expected_action": "patch",
-      "split": "test"
+      "split": "test",
+      "params": {}
     },
     {
       "id": "latlon_swapped-1",
@@ -363,7 +520,8 @@
         "2026-11-07"
       ],
       "expected_action": "patch",
-      "split": "test"
+      "split": "test",
+      "params": {}
     },
     {
       "id": "latlon_swapped-2",
@@ -377,7 +535,8 @@
         "2026-11-07"
       ],
       "expected_action": "patch",
-      "split": "test"
+      "split": "test",
+      "params": {}
     },
     {
       "id": "latlon_swapped-3",
@@ -391,7 +550,8 @@
         "2026-11-06"
       ],
       "expected_action": "patch",
-      "split": "test"
+      "split": "test",
+      "params": {}
     },
     {
       "id": "latlon_swapped-4",
@@ -405,7 +565,8 @@
         "2026-11-05"
       ],
       "expected_action": "patch",
-      "split": "test"
+      "split": "test",
+      "params": {}
     },
     {
       "id": "latlon_swapped-5",
@@ -419,7 +580,8 @@
         "2026-11-06"
       ],
       "expected_action": "patch",
-      "split": "test"
+      "split": "test",
+      "params": {}
     },
     {
       "id": "field_dropped-0",
@@ -433,7 +595,12 @@
         "2026-11-07"
       ],
       "expected_action": "issue",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "fields": [
+          "agency"
+        ]
+      }
     },
     {
       "id": "field_dropped-1",
@@ -447,7 +614,12 @@
         "2026-11-06"
       ],
       "expected_action": "issue",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "fields": [
+          "complaint_type"
+        ]
+      }
     },
     {
       "id": "field_dropped-2",
@@ -461,7 +633,12 @@
         "2026-11-07"
       ],
       "expected_action": "issue",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "fields": [
+          "status"
+        ]
+      }
     },
     {
       "id": "field_dropped-3",
@@ -475,7 +652,12 @@
         "2026-11-06"
       ],
       "expected_action": "issue",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "fields": [
+          "borough"
+        ]
+      }
     },
     {
       "id": "field_dropped-4",
@@ -489,7 +671,12 @@
         "2026-11-07"
       ],
       "expected_action": "issue",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "fields": [
+          "created_date"
+        ]
+      }
     },
     {
       "id": "field_dropped-5",
@@ -503,7 +690,13 @@
         "2026-11-06"
       ],
       "expected_action": "issue",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "fields": [
+          "agency",
+          "status"
+        ]
+      }
     },
     {
       "id": "partial_load-0",
@@ -517,7 +710,11 @@
         "2026-11-06"
       ],
       "expected_action": "issue",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "keep": 0.3,
+        "mode": "random"
+      }
     },
     {
       "id": "partial_load-1",
@@ -531,7 +728,11 @@
         "2026-11-06"
       ],
       "expected_action": "issue",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "keep": 0.3,
+        "mode": "head"
+      }
     },
     {
       "id": "partial_load-2",
@@ -545,7 +746,11 @@
         "2026-11-07"
       ],
       "expected_action": "issue",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "keep": 0.3,
+        "mode": "tail"
+      }
     },
     {
       "id": "partial_load-3",
@@ -559,7 +764,11 @@
         "2026-11-06"
       ],
       "expected_action": "issue",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "keep": 0.3,
+        "mode": "random"
+      }
     },
     {
       "id": "partial_load-4",
@@ -573,7 +782,11 @@
         "2026-11-07"
       ],
       "expected_action": "issue",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "keep": 0.3,
+        "mode": "head"
+      }
     },
     {
       "id": "partial_load-5",
@@ -587,7 +800,11 @@
         "2026-11-07"
       ],
       "expected_action": "issue",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "keep": 0.3,
+        "mode": "tail"
+      }
     },
     {
       "id": "null_flood-0",
@@ -601,7 +818,11 @@
         "2026-11-07"
       ],
       "expected_action": "issue",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "field": "agency",
+        "share": 0.3
+      }
     },
     {
       "id": "null_flood-1",
@@ -615,7 +836,11 @@
         "2026-11-05"
       ],
       "expected_action": "issue",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "field": "complaint_type",
+        "share": 0.5
+      }
     },
     {
       "id": "null_flood-2",
@@ -629,7 +854,11 @@
         "2026-11-07"
       ],
       "expected_action": "issue",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "field": "status",
+        "share": 0.25
+      }
     },
     {
       "id": "null_flood-3",
@@ -643,7 +872,11 @@
         "2026-11-06"
       ],
       "expected_action": "issue",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "field": "borough",
+        "share": 0.4
+      }
     },
     {
       "id": "null_flood-4",
@@ -657,7 +890,11 @@
         "2026-11-07"
       ],
       "expected_action": "issue",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "field": "created_date",
+        "share": 0.2
+      }
     },
     {
       "id": "null_flood-5",
@@ -671,7 +908,11 @@
         "2026-11-07"
       ],
       "expected_action": "issue",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "field": "status",
+        "share": 0.8
+      }
     },
     {
       "id": "source_empty-0",
@@ -685,7 +926,10 @@
         "2026-11-06"
       ],
       "expected_action": "issue",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "keep": 0
+      }
     },
     {
       "id": "source_empty-1",
@@ -699,7 +943,10 @@
         "2026-11-07"
       ],
       "expected_action": "issue",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "keep": 1
+      }
     },
     {
       "id": "source_empty-2",
@@ -713,7 +960,10 @@
         "2026-11-04"
       ],
       "expected_action": "issue",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "keep": 2
+      }
     },
     {
       "id": "source_empty-3",
@@ -727,7 +977,10 @@
         "2026-11-07"
       ],
       "expected_action": "issue",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "keep": 5
+      }
     },
     {
       "id": "source_empty-4",
@@ -741,7 +994,10 @@
         "2026-11-07"
       ],
       "expected_action": "issue",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "keep": 10
+      }
     },
     {
       "id": "source_empty-5",
@@ -755,7 +1011,10 @@
         "2026-11-07"
       ],
       "expected_action": "issue",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "keep": 25
+      }
     },
     {
       "id": "spike-0",
@@ -769,7 +1028,10 @@
         "2026-11-05"
       ],
       "expected_action": "no_change",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "factor": 2.5
+      }
     },
     {
       "id": "spike-1",
@@ -783,7 +1045,10 @@
         "2026-11-05"
       ],
       "expected_action": "no_change",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "factor": 3
+      }
     },
     {
       "id": "spike-2",
@@ -797,7 +1062,10 @@
         "2026-11-07"
       ],
       "expected_action": "no_change",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "factor": 4
+      }
     },
     {
       "id": "spike-3",
@@ -811,7 +1079,10 @@
         "2026-11-07"
       ],
       "expected_action": "no_change",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "factor": 2.5
+      }
     },
     {
       "id": "spike-4",
@@ -825,7 +1096,10 @@
         "2026-11-07"
       ],
       "expected_action": "no_change",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "factor": 3
+      }
     },
     {
       "id": "spike-5",
@@ -839,7 +1113,10 @@
         "2026-11-07"
       ],
       "expected_action": "no_change",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "factor": 4
+      }
     },
     {
       "id": "spike-6",
@@ -853,7 +1130,10 @@
         "2026-11-07"
       ],
       "expected_action": "no_change",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "factor": 2.5
+      }
     },
     {
       "id": "spike-7",
@@ -867,7 +1147,10 @@
         "2026-11-04"
       ],
       "expected_action": "no_change",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "factor": 3
+      }
     },
     {
       "id": "spike-8",
@@ -881,7 +1164,10 @@
         "2026-11-06"
       ],
       "expected_action": "no_change",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "factor": 4
+      }
     },
     {
       "id": "benign_field-0",
@@ -895,7 +1181,11 @@
         "2026-11-07"
       ],
       "expected_action": "nothing",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "field": "priority_flag",
+        "value": "N"
+      }
     },
     {
       "id": "benign_field-1",
@@ -909,7 +1199,11 @@
         "2026-11-07"
       ],
       "expected_action": "nothing",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "field": "channel_detail",
+        "value": "phone"
+      }
     },
     {
       "id": "benign_field-2",
@@ -923,7 +1217,11 @@
         "2026-11-06"
       ],
       "expected_action": "nothing",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "field": "response_hours",
+        "value": "24"
+      }
     },
     {
       "id": "benign_field-3",
@@ -937,7 +1235,11 @@
         "2026-11-07"
       ],
       "expected_action": "nothing",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "field": "source_version",
+        "value": "v2"
+      }
     },
     {
       "id": "benign_field-4",
@@ -951,7 +1253,11 @@
         "2026-11-06"
       ],
       "expected_action": "nothing",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "field": "geo_confidence",
+        "value": "0.9"
+      }
     },
     {
       "id": "benign_field-5",
@@ -965,7 +1271,11 @@
         "2026-11-07"
       ],
       "expected_action": "nothing",
-      "split": "dev"
+      "split": "dev",
+      "params": {
+        "field": "tags",
+        "value": "none"
+      }
     },
     {
       "id": "benign_field-6",
@@ -979,7 +1289,11 @@
         "2026-11-07"
       ],
       "expected_action": "nothing",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "field": "sla_tier",
+        "value": "standard"
+      }
     },
     {
       "id": "benign_field-7",
@@ -993,7 +1307,11 @@
         "2026-11-05"
       ],
       "expected_action": "nothing",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "field": "reviewed",
+        "value": "false"
+      }
     },
     {
       "id": "benign_field-8",
@@ -1007,7 +1325,11 @@
         "2026-11-06"
       ],
       "expected_action": "nothing",
-      "split": "test"
+      "split": "test",
+      "params": {
+        "field": "batch_label",
+        "value": "daily"
+      }
     }
   ]
 }

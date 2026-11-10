@@ -7,7 +7,7 @@ from difflib import SequenceMatcher
 from typing import Any, cast
 
 from pothole.repair.outcome import Op, RegressionCase, RepairOutcome, table_rows
-from pothole.spec import engine, ops
+from pothole.spec import engine, ops, scope
 from pothole.spec.checks import CheckResult
 from pothole.spec.model import DATE_FORMATS, NUMBER_FORMATS, Column, PipelineSpec
 
@@ -105,18 +105,6 @@ def _derive(
     return out
 
 
-def _failing_columns(spec: PipelineSpec, failed: list[CheckResult]) -> set[str]:
-    """Columns a failed check names: by check name, or by source field for the schema check."""
-    by_source = {c.source: c.name for c in spec.columns}
-    out: set[str] = set()
-    for check in failed:
-        if check.name == "schema":
-            out |= {by_source[s.strip()] for s in check.detail.rsplit(": ", 1)[1].split(",")}
-        elif ":" in check.name:
-            out.add(check.name.split(":", 1)[1])
-    return out
-
-
 def repair(
     spec: PipelineSpec,
     failed: list[CheckResult],
@@ -133,15 +121,9 @@ def repair(
         edits = _derive(spec, [c for c in failed if c.name != "volume"], sample_rows, source_fields)
         if not edits:
             return _issue("no rule applies to the failed checks")
-        allowed = _failing_columns(spec, failed)
-        stray = [e.column for e in edits if e.column not in allowed]
-        if stray:
-            raise _Unfixable(f"{stray} has no failed check")
-        stray = [
-            e.source for e in edits if isinstance(e, ops.MapField) and e.source not in source_fields
-        ]
-        if stray:
-            raise _Unfixable(f"the source does not send {stray}")
+        problems = scope.check(edits, failed, source_fields, spec)
+        if problems:
+            raise _Unfixable("; ".join(problems))
         patched = ops.apply(spec, edits)
     except (_Unfixable, ops.ForbiddenEdit) as err:
         return _issue(str(err))

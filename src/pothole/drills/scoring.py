@@ -31,14 +31,23 @@ class CaseResult:
 
 
 def run_case(case: Case, spec: PipelineSpec, repairer: Repairer) -> CaseResult:
+    """One case. A repairer that raises, or an outcome the judge cannot read, is a wrong case."""
     rows, fields = catalog.seen_batch(case)
     checks = catalog.run_engine(spec, rows, case.batch_seen).checks
     found = faults.detected(catalog.fault_of(case), checks)
     outcome = None
-    if case.expected_action != "nothing":  # a warning alone never calls the repairer
-        failed = [c for c in checks if c.level == "fail"]
-        outcome = repairer(spec, failed, catalog.sample(rows, case), fields)
-    verdict = judge.judge(case, outcome, spec)
+    try:
+        if case.expected_action != "nothing":  # a warning alone never calls the repairer
+            failed = [c for c in checks if c.level == "fail"]
+            outcome = repairer(spec, failed, catalog.sample(rows, case), fields)
+            if not isinstance(outcome, RepairOutcome):
+                raise TypeError(f"the repairer returned {type(outcome).__name__}")
+        verdict = judge.judge(case, outcome, spec)
+    except Exception as err:  # any failure of a repairer is scored, never raised
+        reason = f"crashed: {type(err).__name__}: {err}"
+        return CaseResult(
+            case.id, case.family, case.expected_action, found, "crashed", False, reason
+        )
     action = outcome.action if outcome else None
     return CaseResult(
         case.id, case.family, case.expected_action, found, action, verdict.correct, verdict.reason
@@ -53,8 +62,16 @@ def _rate(results: list[CaseResult], expected: str) -> dict[str, Any] | None:
     return {"correct": ok, "of": len(rows), "rate": round(ok / len(rows), 4)}
 
 
+def _detected(rs: list[CaseResult]) -> dict[str, Any]:
+    found = sum(r.detected for r in rs)
+    return {"detected": found, "of": len(rs), "rate": round(found / len(rs), 4) if rs else None}
+
+
 def summarise(results: list[CaseResult], split: str, who: str) -> dict[str, Any]:
-    found = sum(r.detected for r in results)
+    faulted = [r for r in results if r.expected != "nothing"]
+    benign = [r for r in results if r.expected == "nothing"]
+    repairable = [r for r in results if r.expected == "patch"]
+    gave_issue = sum(r.action == "issue" for r in repairable)
     families: dict[str, list[CaseResult]] = defaultdict(list)
     for r in results:
         families[r.family].append(r)
@@ -65,11 +82,14 @@ def summarise(results: list[CaseResult], split: str, who: str) -> dict[str, Any]
         "repair_success": _rate(results, "patch"),
         "issue_accuracy": _rate(results, "issue"),
         "no_change_accuracy": _rate(results, "no_change"),
-        "detection_coverage": {
-            "detected": found,
-            "of": len(results),
-            "rate": round(found / len(results), 4),
+        "repairable_answered_with_issue": {
+            "count": gave_issue,
+            "of": len(repairable),
+            "rate": round(gave_issue / len(repairable), 4) if repairable else None,
         },
+        "crashed": sum(r.action == "crashed" for r in results),
+        "detection_coverage_fault_cases": _detected(faulted),
+        "detection_coverage_benign_control": _detected(benign),
         "per_family": {
             f: {
                 "expected": rs[0].expected,

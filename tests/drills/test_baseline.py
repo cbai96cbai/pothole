@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pothole.drills import baseline, catalog, judge
 from pothole.drills.catalog import Case
-from pothole.spec import ops
+from pothole.spec import ops, scope
 from pothole.spec.model import PipelineSpec
 
 
@@ -21,7 +21,6 @@ def test_baseline_does_not_import_fault_or_catalog_code():
         a.name for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names
     }
     assert not [m for m in imported if "drills" in m and m != "pothole.drills"]
-    assert "pothole.drills" not in imported or True
 
 
 def test_each_rule_on_one_case(cases: dict[str, Case], spec: PipelineSpec):
@@ -66,7 +65,7 @@ def test_edits_touch_only_failed_columns_and_fields_the_batch_sends(
         ]
         outcome = baseline.repair(spec, failed, catalog.sample(rows, case), fields)
         assert outcome.action == "patch", cid
-        assert {o.column for o in outcome.ops} <= baseline._failing_columns(spec, failed)
+        assert {o.column for o in outcome.ops} <= scope.failing_columns(spec, failed)
         assert all(o.source in fields for o in outcome.ops if isinstance(o, ops.MapField))
 
 

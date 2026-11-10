@@ -1,0 +1,10 @@
+{
+  "data/drills/catalog.json": "04af1e643901ddc829383050f35199fa6782c4414dc452d42cb0634f03113323",
+  "fixtures/batches/spec.yaml": "ca3fc1943fd6b54727c223deb7867be91fe7b28172cc3df7a5b1dcdb13577996",
+  "fixtures/batches/2026-11-02.jsonl.gz": "222b2d14991300309ea28dad46794d38aa952c0958d7402371500477e93fc816",
+  "fixtures/batches/2026-11-03.jsonl.gz": "4bff5d7348a2933f4e733c26c3bb4b372b9e322fc152bda790a937062773c9c6",
+  "fixtures/batches/2026-11-04.jsonl.gz": "239949a7ce966eb3f15309689dd801b4ef0454de8382d76e69f043c905ad7e9a",
+  "fixtures/batches/2026-11-05.jsonl.gz": "683cc112e0ebb160c422874ff81971663f4e8420adbbca584e23723bb8e1084d",
+  "fixtures/batches/2026-11-06.jsonl.gz": "0b8abe7894b9d43021e2afd9a373336fc9cf3985ae05fe93598bdfc24c95a9b5",
+  "fixtures/batches/2026-11-07.jsonl.gz": "01112fce2ad85398e89ac6329f7536b1479aad5b67b40917cf6d36b5a7886ec3"
+}

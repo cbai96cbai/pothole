@@ -17,9 +17,20 @@
     "of": 3,
     "rate": 1.0
   },
-  "detection_coverage": {
-    "detected": 30,
-    "of": 30,
+  "repairable_answered_with_issue": {
+    "count": 6,
+    "of": 12,
+    "rate": 0.5
+  },
+  "crashed": 0,
+  "detection_coverage_fault_cases": {
+    "detected": 27,
+    "of": 27,
+    "rate": 1.0
+  },
+  "detection_coverage_benign_control": {
+    "detected": 3,
+    "of": 3,
     "rate": 1.0
   },
   "per_family": {

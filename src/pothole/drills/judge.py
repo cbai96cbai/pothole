@@ -9,10 +9,12 @@ from pothole.drills import catalog
 from pothole.drills.catalog import Case
 from pothole.drills.faults import inject
 from pothole.repair.outcome import RepairOutcome, table_rows
-from pothole.spec import ops
+from pothole.spec import ops, scope
 from pothole.spec.model import PipelineSpec
 
 Rows = list[dict[str, Any]]
+MIN_REGRESSION_ROWS = 3
+MAX_REGRESSION_ROWS = 10
 
 
 @dataclass(frozen=True)
@@ -64,12 +66,19 @@ def judge_patched(
     case: Case, patched: PipelineSpec, outcome: RepairOutcome, spec: PipelineSpec
 ) -> Verdict:
     """The patched spec against the original: same checks, the regression case, then three days."""
+    rows_seen, fields = catalog.seen_batch(case)
+    seen_checks = catalog.run_engine(spec, rows_seen, case.batch_seen).checks
+    problems = scope.check(outcome.ops, seen_checks, fields, spec)
+    if problems:
+        return Verdict(False, "out of scope: " + "; ".join(problems))
     if patched.checks.model_dump_json() != spec.checks.model_dump_json():
         return Verdict(False, "the checks differ from the original spec")
     if patched.source != spec.source:
         return Verdict(False, "the source differs from the original spec")
     if outcome.regression is None:
         return Verdict(False, "no regression case")
+    if not MIN_REGRESSION_ROWS <= len(outcome.regression.rows) <= MAX_REGRESSION_ROWS:
+        return Verdict(False, f"the regression case has {len(outcome.regression.rows)} rows")
     rows: Any = outcome.regression.rows
     got = table_rows(catalog.run_engine(patched, rows, case.batch_seen).table)
     if compare_outputs(outcome.regression.expected, got):

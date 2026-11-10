@@ -1,8 +1,10 @@
-"""Faults: each one changes the source rows the way a real upstream change would."""
+"""Faults: each one changes the source rows the way a real upstream change would.
+
+What a fault does is set by its `params`, which come from the frozen catalog."""
 
 import random
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
@@ -11,81 +13,6 @@ from pothole.spec.model import DATE_FORMATS
 
 Row = dict[str, Any]
 SOURCE_DATE = "%Y-%m-%dT%H:%M:%S.%f"
-BOTH_DATES = ("created_date", "closed_date")
-
-# One entry per variant. The first six variants of every family are the dev ones (test-split
-# families use them as their test ones); the controls have nine, the last three being test.
-RENAMES = [
-    ("agency", "agency_code"),
-    ("complaint_type", "complaint_type_name"),
-    ("status", "case_status"),
-    ("borough", "boro"),
-    ("created_date", "created_at"),
-    ("complaint_type", "issue_category"),
-]
-DATE_CHANGES: list[tuple[tuple[str, ...], str]] = [
-    (BOTH_DATES, "%Y-%m-%dT%H:%M:%S"),
-    (BOTH_DATES, "%Y-%m-%d %H:%M:%S"),
-    (BOTH_DATES, "%m/%d/%Y %I:%M:%S %p"),
-    (BOTH_DATES, "%m/%d/%Y %H:%M:%S"),
-    (("created_date",), "%m/%d/%Y %I:%M:%S %p"),
-    (("closed_date",), "%Y-%m-%d %H:%M:%S"),
-]
-_TITLE = {
-    "BROOKLYN": "Brooklyn",
-    "QUEENS": "Queens",
-    "MANHATTAN": "Manhattan",
-    "BRONX": "Bronx",
-    "STATEN ISLAND": "Staten Island",
-}
-BOROUGH_RECODINGS: list[dict[str, str]] = [
-    _TITLE,
-    {k: k.lower() for k in _TITLE},
-    {"BROOKLYN": "BK", "QUEENS": "QN", "MANHATTAN": "MN", "BRONX": "BX", "STATEN ISLAND": "SI"},
-    {"BROOKLYN": "K", "QUEENS": "Q", "MANHATTAN": "M", "BRONX": "X", "STATEN ISLAND": "R"},
-    {"MANHATTAN": "1", "BRONX": "2", "BROOKLYN": "3", "QUEENS": "4", "STATEN ISLAND": "5"},
-    {k: k + " " for k in _TITLE},
-]
-DROPPED: list[tuple[str, ...]] = [
-    ("agency",),
-    ("complaint_type",),
-    ("status",),
-    ("borough",),
-    ("created_date",),
-    ("agency", "status"),
-]
-NULL_FLOODS = [
-    ("agency", 0.3),
-    ("complaint_type", 0.5),
-    ("status", 0.25),
-    ("borough", 0.4),
-    ("created_date", 0.2),
-    ("status", 0.8),
-]
-X, Y = "x_coordinate_state_plane", "y_coordinate_state_plane"
-COMMA_FIELDS: list[tuple[tuple[str, ...], float]] = [
-    ((X,), 1.0),
-    ((Y,), 1.0),
-    ((X,), 0.6),
-    ((Y,), 0.3),
-    ((X, Y), 0.8),
-    ((X, Y), 0.1),
-]
-PARTIAL_KEEP = 0.3
-PARTIAL_MODES = ["random", "head", "tail", "random", "head", "tail"]
-EMPTY_KEEP = [0, 1, 2, 5, 10, 25]
-SPIKE_FACTORS = [2.5, 3, 4, 2.5, 3, 4, 2.5, 3, 4]
-BENIGN_FIELDS = [
-    ("priority_flag", "N"),
-    ("channel_detail", "phone"),
-    ("response_hours", "24"),
-    ("source_version", "v2"),
-    ("geo_confidence", "0.9"),
-    ("tags", "none"),
-    ("sla_tier", "standard"),
-    ("reviewed", "false"),
-    ("batch_label", "daily"),
-]
 
 
 @dataclass(frozen=True)
@@ -93,40 +20,40 @@ class Fault:
     family: str
     variant: int
     seed: int
+    params: dict[str, Any] = field(default_factory=dict)
 
 
-def _rename(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
-    old, new = RENAMES[f.variant]
-    return [{(new if k == old else k): v for k, v in r.items()} for r in rows]
+Apply = Callable[[list[Row], dict[str, Any], random.Random], list[Row]]
 
 
-def _date_format(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
-    fields, fmt = DATE_CHANGES[f.variant]
+def _rename(rows: list[Row], p: dict[str, Any], rng: random.Random) -> list[Row]:
+    return [{(p["new"] if k == p["column"] else k): v for k, v in r.items()} for r in rows]
+
+
+def _date_format(rows: list[Row], p: dict[str, Any], rng: random.Random) -> list[Row]:
     for r in rows:
-        for name in fields:
+        for name in p["fields"]:
             if r.get(name):
-                r[name] = datetime.strptime(r[name], SOURCE_DATE).strftime(fmt)
+                r[name] = datetime.strptime(r[name], SOURCE_DATE).strftime(p["format"])
     return rows
 
 
-def _borough(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
-    recoding = BOROUGH_RECODINGS[f.variant]
+def _borough(rows: list[Row], p: dict[str, Any], rng: random.Random) -> list[Row]:
     for r in rows:
         if "borough" in r:
-            r["borough"] = recoding.get(r["borough"], r["borough"])
+            r["borough"] = p["recode"].get(r["borough"], r["borough"])
     return rows
 
 
-def _comma(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
-    fields, share = COMMA_FIELDS[f.variant]
+def _comma(rows: list[Row], p: dict[str, Any], rng: random.Random) -> list[Row]:
     for r in rows:
-        for name in fields:
-            if r.get(name) and rng.random() < share:
+        for name in p["fields"]:
+            if r.get(name) and rng.random() < p["share"]:
                 r[name] = f"{int(r[name]):,}"
     return rows
 
 
-def _swap(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
+def _swap(rows: list[Row], p: dict[str, Any], rng: random.Random) -> list[Row]:
     out: list[Row] = []
     for r in rows:
         lat, lon = r.pop("latitude", None), r.pop("longitude", None)
@@ -138,38 +65,36 @@ def _swap(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
     return out
 
 
-def _dropped(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
+def _dropped(rows: list[Row], p: dict[str, Any], rng: random.Random) -> list[Row]:
     for r in rows:
-        for name in DROPPED[f.variant]:
+        for name in p["fields"]:
             r.pop(name, None)
     return rows
 
 
-def _partial(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
-    keep = round(len(rows) * PARTIAL_KEEP)
-    mode = PARTIAL_MODES[f.variant]
-    if mode == "head":
+def _partial(rows: list[Row], p: dict[str, Any], rng: random.Random) -> list[Row]:
+    keep = round(len(rows) * p["keep"])
+    if p["mode"] == "head":
         return rows[:keep]
-    if mode == "tail":
+    if p["mode"] == "tail":
         return rows[len(rows) - keep :]
     return [rows[i] for i in sorted(rng.sample(range(len(rows)), keep))]
 
 
-def _flood(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
-    name, share = NULL_FLOODS[f.variant]
+def _flood(rows: list[Row], p: dict[str, Any], rng: random.Random) -> list[Row]:
     for r in rows:
-        if rng.random() < share:
-            r.pop(name, None)
+        if rng.random() < p["share"]:
+            r.pop(p["field"], None)
     return rows
 
 
-def _empty(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
-    return rng.sample(rows, EMPTY_KEEP[f.variant])
+def _empty(rows: list[Row], p: dict[str, Any], rng: random.Random) -> list[Row]:
+    return rng.sample(rows, p["keep"])
 
 
-def _spike(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
+def _spike(rows: list[Row], p: dict[str, Any], rng: random.Random) -> list[Row]:
     extra: list[Row] = []
-    for n in range(round(len(rows) * (SPIKE_FACTORS[f.variant] - 1))):
+    for n in range(round(len(rows) * (p["factor"] - 1))):
         row = dict(rng.choice(rows))
         row["unique_key"] = f"S{n}"
         if ":id" in row:
@@ -178,14 +103,13 @@ def _spike(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
     return rows + extra
 
 
-def _benign(rows: list[Row], f: Fault, rng: random.Random) -> list[Row]:
-    name, value = BENIGN_FIELDS[f.variant]
+def _benign(rows: list[Row], p: dict[str, Any], rng: random.Random) -> list[Row]:
     for r in rows:
-        r[name] = value
+        r[p["field"]] = p["value"]
     return rows
 
 
-_APPLY: dict[str, Callable[[list[Row], Fault, random.Random], list[Row]]] = {
+_APPLY: dict[str, Apply] = {
     "renamed_field": _rename,
     "date_format": _date_format,
     "borough_recoding": _borough,
@@ -240,30 +164,34 @@ def inject(batch: list[Row], fault: Fault) -> tuple[list[Row], dict[str, str]]:
     The same fault applied to any day's rows changes them by the same rule.
     """
     rng = random.Random(f"{fault.seed}:{fault.family}")
-    rows = _APPLY[fault.family]([dict(r) for r in batch], fault, rng)
+    rows = _APPLY[fault.family]([dict(r) for r in batch], fault.params, rng)
     return rows, field_types(rows or batch)
 
 
-# What the checks must show for a fault to count as detected: (check name, its level).
-_DETECTED_BY = {
-    "renamed_field": ("schema", "fail"),
-    "date_format": ("cast:", "fail"),
-    "borough_recoding": ("values:borough", "fail"),
-    "comma_thousands": ("cast:", "fail"),
-    "latlon_swapped": ("range:", "fail"),
-    "field_dropped": ("schema", "fail"),
-    "partial_load": ("volume", "fail"),
-    "null_flood": ("required:", "fail"),
-    "source_empty": ("volume", "fail"),
-    "spike": ("volume", "fail"),
-    "benign_field": ("schema", "warn"),
-}
+def intended_checks(fault: Fault) -> tuple[list[str], str]:
+    """The check names that must show the fault, and the level they show it at."""
+    p = fault.params
+    return {
+        "renamed_field": (["schema"], "fail"),
+        "date_format": ([f"cast:{c}" for c in p.get("fields", [])], "fail"),
+        "borough_recoding": (["values:borough"], "fail"),
+        "comma_thousands": ([f"cast:{c}" for c in p.get("fields", [])], "fail"),
+        "latlon_swapped": (["range:latitude", "range:longitude"], "fail"),
+        "field_dropped": (["schema"], "fail"),
+        "partial_load": (["volume"], "fail"),
+        "null_flood": ([f"required:{p.get('field')}"], "fail"),
+        "source_empty": (["volume"], "fail"),
+        "spike": (["volume"], "fail"),
+        "benign_field": (["schema"], "warn"),
+    }[fault.family]
 
 
 def detected(fault: Fault, checks: list[CheckResult]) -> bool:
-    prefix, level = _DETECTED_BY[fault.family]
-    hits = [c for c in checks if c.name.startswith(prefix) and c.level == level]
+    """Every intended check shows the fault; the benign control shows its new field in a warning."""
+    names, level = intended_checks(fault)
+    at_level = {c.name: c for c in checks if c.level == level}
+    if not all(n in at_level for n in names):
+        return False
     if fault.family == "benign_field":
-        new = BENIGN_FIELDS[fault.variant][0]
-        return any(new in c.detail for c in hits)
-    return bool(hits)
+        return fault.params["field"] in at_level["schema"].detail
+    return True

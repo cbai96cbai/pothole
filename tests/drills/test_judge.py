@@ -76,9 +76,8 @@ def test_judge_uses_unseen_batch(cases: dict[str, Case], spec: PipelineSpec, mon
 
     monkeypatch.setattr(catalog, "run_engine", spy)
     assert judge.judge(case, outcome, spec).correct
-    assert case.batch_seen not in set(days) - {case.batch_seen} or True
     assert set(days) - {case.batch_seen} == set(case.batch_judged)
-    assert days.count(case.batch_seen) == 1  # only the regression case, never the full batch
+    assert case.batch_seen not in case.batch_judged
 
 
 def test_judge_rejects_a_patch_missing_a_judged_batch_only(
@@ -110,3 +109,24 @@ def test_patch_without_regression_or_with_forbidden_edit_is_wrong(
     assert "regression" in judge.judge(case, bare, spec).reason
     bad = RepairOutcome("patch", ops=[ops.MapField(column="unique_key", source="agency")])
     assert "not allowed" in judge.judge(case, bad, spec).reason
+
+
+def test_an_unrelated_extra_edit_is_out_of_scope(cases: dict[str, Case], spec: PipelineSpec):
+    case = cases["date_format-0"]
+    good = _baseline_outcome(case, spec)
+    assert judge.judge(case, good, spec).correct
+    extra = [*good.ops, ops.AddValueMapping(column="borough", raw="Zzz", value="Queens")]
+    verdict = judge.judge(case, _with_regression(case, spec, extra), spec)
+    assert not verdict.correct and "out of scope" in verdict.reason
+
+
+def test_regression_case_needs_three_to_ten_rows(cases: dict[str, Case], spec: PipelineSpec):
+    case = cases["date_format-0"]
+    good = _baseline_outcome(case, spec)
+    assert good.regression is not None
+    for n in (0, 2, 11):
+        rows = (good.regression.rows * 3)[:n]
+        expected = (good.regression.expected * 3)[:n]
+        outcome = RepairOutcome("patch", ops=good.ops, regression=RegressionCase(rows, expected))
+        verdict = judge.judge(case, outcome, spec)
+        assert not verdict.correct and f"{n} rows" in verdict.reason, n

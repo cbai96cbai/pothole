@@ -1,18 +1,22 @@
 import hashlib
+import json
 from collections import Counter
 
-from pothole.drills import catalog
+from pothole.drills import catalog, generate
 
-FROZEN_SHA256 = "7c8082387ead08759cc6efe10c5dbdc8c4053d9aa1b9606f71f2c664e55a6493"
+FREEZE_SHA256 = "3b04d75cbb2b907a43469431c4bdd751e65ba26fb628bc0da86a62aa5cc29a96"
 
 
 def test_catalog_is_frozen():
-    digest = hashlib.sha256(catalog.CATALOG.read_bytes()).hexdigest()
-    assert digest == FROZEN_SHA256
+    """The freeze file is pinned here; it pins the catalog, the spec and the six batches."""
+    assert hashlib.sha256(catalog.FREEZE.read_bytes()).hexdigest() == FREEZE_SHA256
+    pinned = json.loads(catalog.FREEZE.read_text())
+    assert generate.freeze_hashes() == pinned
+    assert len(pinned) == 8  # catalog, spec, six batches
 
 
-def test_catalog_is_what_the_rule_builds():
-    assert catalog.load() == catalog.build()
+def test_catalog_is_what_the_generator_writes():
+    assert json.loads(catalog.CATALOG.read_text()) == json.loads(json.dumps(generate.build()))
 
 
 def test_split_sizes():
@@ -22,7 +26,7 @@ def test_split_sizes():
 
 def test_every_family_has_its_variants_in_the_split_the_table_gives():
     by = Counter((c.family, c.split) for c in catalog.load())
-    for family, (_, dev, test) in catalog.FAMILIES.items():
+    for family, (_, dev, test) in generate.FAMILIES.items():
         assert by[(family, "dev")] == len(dev)
         assert by[(family, "test")] == len(test)
 
