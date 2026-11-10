@@ -3,6 +3,35 @@ source:
   dataset: erm2-nwe9
   key: unique_key
   window_days: 90
+  ignore:  # fields the source sends that no column uses, knowingly
+    - address_type
+    - agency_name
+    - bbl
+    - bridge_highway_direction
+    - bridge_highway_name
+    - bridge_highway_segment
+    - city
+    - council_district
+    - cross_street_1
+    - cross_street_2
+    - descriptor_2
+    - due_date
+    - facility_type
+    - incident_address
+    - intersection_street_1
+    - intersection_street_2
+    - landmark
+    - location
+    - park_borough
+    - park_facility_name
+    - police_precinct
+    - resolution_action_updated_date
+    - resolution_description
+    - road_ramp
+    - street_name
+    - taxi_company_borough
+    - taxi_pick_up_location
+    - vehicle_type
 columns:
   - {name: unique_key, source: unique_key, type: text, required: true}
   - {name: created_date, source: created_date, type: timestamp, required: true, format: "%Y-%m-%dT%H:%M:%S.%f"}

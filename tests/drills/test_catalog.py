@@ -4,7 +4,7 @@ from collections import Counter
 
 from pothole.drills import catalog, generate
 
-FREEZE_SHA256 = "3b04d75cbb2b907a43469431c4bdd751e65ba26fb628bc0da86a62aa5cc29a96"
+FREEZE_SHA256 = "3f79313eaaa8ad5a4b8da046fbb624fb3910436fad385fa8480f80ffa83cb3bd"
 
 
 def test_catalog_is_frozen():

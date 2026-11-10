@@ -1,5 +1,8 @@
 """The checks. Each returns one CheckResult whose detail names the field and gives counts.
 
+The schema check warns about a source field no column maps and `source.ignore` does not list
+(a field the spec has never seen), so a warning always means something new.
+
 Known limit: the schema check warns that an optional source field is missing from every row only
 when the batch has at least OPTIONAL_MIN_ROWS rows (a 311 day has about 10,000), because a small
 incremental page may hold only empty values for a field and would warn at random. A vanished
@@ -51,7 +54,8 @@ def schema(spec: PipelineSpec, rows: list[dict[str, str]]) -> list[CheckResult]:
     seen = {field for row in rows for field in row}
     mapped = {c.source for c in spec.columns}
     missing = [c.source for c in spec.columns if c.required and c.source not in seen]
-    unknown = sorted(seen - mapped)
+    system = {f for f in seen if f.startswith(":")}  # :id, :updated_at: the source's own
+    unknown = sorted(seen - mapped - set(spec.source.ignore) - system)
     gone = sorted(c.source for c in spec.columns if not c.required and c.source not in seen)
     out: list[CheckResult] = []
     if missing:

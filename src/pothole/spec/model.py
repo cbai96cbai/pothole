@@ -30,6 +30,9 @@ class Source(_Strict):
     dataset: str
     key: str
     window_days: int = Field(gt=0)
+    # Fields the source sends that the pipeline knowingly does not use. The schema check warns
+    # about any other field no column maps (a field the spec has never seen). Not an edit target.
+    ignore: list[str] = Field(default_factory=list)
 
 
 class Column(_Strict):

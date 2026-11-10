@@ -71,11 +71,11 @@ SELECT_ALL = "*, " + ", ".join(SYSTEM_FIELDS)
 
 
 def spec_digest(spec: PipelineSpec) -> str:
-    """sha256 of the part of the spec that decides what a stored row holds: the source and the
-    columns (names, source fields, types, formats, value mappings). The checks do not change a
-    stored row, so editing them never rebuilds the window."""
+    """sha256 of the part of the spec that decides what a stored row holds: the source (not its
+    ignore list) and the columns (names, source fields, types, formats, value mappings). The
+    checks do not change a stored row, so editing them never rebuilds the window."""
     body = {
-        "source": spec.source.model_dump(mode="json"),
+        "source": spec.source.model_dump(mode="json", exclude={"ignore"}),
         "columns": [c.model_dump(mode="json") for c in spec.columns],
     }
     return hashlib.sha256(yaml.safe_dump(body, sort_keys=True).encode()).hexdigest()
