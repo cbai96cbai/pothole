@@ -10,7 +10,7 @@ import pytest
 from daily_kit import SUNDAY, TUESDAY, env_for, forbid_model, window_rows  # noqa: F401
 from store.store_fake import outage_on
 
-from pothole import daily, dailycounts, runrecord
+from pothole import daily, runrecord
 from pothole.budget.envelope import EnvelopeExceeded, RunConfig, Step
 from pothole.store import counts, db
 
@@ -40,7 +40,7 @@ def test_incomplete_load_makes_no_analysis(
     record = daily.run(env)
     assert record.status == "incomplete_load" and record.analyst_day is None
     assert calls == [] and len(sink.issues) == 1
-    assert not (repo / "data" / "analyst").exists() and not (repo / "data" / "counts").exists()
+    assert not (repo / "data" / "analyst").exists()
     assert record.ai_cost == "0"
 
 
@@ -57,45 +57,44 @@ def test_daily_refuses_over_envelope(repo: Path, isolated_state: Path) -> None:
     assert "0.136" in last.error and "0.129" in last.error  # the envelope and the ceiling
 
 
-def test_generation_mismatch_regenerates_counts(repo: Path, isolated_state: Path) -> None:
-    from pothole.analyst import universe
-
+def test_generation_mismatch_rewrites_the_state_file(repo: Path, isolated_state: Path) -> None:
     env, _, _ = env_for(repo, isolated_state, window_rows(TUESDAY))
     first = daily.run(env)
     data = repo / "data"
-    day_file = dailycounts.counts_path(data, date(2026, 11, 8))
     assert json.loads((data / "state.json").read_text())["generation"] == first.generation
-    day_file.unlink()
     (data / "state.json").write_text(json.dumps({"generation": "an-older-store"}))
     second = daily.run(env)
     assert json.loads((data / "state.json").read_text())["generation"] == second.generation
     assert second.generation != first.generation
-    con = db.open(isolated_state / "raw.duckdb", read_only=True)
-    window = counts.regenerate(con, universe.load(data / "universe.json"))
-    con.close()
-    got = dailycounts.read_counts(day_file)
-    assert got.equals(window.filter(pc.equal(window["date"], pa.scalar(date(2026, 11, 8)))))
 
 
-def test_a_days_counts_file_holds_only_that_day_and_is_never_rewritten(
+def test_a_days_counts_live_in_its_analysis_file_and_are_never_rewritten(
     repo: Path, isolated_state: Path
 ) -> None:
-    import gzip
+    from pothole.analyst import universe
 
     env, _, _ = env_for(repo, isolated_state, window_rows(TUESDAY))
     daily.run(env)
-    path = dailycounts.counts_path(repo / "data", date(2026, 11, 8))
+    path = repo / "data" / "analyst" / "2026-11-08.json"
     before = path.read_bytes()
-    assert before[4:8] == b"\0\0\0\0"  # gzip mtime 0: the same table always gives the same bytes
-    lines = gzip.decompress(before).decode().splitlines()
-    assert lines[0] == '"date","borough","board","complaint_type","n"'
-    assert {ln.split(",")[0].strip('"') for ln in lines[1:]} == {"2026-11-08"}
-    keys = [ln.split(",")[:3] for ln in lines[1:]]
-    assert keys == sorted(keys)
+    body = json.loads(before)
+    con = db.open(isolated_state / "raw.duckdb", read_only=True)
+    window = counts.regenerate(con, universe.load(repo / "data" / "universe.json"))
+    con.close()
+    day = window.filter(pc.equal(window["date"], pa.scalar(date(2026, 11, 8))))
+    expected = [
+        {"borough": r["borough"], "board": r["board"], "complaint_type": r["complaint_type"],
+         "n": r["n"]}
+        for r in sorted(
+            day.to_pylist(), key=lambda r: (r["borough"], r["board"], r["complaint_type"])
+        )
+    ]  # fmt: skip
+    assert expected and body["counts"] == expected and "date" not in body["counts"][0]
+    assert not (repo / "data" / "counts").exists()  # there is no separate counts file
     marker = path.stat().st_mtime_ns
-    daily.run(env)  # a later load of the same day: the committed file stays
+    daily.run(env)  # a later load of the same day: the file stays
     assert path.read_bytes() == before and path.stat().st_mtime_ns == marker
-    assert sorted(p.name for p in (repo / "data" / "counts").iterdir()) == ["2026-11-08.csv.gz"]
+    assert sorted(p.name for p in path.parent.iterdir()) == ["2026-11-08.json"]
 
 
 def test_a_holiday_is_skipped_with_its_reason(repo: Path, isolated_state: Path) -> None:

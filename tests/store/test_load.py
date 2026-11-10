@@ -256,3 +256,13 @@ def test_the_load_asks_for_every_field_not_a_list_of_the_specs(con, spec: Pipeli
     load.incremental(con, fake, spec, NOW)
     pages = [q["$select"] for q in fake.queries if "max(" not in q["$select"]]
     assert pages == ["*, :id, :updated_at, :created_at"]
+
+
+def test_a_field_the_spec_does_not_know_reaches_the_schema_check_but_not_the_table(
+    con, spec: PipelineSpec
+) -> None:
+    result = load.incremental(con, FakeSocrata([make_row(0, 0, brand_new_field="x")]), spec, NOW)
+    [schema] = [c for c in result.checks if c.name == "schema"]
+    assert schema.level == "warn" and "brand_new_field" in schema.detail
+    names = [r[0] for r in con.execute("DESCRIBE raw").fetchall()]
+    assert "brand_new_field" not in names

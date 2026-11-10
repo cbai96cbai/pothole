@@ -1,4 +1,11 @@
-"""The checks. Each returns one CheckResult whose detail names the field and gives counts."""
+"""The checks. Each returns one CheckResult whose detail names the field and gives counts.
+
+Known limit: the schema check warns that an optional source field is missing from every row only
+when the batch has at least OPTIONAL_MIN_ROWS rows (a 311 day has about 10,000), because a small
+incremental page may hold only empty values for a field and would warn at random. A vanished
+optional field is therefore warned on full pages and on the window as a whole, not on a handful
+of rows. A vanished required field fails at any size.
+"""
 
 import statistics
 from dataclasses import dataclass

@@ -117,8 +117,9 @@ def test_a_day_whose_first_run_failed_before_its_analysis_is_analysed_by_the_rer
     assert date.fromisoformat(second.analyst_day or "") == date(2026, 11, 8)
 
 
-def test_a_failed_analysis_writes_neither_file_and_the_retry_pairs_them_on_fresh_data(
-    repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch
+@pytest.mark.parametrize("breaks", ["screen", "replace"])
+def test_a_failure_before_the_replace_leaves_no_file_and_the_retry_writes_a_consistent_one(
+    repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch, breaks: str
 ) -> None:
     import pyarrow as pa
     import pyarrow.compute as pc
@@ -129,12 +130,25 @@ def test_a_failed_analysis_writes_neither_file_and_the_retry_pairs_them_on_fresh
 
     rows = window_rows(TUESDAY)
     env, _, fake = env_for(repo, isolated_state, rows)
-    counts_file = dailycounts.counts_path(repo / "data", date(2026, 11, 8))
+
+    def boom(*a: Any, **k: Any) -> Any:
+        raise RuntimeError("broke")
+
+    real_replace = dailycounts.os.replace
+
+    def replace_unless_the_day(src: Any, dst: Any) -> None:
+        if Path(dst).name == "2026-11-08.json":
+            raise RuntimeError("broke at the replace")
+        real_replace(src, dst)
+
     with monkeypatch.context() as m:
-        m.setattr(daily, "screen", lambda *a: (_ for _ in ()).throw(RuntimeError("broke")))
+        if breaks == "screen":
+            m.setattr(daily, "screen", boom)
+        else:
+            m.setattr(dailycounts.os, "replace", replace_unless_the_day)
         with pytest.raises(RuntimeError):
             daily.run(env)
-    assert not analysis_path(repo).exists() and not counts_file.exists()
+    assert not analysis_path(repo).exists()
     assert not list((repo / "data").rglob("*.tmp"))
     fake.rows.extend(  # late arrivals for the analysed day, between the failure and the retry
         r | {"unique_key": f"late-{i}", ":id": f"late-{i}"}
@@ -146,9 +160,10 @@ def test_a_failed_analysis_writes_neither_file_and_the_retry_pairs_them_on_fresh
     con = db.open(isolated_state / "raw.duckdb", read_only=True)
     window = counts.regenerate(con, universe.load(repo / "data" / "universe.json"))
     con.close()
-    day_rows = window.filter(pc.equal(window["date"], pa.scalar(date(2026, 11, 8))))
-    assert analysis_path(repo).exists()
-    assert dailycounts.read_counts(counts_file).equals(day_rows)  # the data the analysis saw
+    day = window.filter(pc.equal(window["date"], pa.scalar(date(2026, 11, 8))))
+    body = json.loads(analysis_path(repo).read_text())
+    assert sum(c["n"] for c in body["counts"]) == sum(day["n"].to_pylist())  # the data it saw
+    assert body["counts"]
 
 
 def test_a_second_record_for_one_attempt_is_refused_across_two_runs(

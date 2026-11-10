@@ -58,6 +58,17 @@ class Finding:
 
 
 @dataclass(frozen=True)
+class DayCount:
+    """Requests created on the day in one district and complaint type, as counted at the run that
+    analysed the day."""
+
+    borough: str
+    board: int
+    complaint_type: str
+    n: int
+
+
+@dataclass(frozen=True)
 class AnalystDay:
     """One analysed day: how many series were tested, how many cleared the bar, and the
     findings for the (at most two) that were investigated. An empty list is a quiet day."""
@@ -67,6 +78,7 @@ class AnalystDay:
     cleared: int
     findings: list[Finding]
     skipped_reason: str | None = None
+    counts: list[DayCount] = field(default_factory=list)  # the day's counts, with its analysis
 
 
 def to_json(value: Any) -> Any:

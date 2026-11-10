@@ -11,6 +11,13 @@ generation and `last_success` are written once, after the whole load and its che
 Row-level checks run on every page and the worst result per check is kept. Freshness and volume
 describe the whole window, not a page, so they are computed from the store after the load:
 volume compares the analysis day's row count with the same weekday in earlier weeks.
+
+Known limits. The load asks for every source field, so a renamed or vanished field reaches the
+schema check instead of being rejected by the source. A vanished optional field is warned only
+when a page has at least 100 rows (a 311 day has about 10,000; see spec/checks.py). A source
+rejection that names a missing field in `$where` or `$order` (the day field) is a schema change
+and goes to diagnosis; if the diagnosis sample itself cannot be fetched, or comes back empty, it
+is recorded as an outage, because the source is then genuinely failing.
 """
 
 import uuid

@@ -21,7 +21,7 @@ and sent to repair, not an outage. A day's analysis is written once and never ag
 
 import uuid
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -286,13 +286,13 @@ def _run(env: Env, ai: LLMClient | None, spend: Spend, p: Progress) -> RunRecord
         p.step = "analysis"
         p.analyst_day = analysed.isoformat()
         path = env.data / "analyst" / f"{analysed.isoformat()}.json"
-        with day_counts(env.data, table, analysed):  # the pair is written only if both succeed
-            if path.exists():
-                p.notes.append(f"already analysed: {analysed.isoformat()} is not analysed again")
-            else:
-                analyst, closed = _analyse(env, con, live(), table, uni, analysed, spend, p)
-                p.step = "analyst file"
-                write_json(path, to_json(analyst))
+        if path.exists():  # a day's counts and analysis are one file, written once
+            p.notes.append(f"already analysed: {analysed.isoformat()} is not analysed again")
+        else:
+            analyst, closed = _analyse(env, con, live(), table, uni, analysed, spend, p)
+            p.step = "analyst file"
+            counted = replace(analyst, counts=day_counts(table, analysed))
+            write_json(path, to_json(counted))  # temporary file then replace: whole or absent
         return finish("checks_failed" if failing else "success")
     finally:
         if not closed:
