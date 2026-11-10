@@ -63,6 +63,8 @@ class RunRecord:
     ai_cost: str = "0"
     generation: str | None = None
     ai_enabled: bool = False  # the run was allowed to call the model
+    attempt: int = 1  # GitHub re-runs keep the run id and raise the attempt
+    error: str | None = None  # an error run: "step: Class: message"
 
     def __post_init__(self) -> None:
         if self.status not in STATUSES:

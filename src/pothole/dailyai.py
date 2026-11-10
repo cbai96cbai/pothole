@@ -136,17 +136,20 @@ def real_repair(
 ) -> RepairRecord:
     """The repair agent on a real failure; its proposal is filed unjudged."""
     day = now.date()
+    paid = False
     try:
         outcome = with_timeout(
             lambda: agent.repair(spec, rows, failing, fields, client, now=now), timeout_s
         )
         spend.add(outcome.cost)
+        paid = True
         after: list[CheckResult] = []
         if outcome.action == "patch":
             after = engine.run(ops.apply(spec, outcome.ops), rows, [], now).checks
         return _file(sink, outcome, spec, failing, after, day, False, None)
     except Exception as exc:
-        spend.add(slot_max(step))
+        if not paid:  # a step that never reported its cost is charged its maximum
+            spend.add(slot_max(step))
         return _failed_step(sink, failing, day, False, "repair", exc)
 
 
@@ -165,15 +168,18 @@ def drill(
     timeout_s: float = REPAIR_TIMEOUT_S,
 ) -> RepairRecord:
     """One planted fault from the catalog's dev cases: repaired, judged, filed with the verdict."""
-    case = pick_case(day)
-    spec = catalog.load_spec()
-    rows, fields = catalog.seen_batch(case)
-    now = datetime.strptime(case.batch_seen, "%Y-%m-%d") + timedelta(days=1, hours=30)
-    checks = catalog.run_engine(spec, rows, case.batch_seen).checks
-    failing = [c for c in checks if c.level == "fail"]
-    sample = catalog.sample(rows, case)
-    strings: list[dict[str, str]] = [{k: str(v) for k, v in r.items()} for r in sample]
+    failing: list[CheckResult] = []
+    paid = False
     try:
+        case = pick_case(day)
+        spec = catalog.load_spec()
+        rows, fields = catalog.seen_batch(case)
+        now = datetime.strptime(case.batch_seen, "%Y-%m-%d") + timedelta(days=1, hours=30)
+        checks = catalog.run_engine(spec, rows, case.batch_seen).checks
+        failing = [c for c in checks if c.level == "fail"]
+        strings: list[dict[str, str]] = [
+            {k: str(v) for k, v in r.items()} for r in catalog.sample(rows, case)
+        ]
         outcome = with_timeout(
             lambda: agent.repair(
                 spec, strings, failing, fields, client, now=now, history=catalog.history()
@@ -181,6 +187,7 @@ def drill(
             timeout_s,
         )
         spend.add(outcome.cost)
+        paid = True
         verdict = judge.judge(case, outcome, spec)
         text = f"{'correct' if verdict.correct else 'not correct'}: {verdict.reason}"
         after: list[CheckResult] = []
@@ -188,7 +195,8 @@ def drill(
             after = engine.run(ops.apply(spec, outcome.ops), strings, [], now).checks
         return _file(sink, outcome, spec, failing, after, day, True, text)
     except Exception as exc:
-        spend.add(slot_max(step))
+        if not paid:
+            spend.add(slot_max(step))
         return _failed_step(sink, failing, day, True, "drill", exc)
 
 

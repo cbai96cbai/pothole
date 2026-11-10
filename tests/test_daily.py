@@ -1,118 +1,18 @@
-"""The daily run, with fakes for the source, the sink and the model. Nothing touches a network."""
+"""The daily run: outage, incomplete load, envelope, counts, the record and the error path."""
 
 import json
-import threading
-from collections.abc import Callable
-from datetime import date, datetime, timedelta
-from decimal import Decimal
+from datetime import date, datetime
 from pathlib import Path
-from typing import Any
 
-import duckdb
 import pyarrow as pa
 import pyarrow.compute as pc
 import pytest
-from store.store_fake import FakeSocrata, make_row, outage_on
-from webdata.site_repo import scratch_repo
+from daily_kit import SUNDAY, TUESDAY, env_for, forbid_model, window_rows  # noqa: F401
+from store.store_fake import outage_on
 
-from pothole import daily, dailyai, runrecord
-from pothole.analyst.finding import AnalystDay
+from pothole import daily, dailycounts, runrecord
 from pothole.budget.envelope import EnvelopeExceeded, RunConfig, Step
-from pothole.drills import baseline, catalog, scoring
-from pothole.repair.outcome import RepairOutcome
-from pothole.repair.sink import Filed
 from pothole.store import counts, db
-
-REAL = Path(__file__).parents[1]
-TUESDAY = datetime(2026, 11, 10, 12, 0)
-SUNDAY = datetime(2026, 11, 15, 12, 0)
-KEEP_OUT = AssertionError("the model was called")
-
-
-class Sink:
-    def __init__(self) -> None:
-        self.prs: list[dict[str, Any]] = []
-        self.issues: list[dict[str, Any]] = []
-
-    def open_pr(self, outcome, spec, before, after, *, day, drill=False, verdict=None):  # type: ignore[no-untyped-def]
-        self.prs.append({"drill": drill, "verdict": verdict, "day": day, "outcome": outcome})
-        return Filed("pr", f"pr-{len(self.prs)}", "branch")
-
-    def open_issue(self, reason, failing, *, day, drill=False):  # type: ignore[no-untyped-def]
-        self.issues.append({"reason": reason, "drill": drill, "failing": failing})
-        return Filed("issue", f"issue-{len(self.issues)}")
-
-
-class NoModel:
-    def call(self, *a: Any, **k: Any) -> Any:
-        raise KEEP_OUT
-
-
-def window_rows(now: datetime, spike: bool = False, status: str = "Open") -> list[dict[str, str]]:
-    """The analysis day and its 8 same weekdays before, plus yesterday: 20 rows a day, 3 of them
-    in series A on baseline days. With `spike`, the analysis day has 12 in A and 8 in B."""
-    d = now.date() - timedelta(days=2)
-    days = [d - timedelta(days=7 * k) for k in range(9)] + [now.date() - timedelta(days=1)]
-    rows: list[dict[str, str]] = []
-    n = 0
-    for day in days:
-        a = 12 if spike and day == d else 3
-        for i in range(20):
-            kind = "Illegal Parking" if i < a else "Noise - Residential"
-            rows.append(
-                make_row(
-                    n, n * 0.01, created=f"{day}T10:00:00.000", complaint_type=kind, status=status
-                )
-            )
-            n += 1
-    return rows
-
-
-def fields_of(*a: Any, **k: Any) -> list[Any]:
-    from pothole.socrata.meta import Field
-
-    return [Field("unique_key", "text")]
-
-
-@pytest.fixture
-def repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    monkeypatch.setattr(daily.meta, "fields", fields_of)
-    return scratch_repo(tmp_path / "repo")
-
-
-def env_for(
-    repo: Path,
-    state: Path,
-    rows: list[dict[str, str]],
-    now: datetime = TUESDAY,
-    ai: bool = False,
-    **over: Any,
-) -> tuple[daily.Env, Sink, FakeSocrata]:
-    fake, sink = FakeSocrata(rows), Sink()
-    env = daily.Env(
-        repo=repo,
-        state=state,
-        socrata=fake,
-        sink=sink,
-        client=NoModel(),  # type: ignore[arg-type]
-        ai_enabled=ai,
-        clock=lambda: now.replace(tzinfo=daily.NEW_YORK),
-        site_dir=repo / "site",
-        **over,
-    )
-    return env, sink, fake
-
-
-def forbid_model(monkeypatch: pytest.MonkeyPatch) -> list[str]:
-    calls: list[str] = []
-
-    def boom(*a: Any, **k: Any) -> Any:
-        calls.append("repair")
-        raise KEEP_OUT
-
-    monkeypatch.setattr(dailyai.agent, "repair", boom)
-    monkeypatch.setattr(dailyai.investigate, "day", boom)
-    return calls
 
 
 def test_daily_routes_outage_without_ai(
@@ -160,7 +60,7 @@ def test_generation_mismatch_regenerates_counts(repo: Path, isolated_state: Path
     env, _, _ = env_for(repo, isolated_state, window_rows(TUESDAY))
     first = daily.run(env)
     data = repo / "data"
-    day_file = daily.counts_path(data, date(2026, 11, 8))
+    day_file = dailycounts.counts_path(data, date(2026, 11, 8))
     assert json.loads((data / "state.json").read_text())["generation"] == first.generation
     day_file.unlink()
     (data / "state.json").write_text(json.dumps({"generation": "an-older-store"}))
@@ -170,7 +70,7 @@ def test_generation_mismatch_regenerates_counts(repo: Path, isolated_state: Path
     con = db.open(isolated_state / "raw.duckdb", read_only=True)
     window = counts.regenerate(con, universe.load(data / "universe.json"))
     con.close()
-    got = daily.read_counts(day_file)
+    got = dailycounts.read_counts(day_file)
     assert got.equals(window.filter(pc.equal(window["date"], pa.scalar(date(2026, 11, 8)))))
 
 
@@ -181,7 +81,7 @@ def test_a_days_counts_file_holds_only_that_day_and_is_never_rewritten(
 
     env, _, _ = env_for(repo, isolated_state, window_rows(TUESDAY))
     daily.run(env)
-    path = daily.counts_path(repo / "data", date(2026, 11, 8))
+    path = dailycounts.counts_path(repo / "data", date(2026, 11, 8))
     before = path.read_bytes()
     assert before[4:8] == b"\0\0\0\0"  # gzip mtime 0: the same table always gives the same bytes
     lines = gzip.decompress(before).decode().splitlines()
@@ -193,173 +93,6 @@ def test_a_days_counts_file_holds_only_that_day_and_is_never_rewritten(
     daily.run(env)  # a later load of the same day: the committed file stays
     assert path.read_bytes() == before and path.stat().st_mtime_ns == marker
     assert sorted(p.name for p in (repo / "data" / "counts").iterdir()) == ["2026-11-08.csv.gz"]
-
-
-def run_with_fake_repair(
-    monkeypatch: pytest.MonkeyPatch, fn: Callable[..., RepairOutcome]
-) -> list[int]:
-    calls: list[int] = []
-
-    def fake(*a: Any, **k: Any) -> RepairOutcome:
-        calls.append(1)
-        return fn(*a, **k)
-
-    monkeypatch.setattr(dailyai.agent, "repair", fake)
-    return calls
-
-
-def test_a_failed_check_goes_to_the_agent_and_its_issue_is_filed_unjudged(
-    repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    calls = run_with_fake_repair(
-        monkeypatch,
-        lambda *a, **k: RepairOutcome("issue", reason="cannot tell", cost=Decimal("0.01")),
-    )
-    env, sink, _ = env_for(repo, isolated_state, window_rows(TUESDAY, status=""), ai=True)
-    record = daily.run(env)
-    assert record.status == "checks_failed" and calls == [1]
-    assert record.repair is not None and record.repair.action == "issue"
-    assert not record.repair.drill and record.repair.verdict is None
-    assert record.ai_cost == "0.01" and len(sink.issues) == 1
-
-
-def test_a_failed_check_with_ai_off_files_an_issue_and_never_calls_the_model(
-    repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    calls = forbid_model(monkeypatch)
-    env, sink, _ = env_for(repo, isolated_state, window_rows(TUESDAY, status=""), ai=False)
-    record = daily.run(env)
-    assert calls == [] and record.ai_enabled is False and record.ai_cost == "0"
-    assert record.repair is not None and record.repair.action == "issue"
-    assert len(sink.issues) == 1
-
-
-def test_ai_off_never_calls_the_model_even_with_candidates_and_on_a_sunday(
-    repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    calls = forbid_model(monkeypatch)
-    env, sink, _ = env_for(repo, isolated_state, window_rows(SUNDAY, spike=True), SUNDAY, ai=False)
-    record = daily.run(env)
-    assert calls == [] and record.repair is None and sink.prs == [] and sink.issues == []
-    day = json.loads((repo / "data" / "analyst" / "2026-11-13.json").read_text())
-    assert day["cleared"] == 1 and day["findings"] == []
-    assert "not enabled" in day["skipped_reason"]
-
-
-def baseline_repairer(spec, rows, failing, fields, client, **k):  # type: ignore[no-untyped-def]
-    return baseline.repair(spec, failing, rows, fields)
-
-
-def test_drill_only_on_sunday_without_real_repair(
-    repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    spec = catalog.load_spec()
-    solvable = next(  # a dev case the non-AI baseline repairs correctly
-        c
-        for c in catalog.load()
-        if c.split == "dev"
-        and c.expected_action == "patch"
-        and scoring.run_case(c, spec, baseline.repair).correct
-    )
-    monkeypatch.setattr(dailyai, "pick_case", lambda day: solvable)
-    calls = run_with_fake_repair(monkeypatch, baseline_repairer)
-    # a Tuesday: no drill
-    env, sink, _ = env_for(repo, isolated_state, window_rows(TUESDAY), ai=True)
-    assert daily.run(env).repair is None and calls == []
-    # a Sunday with no real repair today: one drill, filed with the judge's verdict
-    env, sink, _ = env_for(repo, isolated_state, window_rows(SUNDAY), SUNDAY, ai=True)
-    record = daily.run(env)
-    assert calls == [1] and len(sink.prs) == 1, sink.issues
-    pr = sink.prs[0]
-    assert pr["drill"] is True and pr["verdict"] and pr["verdict"].startswith("correct")
-    assert (
-        record.repair is not None and record.repair.drill and record.repair.verdict == pr["verdict"]
-    )
-    assert record.repair.not_judged is False
-    # a Sunday on which a real repair already ran today: no drill
-    runrecord.append(
-        repo / "data" / "runs.jsonl",
-        runrecord.RunRecord(
-            "earlier",
-            "2026-11-15T06:00:00-05:00",
-            "2026-11-15T06:05:00-05:00",
-            "checks_failed",
-            1,
-            1,
-            repair=runrecord.RepairRecord("patch", False, "u", None, True),
-        ),  # fmt: skip
-    )
-    env, sink, _ = env_for(repo, isolated_state, window_rows(SUNDAY), SUNDAY, ai=True)
-    assert daily.run(env).repair is None and calls == [1] and sink.prs == []
-
-
-def test_a_drill_cannot_be_filed_without_a_verdict() -> None:
-    with pytest.raises(ValueError):
-        dailyai._file(
-            Sink(),
-            RepairOutcome("patch"),
-            None,
-            [],
-            [],
-            date(2026, 11, 15),
-            True,
-            None,  # type: ignore[arg-type]
-        )
-
-
-def test_a_timed_out_repair_is_recorded_and_the_run_goes_on(
-    repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    release = threading.Event()
-    run_with_fake_repair(monkeypatch, lambda *a, **k: release.wait(30) and RepairOutcome("issue"))
-    env, sink, _ = env_for(
-        repo, isolated_state, window_rows(TUESDAY, status=""), ai=True, repair_timeout_s=0.05
-    )
-    record = daily.run(env)
-    release.set()
-    assert record.repair is not None and record.repair.action == "issue"
-    assert (
-        "did not finish" in sink.issues[-1]["reason"] and "StepTimeout" in sink.issues[-1]["reason"]
-    )
-    assert Decimal(record.ai_cost) == dailyai.slot_max(daily.DEFAULT_STEPS[0])
-    assert (repo / "data" / "analyst" / "2026-11-08.json").exists()  # the analyst still ran
-    assert (repo / "site" / "board.json").exists()
-
-
-def test_a_timed_out_investigation_keeps_the_counts_and_says_so(
-    repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    release = threading.Event()
-    monkeypatch.setattr(dailyai.investigate, "day", lambda *a, **k: release.wait(30))
-    env, _, _ = env_for(
-        repo, isolated_state, window_rows(TUESDAY, spike=True), ai=True, investigate_timeout_s=0.05
-    )
-    record = daily.run(env)
-    release.set()
-    day = json.loads((repo / "data" / "analyst" / "2026-11-08.json").read_text())
-    assert day["cleared"] == 1 and day["findings"] == []
-    assert day["skipped_reason"] == dailyai.TIMED_OUT
-    assert Decimal(record.ai_cost) == sum(
-        (dailyai.slot_max(s) for s in daily.DEFAULT_STEPS[1:]), Decimal(0)
-    )
-    assert record.status == "success" and (repo / "site" / "board.json").exists()
-
-
-def test_the_investigator_gets_the_store_path_with_no_other_connection_open(
-    repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    seen: list[Any] = []
-
-    def fake_day(store: Path, found: list[Any], client: Any, **k: Any) -> AnalystDay:
-        # a read-only open fails while a read-write connection to the file is still open
-        duckdb.connect(str(store), read_only=True).close()
-        seen.append((store, [c.complaint_type for c in found]))
-        return AnalystDay(k["analysed"], k["tested"], k["cleared"], [])
-
-    monkeypatch.setattr(dailyai.investigate, "day", fake_day)
-    env, _, _ = env_for(repo, isolated_state, window_rows(TUESDAY, spike=True), ai=True)
-    daily.run(env)
-    assert seen == [(isolated_state / "raw.duckdb", ["Illegal Parking"])]
 
 
 def test_a_holiday_is_skipped_with_its_reason(repo: Path, isolated_state: Path) -> None:

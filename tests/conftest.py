@@ -44,3 +44,15 @@ def isolated_state(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("POTHOLE_STATE", str(state))
     monkeypatch.setattr("pothole.budget.tally.DEFAULT_PATH", tmp_path / "spend.jsonl")
     return state
+
+
+@pytest.fixture
+def repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    """A scratch checkout for the daily run: the pinned spec and the committed data files."""
+    from daily_kit import fields_of
+    from webdata.site_repo import scratch_repo
+
+    from pothole import daily
+
+    monkeypatch.setattr(daily.meta, "fields", fields_of)
+    return scratch_repo(tmp_path / "repo")

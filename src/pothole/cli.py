@@ -3,9 +3,9 @@
 import json
 import os
 import uuid
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated
 from zoneinfo import ZoneInfo
 
 import typer
@@ -18,6 +18,7 @@ from pothole.repair.sink import GitHubSink, LocalSink
 from pothole.repair.validate import failed, load_batches
 from pothole.socrata import batches
 from pothole.socrata.client import Socrata, SourceRejected, SourceUnavailable
+from pothole.socrata.recent import BATCH_ROWS, fetch_batch
 from pothole.spec import engine
 from pothole.spec.model import PipelineSpec
 from pothole.store import db, load
@@ -25,8 +26,6 @@ from pothole.store import db, load
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 
 NEW_YORK = ZoneInfo("America/New_York")
-DATASET_311 = "erm2-nwe9"
-BATCH_ROWS = 2000
 BATCH_DAYS = 6
 FIRST_OFFSET = 3  # newest batch day is run date - 3; the oldest is run date - 8
 
@@ -34,20 +33,6 @@ FIRST_OFFSET = 3  # newest batch day is run date - 3; the oldest is run date - 8
 @app.callback()
 def main() -> None:
     """A daily pipeline over public NYC 311 data."""
-
-
-def fetch_batch(client: Socrata, day: date) -> list[dict[str, Any]]:
-    """BATCH_ROWS rows created on `day`, by unique_key, all fields plus :id and :updated_at."""
-    nxt = day + timedelta(days=1)
-    return client.query(
-        DATASET_311,
-        {
-            "$select": "*, :id, :updated_at",
-            "$where": f"created_date >= '{day}T00:00:00' AND created_date < '{nxt}T00:00:00'",
-            "$order": "unique_key",
-            "$limit": str(BATCH_ROWS),
-        },
-    )
 
 
 @app.command("record-batches")
@@ -157,12 +142,16 @@ def daily_command(
         ai_enabled=ai,
         tally=Tally() if ai and not on_github else None,
         run_id=os.environ.get("GITHUB_RUN_ID") or uuid.uuid4().hex,
+        attempt=int(os.environ.get("GITHUB_RUN_ATTEMPT") or 1),
         site_dir=site_dir,
     )
     try:
         record = daily.run(env)
     except EnvelopeExceeded as exc:
         typer.echo(f"refusing to run: {exc}", err=True)
+        raise typer.Exit(1) from exc
+    except Exception as exc:  # the run has already written its error record
+        typer.echo(f"the run failed and was recorded: {type(exc).__name__}", err=True)
         raise typer.Exit(1) from exc
     typer.echo(json.dumps(to_json(record), sort_keys=True))
 
@@ -177,12 +166,12 @@ def tally_github_command(
         "data/runs.jsonl"
     ),
 ) -> None:
-    """Admit each finished GitHub run that had AI enabled into the build tally, once."""
+    """Charge every scheduled GitHub run attempt that may have used AI to the build tally, once."""
     from pothole.budget.tally import Tally
     from pothole.tallygithub import tally_github
 
     done = tally_github(repo, since.date(), records, Tally())
     typer.echo(
-        f"admitted {len(done.admitted)}, already {len(done.already)}, "
-        f"no committed record {len(done.no_record)}"
+        f"admitted {len(done.admitted)} ({len(done.without_record)} with no committed record), "
+        f"already {len(done.already)}, AI off {len(done.ai_off)}"
     )

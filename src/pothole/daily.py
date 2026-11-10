@@ -6,11 +6,13 @@ produces new analysis. Checks that fail go to the repair agent (only when AI is 
 issue. A Sunday with no failure and no real repair earlier that day runs one judged drill. The
 analyst works on the day two days back, only after a complete load. `last_success` is written by
 the load itself, after the whole window loaded and the checks ran.
+
+Every run that starts leaves a record. Any exception after the envelope check ends in a record
+with status `error` (the step, the exception's class and a cut, secret-free message, the cost so
+far), then the exception goes on and the job fails. The envelope refusal happens before anything
+runs and leaves no record.
 """
 
-import gzip
-import io
-import json
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -20,8 +22,6 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 import pyarrow as pa
-import pyarrow.compute as pc
-import pyarrow.csv as pacsv
 
 from pothole import dailyai, runrecord, sitedata
 from pothole.analyst import detect, universe
@@ -29,8 +29,9 @@ from pothole.analyst.finding import AnalystDay, to_json
 from pothole.analyst.holidays import is_holiday
 from pothole.budget.envelope import DEFAULT_STEPS, RunConfig, run_envelope
 from pothole.budget.tally import Tally, settle_if_complete
-from pothole.cli import fetch_batch
 from pothole.dailyai import Sink, Spend
+from pothole.dailycounts import refresh_counts, write_json, write_vintage
+from pothole.dailyerror import Progress, describe
 from pothole.llm.client import LLMClient
 from pothole.logs import get_logger
 from pothole.repair import render
@@ -39,10 +40,11 @@ from pothole.repair.validate import failed
 from pothole.runrecord import CheckResult, RepairRecord, RunRecord, Status
 from pothole.socrata import meta
 from pothole.socrata.client import Socrata, SourceRejected, SourceUnavailable
+from pothole.socrata.recent import fetch_batch
 from pothole.spec import checks as spec_checks
 from pothole.spec import engine
 from pothole.spec.model import PipelineSpec
-from pothole.store import counts, db, load, reconcile
+from pothole.store import db, load, reconcile
 
 NEW_YORK = ZoneInfo("America/New_York")
 SUNDAY = 6
@@ -60,6 +62,7 @@ class Env:
     tally: Tally | None = None
     config: RunConfig | None = None
     run_id: str = field(default_factory=lambda: uuid.uuid4().hex)
+    attempt: int = 1
     clock: Callable[[], datetime] = lambda: datetime.now(NEW_YORK)
     page_size: int = load.PAGE_SIZE
     site_dir: Path | None = None
@@ -74,53 +77,6 @@ class Env:
 
 def _records(results: list[spec_checks.CheckResult]) -> list[CheckResult]:
     return [CheckResult(r.name, r.level, r.detail) for r in results]
-
-
-def _write_json(path: Path, payload: Any) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=1, sort_keys=True) + "\n")
-
-
-COUNT_TYPES = {
-    "date": pa.date32(),
-    "borough": pa.string(),
-    "board": pa.int64(),
-    "complaint_type": pa.string(),
-    "n": pa.int64(),
-}
-
-
-def counts_path(data: Path, day: date) -> Path:
-    return data / "counts" / f"{day.isoformat()}.csv.gz"
-
-
-def write_counts(path: Path, table: pa.Table) -> None:
-    """The same table always gives the same bytes (no timestamp in the gzip header)."""
-    sink = io.BytesIO()
-    pacsv.write_csv(table, sink)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(gzip.compress(sink.getvalue(), mtime=0))
-
-
-def read_counts(path: Path) -> pa.Table:
-    options = pacsv.ConvertOptions(column_types=COUNT_TYPES)
-    return pacsv.read_csv(io.BytesIO(gzip.decompress(path.read_bytes())), convert_options=options)
-
-
-def refresh_counts(
-    con: db.Connection, data: Path, generation: str, uni: universe.Universe, day: date
-) -> pa.Table:
-    """The counts of the whole window, derived from the store, for the analyst; and the day's own
-    file. `data/counts/<day>.csv.gz` holds only the rows created on `day`, as counted at this run,
-    and is written once: a day's file is its count as seen at its own run, later arrivals are never
-    back-filled and a committed file is never rewritten. `data/state.json` names the store
-    generation this run derived the counts from."""
-    table = counts.regenerate(con, uni)
-    path = counts_path(data, day)
-    if not path.exists():
-        write_counts(path, table.filter(pc.equal(table["date"], pa.scalar(day, pa.date32()))))
-    _write_json(data / "state.json", {"generation": generation})
-    return table
 
 
 def screen(table: pa.Table, uni: universe.Universe, day: date) -> AnalystDay | list[Any]:
@@ -183,12 +139,6 @@ def _real_repair_today(env: Env, day: date) -> bool:
     )
 
 
-def _finish(env: Env, record: RunRecord, now: datetime) -> RunRecord:
-    runrecord.append(env.data / "runs.jsonl", record)
-    sitedata.build(env.repo, env.site_dir or env.repo / "web" / "src" / "data", now)
-    return record
-
-
 def _outage(env: Env, con: db.Connection, exc: Exception, now: datetime) -> Status:
     """Record why the load stopped: some pages committed (incomplete) or none (unavailable)."""
     status: Status = (
@@ -201,59 +151,108 @@ def _outage(env: Env, con: db.Connection, exc: Exception, now: datetime) -> Stat
     return status
 
 
+def _site(env: Env, now: datetime) -> None:
+    sitedata.build(env.repo, env.site_dir or env.repo / "web" / "src" / "data", now)
+
+
 def run(env: Env) -> RunRecord:
     """Run once. Raises EnvelopeExceeded before doing anything when the configuration could spend
-    more than the ceiling."""
+    more than the ceiling; after that, a failure is recorded as an error run and re-raised."""
     envelope = run_envelope(env.config)
     ai = env.client if env.ai_enabled else None
     if ai is not None and env.tally is not None:
         env.tally.admit(env.run_id, envelope)
     spend = Spend()
-    record = _run(env, ai, spend)
+    started = env.clock()
+    progress = Progress(started)
+    try:
+        record = _run(env, ai, spend, progress)
+    except Exception as exc:
+        message = describe(exc, progress.step)
+        log.error("daily run failed", extra={"error": message})
+        failure = _record(env, ai, spend, progress, "error", error=message)
+        runrecord.append(env.data / "runs.jsonl", failure)
+        try:
+            _site(env, started.replace(tzinfo=None))
+        except Exception as site_exc:  # the record is written; the first failure is the one raised
+            log.error("site build after a failure also failed", extra={"error": str(site_exc)})
+        raise
     if ai is not None and env.tally is not None:
         settle_if_complete(env.tally, env.run_id, spend.total, True)
     return record
 
 
-def _run(env: Env, ai: LLMClient | None, spend: Spend) -> RunRecord:
-    started = env.clock()
-    now = started.replace(tzinfo=None)
+def _record(
+    env: Env, ai: LLMClient | None, spend: Spend, p: Progress, status: Status, **over: Any
+) -> RunRecord:
+    fields: dict[str, Any] = {
+        "rows_loaded": p.rows,
+        "pages": p.pages,
+        "checks": p.checks,
+        "repair": p.repair,
+        "analyst_day": p.analyst_day,
+        "generation": p.generation,
+        **over,
+    }
+    return RunRecord(
+        run_id=env.run_id,
+        started=p.started.isoformat(timespec="seconds"),
+        finished=datetime.now(NEW_YORK).isoformat(timespec="seconds"),
+        status=status,
+        ai_enabled=ai is not None,
+        attempt=env.attempt,
+        ai_cost=str(spend.total),
+        **fields,
+    )
+
+
+def _run(env: Env, ai: LLMClient | None, spend: Spend, p: Progress) -> RunRecord:
+    now = p.started.replace(tzinfo=None)
     day = now.date()
+    p.step = "spec"
     spec = PipelineSpec.load(env.repo / render.SPEC_PATH)
 
-    def record(status: Status, **fields: Any) -> RunRecord:
-        return RunRecord(
-            run_id=env.run_id,
-            started=started.isoformat(timespec="seconds"),
-            finished=datetime.now(NEW_YORK).isoformat(timespec="seconds"),
-            status=status,
-            ai_enabled=ai is not None,
-            ai_cost=str(spend.total),
-            **{"rows_loaded": 0, "pages": 0, **fields},
-        )
+    def finish(status: Status) -> RunRecord:
+        p.step = "record and site"
+        record = _record(env, ai, spend, p, status)
+        runrecord.append(env.data / "runs.jsonl", record)
+        _site(env, now)
+        return record
 
+    p.step = "open store"
     con = db.open(env.state / "raw.duckdb")
     closed = False
     try:
+        p.step = "load"
         try:
             result = load.incremental(con, env.socrata, spec, now, env.page_size)
         except (SourceUnavailable, SourceRejected) as exc:
-            return _finish(env, record(_outage(env, con, exc, now)), now)
+            p.step = "outage report"
+            return finish(_outage(env, con, exc, now))
+        p.rows, p.pages, p.generation = result.rows, result.pages, result.generation
+        p.checks = _records(result.checks)
         if day.weekday() == SUNDAY:
+            p.step = "weekly reconcile"
             try:
                 reconcile.weekly(con, env.socrata, spec, now)
             except (SourceUnavailable, SourceRejected) as exc:
                 log.warning("weekly reconcile skipped", extra={"error": str(exc)})
         failing = failed(result.checks)
-        repair: RepairRecord | None = None
         if route(result.checks, None) == "agent":
-            repair = _real_failure(env, spec, ai, failing, now, spend)
+            p.step = "repair"
+            p.repair = _real_failure(env, spec, ai, failing, now, spend)
         elif day.weekday() == SUNDAY and ai is not None and not _real_repair_today(env, day):
-            repair = dailyai.drill(env.sink, ai, day, spend, DEFAULT_STEPS[0], env.repair_timeout_s)
+            p.step = "drill"
+            p.repair = dailyai.drill(
+                env.sink, ai, day, spend, DEFAULT_STEPS[0], env.repair_timeout_s
+            )
+        p.step = "counts"
         uni = universe.load(env.data / "universe.json")
         analysed = day - timedelta(days=load.ANALYSIS_LAG_DAYS)
         table = refresh_counts(con, env.data, result.generation, uni, analysed)
-        _write_vintage(env, con, day)
+        write_vintage(env.data, env.run_id, con, day)
+        p.step = "analysis"
+        p.analyst_day = analysed.isoformat()
         screened = screen(table, uni, analysed)
         if isinstance(screened, AnalystDay):
             analyst = screened
@@ -261,6 +260,7 @@ def _run(env: Env, ai: LLMClient | None, spend: Spend) -> RunRecord:
             tested, cleared, found = screened
             analyst = AnalystDay(analysed, tested, cleared, [])
             if found and ai is not None:
+                p.step = "investigation"
                 con.close()
                 closed = True  # the investigator opens the store itself
                 analyst = dailyai.investigate_day(
@@ -271,30 +271,9 @@ def _run(env: Env, ai: LLMClient | None, spend: Spend) -> RunRecord:
             elif found:
                 note = "AI is not enabled: the candidates were counted, not investigated"
                 analyst = AnalystDay(analysed, tested, cleared, [], skipped_reason=note)
-        _write_json(env.data / "analyst" / f"{analysed.isoformat()}.json", to_json(analyst))
-        return _finish(
-            env,
-            record(
-                "checks_failed" if failing else "success",
-                rows_loaded=result.rows,
-                pages=result.pages,
-                checks=_records(result.checks),
-                repair=repair,
-                analyst_day=analysed.isoformat(),
-                generation=result.generation,
-            ),
-            now,
-        )
+        p.step = "analyst file"
+        write_json(env.data / "analyst" / f"{analysed.isoformat()}.json", to_json(analyst))
+        return finish("checks_failed" if failing else "success")
     finally:
         if not closed:
             con.close()
-
-
-def _write_vintage(env: Env, con: db.Connection, day: date) -> None:
-    """One line per run: how many rows each created day held when this run finished loading."""
-    line = {"run_id": env.run_id, "run_date": day.isoformat(),
-            "held": [[d.isoformat(), n] for d, n in counts.vintage(con, day)]}  # fmt: skip
-    path = env.data / "vintages.jsonl"
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as f:
-        f.write(json.dumps(line, sort_keys=True) + "\n")
