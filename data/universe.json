@@ -1,0 +1,346 @@
+{
+  "span": {
+    "from": "2026-08-01",
+    "before": "2026-11-01"
+  },
+  "complaint_types": [
+    {
+      "name": "Illegal Parking",
+      "rows": 164200
+    },
+    {
+      "name": "Noise - Residential",
+      "rows": 97649
+    },
+    {
+      "name": "Noise - Street/Sidewalk",
+      "rows": 59496
+    },
+    {
+      "name": "Blocked Driveway",
+      "rows": 48407
+    },
+    {
+      "name": "UNSANITARY CONDITION",
+      "rows": 43240
+    },
+    {
+      "name": "HEAT/HOT WATER",
+      "rows": 34998
+    },
+    {
+      "name": "Street Condition",
+      "rows": 25085
+    },
+    {
+      "name": "PLUMBING",
+      "rows": 20439
+    },
+    {
+      "name": "Dirty Condition",
+      "rows": 20202
+    },
+    {
+      "name": "PAINT/PLASTER",
+      "rows": 19824
+    },
+    {
+      "name": "Abandoned Vehicle",
+      "rows": 19744
+    },
+    {
+      "name": "Water Maintenance",
+      "rows": 19525
+    },
+    {
+      "name": "Noise",
+      "rows": 17711
+    },
+    {
+      "name": "Noise - Commercial",
+      "rows": 17592
+    },
+    {
+      "name": "Noise - Vehicle",
+      "rows": 15399
+    },
+    {
+      "name": "WATER LEAK",
+      "rows": 14990
+    },
+    {
+      "name": "Encampment",
+      "rows": 14359
+    },
+    {
+      "name": "DOOR/WINDOW",
+      "rows": 14331
+    },
+    {
+      "name": "GENERAL",
+      "rows": 13529
+    },
+    {
+      "name": "Damaged Tree",
+      "rows": 13324
+    },
+    {
+      "name": "Street Light Condition",
+      "rows": 13111
+    },
+    {
+      "name": "Traffic Signal Condition",
+      "rows": 12009
+    },
+    {
+      "name": "Illegal Dumping",
+      "rows": 11899
+    },
+    {
+      "name": "General Construction/Plumbing",
+      "rows": 11658
+    },
+    {
+      "name": "Homeless Person Assistance",
+      "rows": 11275
+    }
+  ],
+  "boards": [
+    {
+      "borough": "Bronx",
+      "number": 1
+    },
+    {
+      "borough": "Bronx",
+      "number": 2
+    },
+    {
+      "borough": "Bronx",
+      "number": 3
+    },
+    {
+      "borough": "Bronx",
+      "number": 4
+    },
+    {
+      "borough": "Bronx",
+      "number": 5
+    },
+    {
+      "borough": "Bronx",
+      "number": 6
+    },
+    {
+      "borough": "Bronx",
+      "number": 7
+    },
+    {
+      "borough": "Bronx",
+      "number": 8
+    },
+    {
+      "borough": "Bronx",
+      "number": 9
+    },
+    {
+      "borough": "Bronx",
+      "number": 10
+    },
+    {
+      "borough": "Bronx",
+      "number": 11
+    },
+    {
+      "borough": "Bronx",
+      "number": 12
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 1
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 2
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 3
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 4
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 5
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 6
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 7
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 8
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 9
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 10
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 11
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 12
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 13
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 14
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 15
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 16
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 17
+    },
+    {
+      "borough": "Brooklyn",
+      "number": 18
+    },
+    {
+      "borough": "Manhattan",
+      "number": 1
+    },
+    {
+      "borough": "Manhattan",
+      "number": 2
+    },
+    {
+      "borough": "Manhattan",
+      "number": 3
+    },
+    {
+      "borough": "Manhattan",
+      "number": 4
+    },
+    {
+      "borough": "Manhattan",
+      "number": 5
+    },
+    {
+      "borough": "Manhattan",
+      "number": 6
+    },
+    {
+      "borough": "Manhattan",
+      "number": 7
+    },
+    {
+      "borough": "Manhattan",
+      "number": 8
+    },
+    {
+      "borough": "Manhattan",
+      "number": 9
+    },
+    {
+      "borough": "Manhattan",
+      "number": 10
+    },
+    {
+      "borough": "Manhattan",
+      "number": 11
+    },
+    {
+      "borough": "Manhattan",
+      "number": 12
+    },
+    {
+      "borough": "Queens",
+      "number": 1
+    },
+    {
+      "borough": "Queens",
+      "number": 2
+    },
+    {
+      "borough": "Queens",
+      "number": 3
+    },
+    {
+      "borough": "Queens",
+      "number": 4
+    },
+    {
+      "borough": "Queens",
+      "number": 5
+    },
+    {
+      "borough": "Queens",
+      "number": 6
+    },
+    {
+      "borough": "Queens",
+      "number": 7
+    },
+    {
+      "borough": "Queens",
+      "number": 8
+    },
+    {
+      "borough": "Queens",
+      "number": 9
+    },
+    {
+      "borough": "Queens",
+      "number": 10
+    },
+    {
+      "borough": "Queens",
+      "number": 11
+    },
+    {
+      "borough": "Queens",
+      "number": 12
+    },
+    {
+      "borough": "Queens",
+      "number": 13
+    },
+    {
+      "borough": "Queens",
+      "number": 14
+    },
+    {
+      "borough": "Staten Island",
+      "number": 1
+    },
+    {
+      "borough": "Staten Island",
+      "number": 2
+    },
+    {
+      "borough": "Staten Island",
+      "number": 3
+    }
+  ]
+}
