@@ -1,13 +1,15 @@
-"""The detector: which district-and-complaint-type counts are unusually high on one day.
+"""The screen: which district-and-complaint-type counts are unusually high on one day.
 
 Per series, the previous 8 same weekdays inside the window (federal holidays left out) give a
 baseline with mean mu and sample variance v. The spread is shared by complaint type: over every
 series of the type tested that day, k = sum(mu^2) / sum(max(v - mu, 0)), clamped to [0.5, 1e6].
 The predictive count for a series is negative binomial with mean mu and variance
 (mu + mu^2 / k) * (1 + 1/8), the last factor being the baseline's own uncertainty; the p-value is
-P(X >= observed) on the integer count. Benjamini-Hochberg at q = 0.05 runs over every series
-tested that day; a candidate also needs observed >= 10 and observed / mu >= 2. A series without
-8 baseline days in the window, or with a baseline mean of 0, is not tested.
+P(X >= observed) on the integer count. A count is a candidate when it is >= 10, at least 2x the
+usual (observed / mu) and in the tail of that model: Benjamini-Hochberg at 0.05 over every series
+tested that day is used as a filter, not as a guarantee about false alarms (see null_simulation).
+The two candidates with the largest ratio are investigated.
+A series without 8 baseline days in the window, or with a baseline mean of 0, is not tested.
 """
 
 import json
@@ -33,7 +35,7 @@ FDR = 0.05
 MIN_OBSERVED = 10
 MIN_RATIO = 2.0
 SENT_ON = 2  # the investigator takes this many, largest ratio first
-K_RANGE = (0.5, 1e6)  # 1e6 is Poisson for practical purposes
+K_RANGE = (0.5, 1e6)  # the upper end is Poisson for practical purposes
 CALIBRATION_PATH = Path(__file__).parents[3] / "data" / "calibration.json"
 
 Key = tuple[str, int, str]  # borough, district number, complaint type

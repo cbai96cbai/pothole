@@ -1,10 +1,7 @@
-import math
-import time
 from datetime import date, timedelta
 
 import numpy as np
 import pyarrow as pa
-import pytest
 
 from pothole.analyst import detect
 from pothole.analyst.detect import Panel
@@ -87,47 +84,3 @@ def test_predictive_variance_never_below_poisson() -> None:
         assert np.allclose(r * (1 - p) / p, mean)  # the predictive mean is the baseline mean
         variance = r * (1 - p) / p**2
         assert (variance > mean).all()
-
-
-TYPES = 25
-BOUND = 0.05 + 3 * math.sqrt(0.05 * 0.95 / 200)  # 0.096
-
-
-def _any_flag_rate(spread: float) -> float:
-    """1,475 series (25 types x 59 districts) x 200 days of null counts whose variance is
-    mean + mean^2 / k, k shared within a type and set so a typical series (mean 9) has `spread`
-    times the Poisson variance (1.0 is Poisson); the share of days with any BH flag."""
-    rng = np.random.default_rng(7)
-    series, columns = TYPES * 59, 263
-    means = rng.lognormal(mean=2.2, sigma=0.9, size=series)
-    if spread == 1.0:
-        matrix = rng.poisson(means[:, None], size=(series, columns))
-    else:
-        size = np.repeat(rng.uniform(0.7, 1.3, TYPES), 59) * np.exp(2.2) / (spread - 1)
-        matrix = rng.negative_binomial(
-            size[:, None], (size / (size + means))[:, None], (series, columns)
-        )
-    keys = [("Queens", i % 59 + 1, f"type {i // 59}") for i in range(series)]
-    panel = Panel(START, keys, matrix.astype(np.int64))
-    flagged = tested = 0
-    started = time.monotonic()
-    for i in range(63, columns):
-        ev = detect.evaluate(panel, panel.day_at(i))
-        if ev is not None:
-            tested += 1
-            flagged += bool((ev.q <= detect.FDR).any())
-    assert tested >= 190
-    assert time.monotonic() - started < 20
-    return flagged / tested
-
-
-XFAIL = pytest.mark.xfail(strict=True, reason="measured 0.18 (2x) and 0.32 (3x): above the bound")
-
-
-@pytest.mark.parametrize(
-    "spread", [1.0, 1.5, pytest.param(2.0, marks=XFAIL), pytest.param(3.0, marks=XFAIL)]
-)
-def test_null_simulation_any_flag_rate(spread: float) -> None:
-    """Under a null with counts `spread` times more spread than Poisson, BH keeps P(any flag on a
-    day) at or below q (with 3 standard errors of slack over 200 days)."""
-    assert _any_flag_rate(spread) <= BOUND < 0.0966

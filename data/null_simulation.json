@@ -1,0 +1,13 @@
+{
+  "label": "measured on simulated days with no events; not a guarantee about real data",
+  "seed": 7,
+  "series": 1475,
+  "test_days": 200,
+  "dispersion": "negative binomial, variance = mean + mean^2/k, k shared within a complaint type; spread is the variance as a multiple of Poisson for a series with mean 9",
+  "share_of_days_with_any_flag": {
+    "1x": 0.0052,
+    "1.5x": 0.0777,
+    "2x": 0.1762,
+    "3x": 0.3212
+  }
+}
