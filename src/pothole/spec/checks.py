@@ -32,23 +32,36 @@ def _result(name: str, level: Level, detail: str, keys: list[str] | None = None)
     return CheckResult(name, level, detail, (keys or [])[:SAMPLE])
 
 
-def schema(spec: PipelineSpec, rows: list[dict[str, str]]) -> CheckResult:
+def schema(spec: PipelineSpec, rows: list[dict[str, str]]) -> list[CheckResult]:
     seen = {field for row in rows for field in row}
     mapped = {c.source for c in spec.columns}
     missing = [c.source for c in spec.columns if c.required and c.source not in seen]
-    if missing:
-        return _result(
-            "schema",
-            "fail",
-            f"required source fields missing from all {len(rows)} rows: "
-            + ", ".join(sorted(missing)),
-        )
     unknown = sorted(seen - mapped)
+    out: list[CheckResult] = []
+    if missing:
+        detail = f"required source fields missing from all {len(rows)} rows: "
+        out.append(_result("schema", "fail", detail + ", ".join(sorted(missing))))
     if unknown:
-        return _result(
-            "schema", "warn", f"{len(unknown)} source fields not in the spec: " + ", ".join(unknown)
+        detail = f"{len(unknown)} source fields not in the spec: " + ", ".join(unknown)
+        out.append(_result("schema" if not missing else "schema:unknown_fields", "warn", detail))
+    if not out:
+        out.append(
+            _result("schema", "pass", f"all required source fields present in {len(rows)} rows")
         )
-    return _result("schema", "pass", f"all required source fields present in {len(rows)} rows")
+    return out
+
+
+def required(spec: PipelineSpec, rows: list[dict[str, str]], keys: list[str]) -> list[CheckResult]:
+    """A required column has a value in every row; absent from all rows is the schema check's."""
+    seen = {field for row in rows for field in row}
+    out: list[CheckResult] = []
+    for col in spec.columns:
+        if not col.required or col.source not in seen:
+            continue
+        empty = [k for k, r in zip(keys, rows, strict=True) if not r.get(col.source)]
+        detail = f"{col.name}: required but missing from {len(empty)} of {len(rows)} rows"
+        out.append(_result(f"required:{col.name}", "fail" if empty else "pass", detail, empty))
+    return out
 
 
 def cast_and_values(col: Column, cast: Cast, total: int) -> list[CheckResult]:

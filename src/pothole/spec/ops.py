@@ -67,6 +67,10 @@ def apply(spec: PipelineSpec, ops: list[MapField | SetFormat | AddValueMapping])
             raise ForbiddenEdit(f"{op.op}: column {op.column!r} is not a column of this spec")
         col = columns[op.column]
         if isinstance(op, MapField):
+            if op.column == spec.source.key:
+                raise ForbiddenEdit(
+                    f"map_field: {op.column} is the key column and cannot be remapped"
+                )
             col.source = op.source
         elif isinstance(op, SetFormat):
             fixed = {"timestamp": DATE_FORMATS, "int": NUMBER_FORMATS, "float": NUMBER_FORMATS}
@@ -76,9 +80,15 @@ def apply(spec: PipelineSpec, ops: list[MapField | SetFormat | AddValueMapping])
                 )
             col.format = op.format
         else:
-            if col.type != "text":
-                raise ForbiddenEdit(f"add_value_mapping: column {col.name} is {col.type}, not text")
-            col.values = {**(col.values or {}), op.raw: op.value}
+            if col.values is None:
+                raise ForbiddenEdit(
+                    f"add_value_mapping: column {col.name} has no listed values to extend"
+                )
+            col.values = {**col.values, op.raw: op.value}
+    sources = [c.source for c in columns.values()]
+    for source in sorted({s for s in sources if sources.count(s) > 1}):
+        feeding = [c.name for c in columns.values() if c.source == source]
+        raise ForbiddenEdit(f"source field {source!r} would feed more than one column: {feeding}")
     edited = PipelineSpec(
         source=spec.source.model_copy(deep=True),
         columns=[columns[c.name] for c in spec.columns],

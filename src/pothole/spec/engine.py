@@ -17,7 +17,7 @@ _ARROW = {
     "text": pa.string(),
     "int": pa.int64(),
     "float": pa.float64(),
-    "timestamp": pa.timestamp("ms"),
+    "timestamp": pa.timestamp("us"),
 }
 
 
@@ -72,7 +72,7 @@ def run(
     history: list[int],
     now: datetime | None = None,
 ) -> EngineResult:
-    """history: the row counts of the same weekday over the trailing weeks (empty if unknown).
+    """history: same-weekday row counts, oldest first; only the last `volume.weeks` are used.
 
     now: New York local time, naive (the dataset's timestamps carry no zone).
     """
@@ -83,7 +83,8 @@ def run(
     results: list[CheckResult] = []
     c = spec.checks
     if c.schema_check:
-        results.append(ck.schema(spec, rows))
+        results.extend(ck.schema(spec, rows))
+        results.extend(ck.required(spec, rows, keys))
     for col in spec.columns:
         results.extend(ck.cast_and_values(col, casts[col.name], len(rows)))
     for name, limit in c.null_rate_max.items():
@@ -99,7 +100,7 @@ def run(
     if c.unique_key:
         results.append(ck.unique_key(spec.source.key, keys))
     if c.volume is not None:
-        results.append(ck.volume(c.volume, len(rows), history))
+        results.append(ck.volume(c.volume, len(rows), history[-c.volume.weeks :]))
     table = pa.table(
         {col.name: pa.array(casts[col.name].values, type=_ARROW[col.type]) for col in spec.columns}
     )

@@ -22,3 +22,7 @@ def test_event_boards_cases():
     ]
     assert normalise.event_boards(["13,"], "Manhattan") == []
     assert normalise.event_boards(["1,"], "Nowhere") == []
+
+
+def test_event_boards_skips_missing_elements():
+    assert normalise.event_boards([None, "2,"], "Manhattan") == [("Manhattan", 2)]

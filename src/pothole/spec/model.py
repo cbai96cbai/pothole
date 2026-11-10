@@ -82,6 +82,9 @@ class PipelineSpec(_Strict):
         names = [c.name for c in self.columns]
         if len(set(names)) != len(names):
             raise ValueError("duplicate column names")
+        sources = [c.source for c in self.columns]
+        if len(set(sources)) != len(sources):
+            raise ValueError("a source field feeds more than one column")
         known = set(names)
         if self.source.key not in known:
             raise ValueError(f"source.key {self.source.key!r} is not a column")
@@ -89,6 +92,9 @@ class PipelineSpec(_Strict):
         for name in named:
             if name not in known:
                 raise ValueError(f"check names unknown column {name!r}")
+        for col in self.columns:
+            if col.required and col.name in self.checks.null_rate_max:
+                raise ValueError(f"required column {col.name!r} cannot also have a null rate limit")
         return self
 
     @classmethod

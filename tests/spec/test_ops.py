@@ -39,8 +39,8 @@ def test_add_value_mapping_extends_values(spec):
     )
     assert out.column("borough").values["NEW BOROUGH"] == "Queens"
     assert "NEW BOROUGH" not in (spec.column("borough").values or {})
-    with pytest.raises(ops.ForbiddenEdit, match="latitude is float, not text"):
-        ops.apply(spec, [ops.AddValueMapping(column="latitude", raw="a", value="b")])
+    with pytest.raises(ops.ForbiddenEdit, match="agency has no listed values to extend"):
+        ops.apply(spec, [ops.AddValueMapping(column="agency", raw="a", value="b")])
 
 
 def test_ops_cannot_touch_checks(spec):
@@ -63,3 +63,35 @@ def test_apply_returns_a_valid_spec_and_keeps_checks(spec):
     out = ops.apply(spec, [])
     assert isinstance(out, PipelineSpec)
     assert out == spec
+
+
+def test_failed_apply_leaves_the_spec_untouched(spec):
+    before = spec.model_copy(deep=True)
+    with pytest.raises(ops.ForbiddenEdit):
+        ops.apply(
+            spec,
+            [ops.MapField(column="agency", source="x"), ops.MapField(column="status", source="x")],
+        )
+    assert spec == before
+
+
+def test_map_field_to_a_source_already_in_use_is_refused(spec):
+    with pytest.raises(ops.ForbiddenEdit, match="'longitude' would feed more than one column"):
+        ops.apply(spec, [ops.MapField(column="latitude", source="longitude")])
+
+
+def test_map_field_on_the_key_column_is_refused(spec):
+    with pytest.raises(ops.ForbiddenEdit, match="unique_key is the key column"):
+        ops.apply(spec, [ops.MapField(column="unique_key", source="agency")])
+
+
+def test_a_swap_in_one_patch_is_valid(spec):
+    out = ops.apply(
+        spec,
+        [
+            ops.MapField(column="latitude", source="longitude"),
+            ops.MapField(column="longitude", source="latitude"),
+        ],
+    )
+    assert out.column("latitude").source == "longitude"
+    assert out.column("longitude").source == "latitude"

@@ -172,3 +172,38 @@ def test_comma_thousands_number_format(spec, rows):
     result, checks = run(spec, rows)
     assert result.table.column("x_coordinate_state_plane")[0].as_py() == 1001234
     assert checks["cast:x_coordinate_state_plane"].level == "pass"
+
+
+def test_required_field_missing_from_some_rows_fails(spec):
+    rows = [make_row(i, agency="<omit>") if i < 9 else make_row(i) for i in range(10)]
+    _, checks = run(spec, rows)
+    assert checks["required:agency"].level == "fail"
+    assert checks["required:agency"].detail == "agency: required but missing from 9 of 10 rows"
+    assert checks["required:agency"].sample_keys == ["1000", "1001", "1002", "1003", "1004"]
+    assert checks["schema"].level == "pass"
+
+
+def test_required_field_present_in_every_row_passes(spec, rows):
+    _, checks = run(spec, rows)
+    assert checks["required:agency"].level == "pass"
+
+
+def test_unknown_field_warn_is_kept_beside_a_missing_required_field(spec):
+    rows = [make_row(i, agency="<omit>", extra_field="x") for i in range(10)]
+    _, checks = run(spec, rows)
+    assert checks["schema"].level == "fail"
+    assert checks["schema:unknown_fields"].level == "warn"
+    assert checks["schema:unknown_fields"].detail == "1 source fields not in the spec: extra_field"
+
+
+def test_timestamps_keep_microseconds(spec, rows):
+    rows[0]["created_date"] = "2026-11-09T10:00:00.123456"
+    result, _ = run(spec, rows)
+    assert result.table.column("created_date")[0].as_py().microsecond == 123456
+
+
+def test_volume_uses_only_the_last_weeks_of_history(spec):
+    rows = [make_row(i) for i in range(10)]
+    _, checks = run(spec, rows, [1000, 1000, 10, 10, 10, 10])
+    assert checks["volume"].level == "pass"
+    assert checks["volume"].detail.endswith("over 4 earlier same-weekday counts; allowed 5 to 20")

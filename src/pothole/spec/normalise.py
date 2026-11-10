@@ -26,10 +26,12 @@ def board(raw: str | None) -> tuple[str, int] | None:
     return _regular(match.group(2), int(match.group(1))) if match else None
 
 
-def event_boards(raw_list: list[str], borough: str) -> list[tuple[str, int]]:
+def event_boards(raw_list: list[str | None], borough: str) -> list[tuple[str, int]]:
     """Event community_board values such as "1," or "1,2," with the borough given apart."""
     found: list[tuple[str, int]] = []
     for raw in raw_list:
+        if raw is None:
+            continue
         for part in raw.split(","):
             part = part.strip()
             if not part.isdigit():
