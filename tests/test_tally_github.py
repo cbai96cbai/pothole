@@ -9,45 +9,74 @@ from typer.testing import CliRunner
 
 from pothole import cli, runrecord
 from pothole.budget.tally import Tally
-from pothole.tallygithub import tally_github
+from pothole.tallygithub import Admitted, tally_github
 
 ROOT = Path(__file__).parents[1]
 
 
-def record(run_id: str, ai: bool) -> runrecord.RunRecord:
+def record(run_id: str, ai: bool, attempt: int = 1) -> runrecord.RunRecord:
     return runrecord.RunRecord(
         run_id, "2026-11-10T06:17:00-05:00", "2026-11-10T06:20:00-05:00", "success", 1, 1,
-        ai_enabled=ai,
+        ai_enabled=ai, attempt=attempt,
     )  # fmt: skip
 
 
-def listing(*runs: tuple[int, str, str, str]) -> str:
+def listing(*runs: tuple[int, str, str, str, str, int]) -> str:
     return json.dumps(
         [
-            {"databaseId": i, "status": st, "conclusion": c, "createdAt": f"{day}T11:17:00Z"}
-            for i, st, c, day in runs
+            {
+                "databaseId": i, "status": st, "conclusion": c, "event": ev, "attempt": n,
+                "createdAt": f"{day}T11:17:00Z",
+            }
+            for i, st, c, ev, day, n in runs
         ]
-    )
+    )  # fmt: skip
 
 
-def test_ai_runs_are_admitted_once(tmp_path: Path) -> None:
-    records = tmp_path / "runs.jsonl"
-    for r in (record("1", True), record("2", False), record("3", True), record("5", True)):
-        runrecord.append(records, r)
-    out = listing(
-        (1, "completed", "success", "2026-11-10"),
-        (2, "completed", "success", "2026-11-10"),
-        (3, "completed", "failure", "2026-11-11"),
-        (4, "completed", "failure", "2026-11-11"),  # no committed record
-        (5, "in_progress", "", "2026-11-12"),  # not finished
-        (6, "completed", "success", "2026-11-01"),  # before --since
-    )
+def charge(tmp_path: Path, out: str, *records: runrecord.RunRecord) -> tuple[Tally, Admitted]:
+    path = tmp_path / "runs.jsonl"
+    for r in records:
+        runrecord.append(path, r)
     tally = Tally(tmp_path / "spend.jsonl")
-    first = tally_github("o/r", date(2026, 11, 10), records, tally, lambda args: out)
-    assert first.admitted == ["1", "3"] and first.no_record == ["4"]
-    assert tally.total() == Decimal("0.128") * 2
-    again = tally_github("o/r", date(2026, 11, 10), records, tally, lambda args: out)
-    assert again.admitted == [] and again.already == ["1", "3"]
+    return tally, tally_github("o/r", date(2026, 11, 10), path, tally, lambda args: out)
+
+
+@pytest.mark.parametrize("conclusion", ["success", "failure", "cancelled", "timed_out"])
+def test_every_conclusion_of_a_scheduled_run_is_charged(tmp_path: Path, conclusion: str) -> None:
+    out = listing((1, "completed", conclusion, "schedule", "2026-11-10", 1))
+    tally, done = charge(tmp_path, out, record("1", True))
+    assert done.admitted == ["1-1"] and tally.total() == Decimal("0.128")
+
+
+def test_a_run_without_a_committed_record_is_charged(tmp_path: Path) -> None:
+    out = listing((4, "completed", "failure", "schedule", "2026-11-11", 1))
+    tally, done = charge(tmp_path, out)
+    assert done.admitted == ["4-1"] and done.without_record == ["4-1"]
+    assert tally.total() == Decimal("0.128")
+
+
+def test_only_a_record_saying_ai_off_spares_a_scheduled_run(tmp_path: Path) -> None:
+    out = listing(
+        (1, "completed", "success", "schedule", "2026-11-10", 1),  # AI off in its record
+        (2, "completed", "success", "workflow_dispatch", "2026-11-10", 1),  # a manual run
+        (3, "in_progress", "", "schedule", "2026-11-12", 1),  # not finished
+        (4, "completed", "success", "schedule", "2026-11-01", 1),  # before --since
+    )
+    tally, done = charge(tmp_path, out, record("1", False))
+    assert done.admitted == [] and done.ai_off == ["1-1"] and tally.total() == 0
+
+
+def test_each_attempt_of_a_rerun_is_its_own_charge_and_only_once(tmp_path: Path) -> None:
+    out = listing((7, "completed", "success", "schedule", "2026-11-10", 3))
+    path = tmp_path / "runs.jsonl"
+    for r in (record("7", False, 1), record("7", True, 2)):  # attempt 3 left no record
+        runrecord.append(path, r)
+    tally = Tally(tmp_path / "spend.jsonl")
+    first = tally_github("o/r", date(2026, 11, 10), path, tally, lambda args: out)
+    assert first.admitted == ["7-2", "7-3"] and first.ai_off == ["7-1"]
+    assert first.without_record == ["7-3"] and tally.total() == Decimal("0.128") * 2
+    again = tally_github("o/r", date(2026, 11, 10), path, tally, lambda args: out)
+    assert again.admitted == [] and again.already == ["7-2", "7-3"]
     assert tally.total() == Decimal("0.128") * 2
 
 
@@ -74,3 +103,13 @@ def test_workflow_matches_the_plan() -> None:
     assert "41898282+github-actions[bot]@users.noreply.github.com" in text
     deploy = wf["jobs"]["deploy"]
     assert deploy["if"] == "${{ vars.PAGES_ENABLED == 'true' }}"
+    run_step = next(s for s in wf["jobs"]["run"]["steps"] if s.get("name") == "Daily run")
+    for name in ("AZURE_OPENAI_ENDPOINT", "AZURE_OPENAI_API_KEY"):
+        assert run_step["env"][name].startswith("${{ github.event_name == 'schedule' && secrets.")
+    commit = next(
+        s for s in wf["jobs"]["run"]["steps"] if s.get("name") == "Commit data and results"
+    )
+    script = commit["run"]
+    assert script.index("git config user.name") < script.index("git commit")
+    assert script.index("git config user.email") < script.index("git pull --rebase")
+    assert script.count("git pull --rebase") == 2 and script.count("git push") == 2

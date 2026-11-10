@@ -1,13 +1,16 @@
-"""Admit the GitHub runs that had AI enabled into the local build tally.
+"""Admit the GitHub daily runs that may have used the model into the local build tally.
 
-Every completed or failed daily run whose committed record says AI was enabled is charged the
-run envelope once (idempotent by run id), so the tally stays conservative however the run ended.
+Every attempt of a scheduled daily run on or after `since` is charged the run envelope once,
+whatever its conclusion (success, failure, cancelled, timed out), unless that attempt's committed
+record says AI was off. A run with no committed record, as after a crash, is charged. A re-run
+keeps its run id and raises the attempt number, so each attempt is its own charge (idempotent by
+run id and attempt). Manual dispatches never use the model and are not listed here.
 """
 
 import json
 import subprocess
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
 
@@ -16,7 +19,7 @@ from pothole.budget.envelope import run_envelope
 from pothole.budget.tally import Tally
 
 Runner = Callable[[list[str]], str]
-DONE = ("success", "failure")
+SCHEDULE = "schedule"
 
 
 def gh_runner(args: list[str]) -> str:
@@ -26,11 +29,12 @@ def gh_runner(args: list[str]) -> str:
     return done.stdout
 
 
-@dataclass(frozen=True)
+@dataclass
 class Admitted:
-    admitted: list[str]
-    already: list[str]
-    no_record: list[str]  # finished runs whose record was never committed: not charged
+    admitted: list[str] = field(default_factory=list)  # "<run id>-<attempt>"
+    already: list[str] = field(default_factory=list)
+    ai_off: list[str] = field(default_factory=list)  # the attempt's record says AI was off
+    without_record: list[str] = field(default_factory=list)  # charged, no committed record
 
 
 def tally_github(
@@ -52,27 +56,29 @@ def tally_github(
             "--limit",
             "200",
             "--json",
-            "databaseId,conclusion,status,createdAt",
+            "databaseId,conclusion,status,createdAt,event,attempt",
         ]  # fmt: skip
     )
-    listed = json.loads(out)
-    known = {r.run_id: r for r in runrecord.read(records)}
+    seen: dict[tuple[str, int], list[runrecord.RunRecord]] = {}
+    for r in runrecord.read(records):
+        seen.setdefault((r.run_id, r.attempt), []).append(r)
     amount = run_envelope()
-    result = Admitted([], [], [])
-    for item in sorted(listed, key=lambda i: i["databaseId"]):
-        run_id = str(item["databaseId"])
-        if item["status"] != "completed" or item["conclusion"] not in DONE:
+    result = Admitted()
+    for item in sorted(json.loads(out), key=lambda i: i["databaseId"]):
+        if item["event"] != SCHEDULE or item["status"] != "completed":
             continue
         if date.fromisoformat(item["createdAt"][:10]) < since:
             continue
-        record = known.get(run_id)
-        if record is None:
-            result.no_record.append(run_id)
-        elif not record.ai_enabled:
-            continue
-        elif tally.has(f"github-{run_id}"):
-            result.already.append(run_id)
-        else:
-            tally.admit(f"github-{run_id}", amount, github=True)
-            result.admitted.append(run_id)
+        for attempt in range(1, int(item.get("attempt") or 1) + 1):
+            tag = f"{item['databaseId']}-{attempt}"
+            held = seen.get((str(item["databaseId"]), attempt), [])
+            if held and not any(r.ai_enabled for r in held):
+                result.ai_off.append(tag)
+            elif tally.has(f"github-{tag}"):
+                result.already.append(tag)
+            else:
+                tally.admit(f"github-{tag}", amount, github=True)
+                result.admitted.append(tag)
+                if not held:
+                    result.without_record.append(tag)
     return result
