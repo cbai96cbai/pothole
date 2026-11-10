@@ -138,7 +138,7 @@ class FakeLog:
 def test_a_failed_record_write_never_hides_the_original_error(
     repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setenv("SOCRATA_APP_TOKEN", "tok-secret-1234")
+    monkeypatch.setenv("SOCRATA_APP_TOKEN", "dummy-token-0000")
     fake = FakeLog()
     monkeypatch.setattr(daily, "log", fake)
 
@@ -146,7 +146,7 @@ def test_a_failed_record_write_never_hides_the_original_error(
         raise OSError("disk full")
 
     def broken(*a: Any, **k: Any) -> Any:
-        raise RuntimeError("step broke for tok-secret-1234")
+        raise RuntimeError("step broke for dummy-token-0000")
 
     monkeypatch.setattr(daily.runrecord, "append", failing_append)
     monkeypatch.setattr(daily, "refresh_counts", broken)
@@ -156,7 +156,7 @@ def test_a_failed_record_write_never_hides_the_original_error(
     [line] = [x for x in fake.lines if x["message"] == "the error record could not be written"]
     assert line["error"].startswith("counts: RuntimeError: step broke for ***")
     assert line["record_error"] == "record write: OSError: disk full"
-    assert "tok-secret-1234" not in str(fake.lines)
+    assert "dummy-token-0000" not in str(fake.lines)
     # the same for a setup failure: the command still exits 1, chained to the setup error
     monkeypatch.setenv("AI_ENABLED", "true")
     monkeypatch.delenv("AZURE_OPENAI_API_KEY", raising=False)
