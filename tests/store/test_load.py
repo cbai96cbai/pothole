@@ -90,9 +90,24 @@ def test_crash_between_pages_resumes_from_last_page(con, spec: PipelineSpec) -> 
     assert keys(con) == ["1000", "1001", "1002", "1003"]
     resumed = FakeSocrata(fake.rows)
     load.incremental(con, resumed, spec, NOW, page_size=2)
-    first_page = resumed.queries[1]["$where"]
-    assert f":updated_at >= '{stamp(120)}'" in first_page  # one hour before the saved cursor
     assert keys(con) == [str(1000 + i) for i in range(5)]
+
+
+def test_resume_after_crash_does_not_rewind(con, spec: PipelineSpec) -> None:
+    fake = FakeSocrata([make_row(i, 60 * i) for i in range(5)])
+    fake.before_query = outage_on(3)
+    with pytest.raises(SourceUnavailable):
+        load.incremental(con, fake, spec, NOW, page_size=2)
+    assert db.get_meta(con, "load_in_progress") == "1"
+    resumed = FakeSocrata(fake.rows)
+    result = load.incremental(con, resumed, spec, NOW, page_size=2)
+    first_page = resumed.queries[1]["$where"]
+    assert f":updated_at > '{stamp(180)}'" in first_page and "'row-00003'" in first_page
+    assert result.rows == 1  # only the row after the last committed page
+    assert db.get_meta(con, "load_in_progress") is None
+    again = FakeSocrata(fake.rows)  # a finished load rewinds again
+    load.incremental(con, again, spec, NOW, page_size=2)
+    assert f":updated_at >= '{stamp(180)}'" in again.queries[1]["$where"]  # 240 minus one hour
 
 
 def test_outage_mid_paging_keeps_cursor(con, spec: PipelineSpec) -> None:
@@ -108,14 +123,22 @@ def test_outage_mid_paging_keeps_cursor(con, spec: PipelineSpec) -> None:
 
 
 def test_reload_is_bounded_and_idempotent(con, spec: PipelineSpec) -> None:
-    fake = FakeSocrata([make_row(i, i * 10) for i in range(30)])  # 290 minutes of updates
+    window = [make_row(i, i * 10) for i in range(30)]
+    old = [make_row(40 + i, i, created="2026-07-01T10:00:00.000") for i in range(5)]
+    fake = FakeSocrata(window + old)
     first = load.incremental(con, fake, spec, NOW, page_size=7)
-    snapshot = con.execute("SELECT * FROM raw ORDER BY unique_key").fetchall()
+    sql = "SELECT * EXCLUDE (_updated_at) FROM raw ORDER BY unique_key"
+    snapshot = con.execute(sql).fetchall()
+    for n, row in enumerate(fake.rows):  # a dataset reload restamps every row
+        row[":updated_at"] = stamp(1000 + n)
     second = load.incremental(con, fake, spec, NOW, page_size=7)
     assert first.rows == 30
-    assert second.rows == 7  # rows stamped within the hour before the cursor, cursor row included
-    assert con.execute("SELECT * FROM raw ORDER BY unique_key").fetchall() == snapshot
+    assert second.rows == 30  # one window of rows, none of the old ones
+    assert con.execute(sql).fetchall() == snapshot
+    assert len(snapshot) == 30
     assert second.generation != first.generation
+    third = load.incremental(con, FakeSocrata(fake.rows), spec, NOW, page_size=7)
+    assert third.rows == 30  # the restamps all fall inside the hour before the cursor
 
 
 def test_cache_miss_rebuilds_window(tmp_path: Path, spec: PipelineSpec) -> None:
@@ -165,3 +188,64 @@ def test_checks_keep_the_worst_page_and_window_wide_results(con, spec: PipelineS
     assert by_name["required:status"].level == "fail"
     assert by_name["freshness"].level == "pass"
     assert by_name["volume"].level == "pass"  # no earlier same-weekday counts yet
+
+
+class _FailOnSecond:
+    """Wraps a db function so its second call fails after the real work is done."""
+
+    def __init__(self, real):  # type: ignore[no-untyped-def]
+        self.real, self.calls = real, 0
+
+    def __call__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+        self.calls += 1
+        out = self.real(*args, **kwargs)
+        if self.calls == 2:
+            raise RuntimeError("injected")
+        return out
+
+
+@pytest.mark.parametrize("name", ["upsert", "set_cursor"])
+def test_failure_inside_a_page_leaves_cursor_and_rows_unchanged(
+    con, spec: PipelineSpec, monkeypatch: pytest.MonkeyPatch, name: str
+) -> None:
+    fake = FakeSocrata([make_row(i, i) for i in range(6)])
+    monkeypatch.setattr(db, name, _FailOnSecond(getattr(db, name)))
+    with pytest.raises(RuntimeError, match="injected"):
+        load.incremental(con, fake, spec, NOW, page_size=2)
+    assert db.cursor(con) == (stamp(1), "row-00001")
+    assert keys(con) == ["1000", "1001"]
+    assert db.get_meta(con, "last_success") is None
+
+
+def test_quotes_in_an_id_and_a_timestamp_are_escaped(con, spec: PipelineSpec) -> None:
+    where = load.keyset_where("T'x", "row-a'b", "W'w", "S'")
+    assert where == (
+        "((:updated_at > 'T''x') OR (:updated_at = 'T''x' AND :id > 'row-a''b')) "
+        "AND :updated_at <= 'W''w' AND created_date >= 'S'''"
+    )
+    rows = [make_row(i, i, **{":id": f"row-a'b{i}"}) for i in range(3)]
+    load.incremental(con, FakeSocrata(rows), spec, NOW, page_size=1)  # ids reach the next query
+    assert keys(con) == ["1000", "1001", "1002"]
+    assert con.execute("SELECT _id FROM raw ORDER BY 1").fetchone()[0] == "row-a'b0"
+
+
+def test_rebuilding_the_table_is_one_transaction(con, spec: PipelineSpec) -> None:
+    load.incremental(con, FakeSocrata([make_row(0, 0)]), spec, NOW)
+    fewer = spec.model_copy(update={"columns": spec.columns[:-1]})
+
+    class Spy:
+        def __init__(self, inner: db.Connection) -> None:
+            self.inner = inner
+
+        def execute(self, sql: str, *args):  # type: ignore[no-untyped-def]
+            if sql.startswith("CREATE TABLE"):
+                raise RuntimeError("injected")
+            return self.inner.execute(sql, *args)
+
+        def __getattr__(self, name: str):  # type: ignore[no-untyped-def]
+            return getattr(self.inner, name)
+
+    with pytest.raises(RuntimeError, match="injected"):
+        db.ensure_raw(Spy(con), fewer)  # type: ignore[arg-type]
+    assert keys(con) == ["1000"]  # the old table and its cursor are still there
+    assert db.cursor(con) is not None

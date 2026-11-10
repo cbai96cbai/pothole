@@ -1,7 +1,9 @@
 """Incremental load of the raw window by keyset paging on (:updated_at, :id).
 
-Each run starts one hour before the saved cursor and replays from there, so a row that became
-visible late with an older timestamp is still read; upserts by key make the replay harmless.
+Each run whose predecessor finished starts one hour before the saved cursor and replays from
+there, so a row that became visible late with an older timestamp is still read; upserts by key
+make the replay harmless. A run whose predecessor died mid-load (`load_in_progress` in meta,
+set with each page's cursor, cleared with last_success) continues exactly after the saved cursor.
 W, the newest :updated_at in the window, is read once at the start: rows changed after it wait
 for the next run. One transaction per page writes the rows and the cursor together; the
 generation and `last_success` are written once, after the whole load and its checks.
@@ -106,7 +108,12 @@ def incremental(
     db.ensure_raw(con, spec)
     start = window_start(spec, now)
     saved = db.cursor(con)
-    ts, id_ = (EPOCH, "") if saved is None else (_shift(saved[0], -OVERLAP), "")
+    if saved is None:
+        ts, id_ = EPOCH, ""
+    elif db.get_meta(con, "load_in_progress"):
+        ts, id_ = saved  # the last load died mid-way: continue exactly after its last page
+    else:
+        ts, id_ = _shift(saved[0], -OVERLAP), ""
     upper = meta.max_updated_at(socrata, dataset, f"created_date >= {db.literal(start)}")
     select = db.select_clause(spec)
     worst: dict[str, CheckResult] = {}
@@ -131,6 +138,7 @@ def incremental(
         try:
             _keep_worst(worst, db.upsert(con, spec, page, now))
             db.set_cursor(con, ts, id_)
+            db.set_meta(con, "load_in_progress", "1")
             con.commit()
         except BaseException:
             con.rollback()
@@ -146,6 +154,7 @@ def incremental(
     con.begin()
     try:
         con.execute(f"DELETE FROM {db.RAW} WHERE created_date < CAST(? AS DATE)", [cutoff])
+        con.execute("DELETE FROM meta WHERE key = 'load_in_progress'")
         db.set_meta(con, "generation", generation)
         db.set_meta(con, "last_success", now.isoformat(timespec="seconds"))
         con.commit()

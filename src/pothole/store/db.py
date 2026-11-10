@@ -79,12 +79,20 @@ def ensure_raw(con: Connection, spec: PipelineSpec) -> bool:
     if [tuple(r) for r in have] == want:
         return False
     rebuilt = bool(have)
-    if rebuilt:
-        con.execute(f"DROP TABLE {RAW}")
-        con.execute("DELETE FROM meta WHERE key IN ('cursor_ts', 'cursor_id')")
     columns = ", ".join(f"{quote(n)} {t}" for n, t in want)
     key = quote(spec.source.key)
-    con.execute(f"CREATE TABLE {RAW} ({columns}, PRIMARY KEY ({key}))")
+    con.begin()
+    try:
+        if rebuilt:
+            con.execute(f"DROP TABLE {RAW}")
+            con.execute(
+                "DELETE FROM meta WHERE key IN ('cursor_ts', 'cursor_id', 'load_in_progress')"
+            )
+        con.execute(f"CREATE TABLE {RAW} ({columns}, PRIMARY KEY ({key}))")
+        con.commit()
+    except BaseException:
+        con.rollback()
+        raise
     return rebuilt
 
 

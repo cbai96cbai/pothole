@@ -45,24 +45,39 @@ class FakeSocrata(Socrata):
         self.before_query: Callable[[int, Mapping[str, str]], None] | None = None
 
     def _matching(self, where: str) -> list[dict[str, str]]:
+        """Answer only the predicates the store is known to send; anything else raises."""
         out = list(self.rows)
-        if m := re.search(r"created_date >= '([^']*)'", where):
-            out = [r for r in out if r["created_date"] >= m.group(1)]
-        if m := re.search(r"created_date < '([^']*)'", where):
-            out = [r for r in out if r["created_date"] < m.group(1)]
-        if m := re.search(r":updated_at <= '([^']*)'", where):
-            out = [r for r in out if r[":updated_at"] <= m.group(1)]
-        if m := re.search(r"^:updated_at >= '([^']*)'", where):
-            out = [r for r in out if r[":updated_at"] >= m.group(1)]
-        if m := re.search(
-            r"\(\(:updated_at > '([^']*)'\) OR \(:updated_at = '[^']*' AND :id > '([^']*)'\)\)",
-            where,
-        ):
-            t, i = m.groups()
+        rest = where
+        lit = r"'((?:[^']|'')*)'"
+
+        def take(pattern: str) -> re.Match[str] | None:
+            nonlocal rest
+            m = re.search(pattern, rest)
+            if m:
+                rest = rest[: m.start()] + " " + rest[m.end() :]
+            return m
+
+        def un(text: str) -> str:
+            return text.replace("''", "'")
+
+        keyset = rf"\(\(:updated_at > {lit}\) OR \(:updated_at = {lit} AND :id > {lit}\)\)"
+        if m := take(keyset):
+            t, i = un(m.group(1)), un(m.group(3))
+            assert un(m.group(2)) == t
             out = [r for r in out if (r[":updated_at"], r[":id"]) > (t, i)]
-        if m := re.search(r"unique_key in \(([^)]*)\)", where):
-            keys = set(re.findall(r"'([^']*)'", m.group(1)))
+        elif m := take(rf"^:updated_at >= {lit}"):
+            out = [r for r in out if r[":updated_at"] >= un(m.group(1))]
+        if m := take(rf":updated_at <= {lit}"):
+            out = [r for r in out if r[":updated_at"] <= un(m.group(1))]
+        if m := take(rf"created_date >= {lit}"):
+            out = [r for r in out if r["created_date"] >= un(m.group(1))]
+        if m := take(rf"created_date < {lit}"):
+            out = [r for r in out if r["created_date"] < un(m.group(1))]
+        if m := take(r"unique_key in \(((?:[^')]|'(?:[^']|'')*')*)\)"):
+            keys = {un(k) for k in re.findall(lit, m.group(1))}
             out = [r for r in out if r["unique_key"] in keys]
+        if re.sub(r"\s|AND", "", rest):
+            raise AssertionError(f"the fake does not understand $where: {where!r} (left: {rest!r})")
         return out
 
     def query(self, dataset: str, params: Mapping[str, str]) -> list[dict[str, Any]]:
@@ -79,8 +94,10 @@ class FakeSocrata(Socrata):
         order = params.get("$order", "")
         if order == ":updated_at,:id":
             rows.sort(key=lambda r: (r[":updated_at"], r[":id"]))
+        elif order == "unique_key":
+            rows.sort(key=lambda r: r["unique_key"])
         elif order:
-            rows.sort(key=lambda r: r[order])
+            raise AssertionError(f"the fake does not understand $order: {order!r}")
         offset = int(params.get("$offset", "0"))
         rows = rows[offset : offset + int(params["$limit"])]
         if select == "unique_key":
