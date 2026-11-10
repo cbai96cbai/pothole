@@ -1,9 +1,9 @@
 export const REPO_URL = "https://github.com/cbai96cbai/pothole";
-export const MONTHLY_LIMIT = "$4";
 export const PROPOSED_NOT_JUDGED = "Proposed, not judged";
 export const DRILL = "Drill";
 export const NOTHING_NOTABLE = "Nothing notable today";
 export const NOT_YET_RUN = "not yet run";
+export const UNFINISHED = "The investigation did not finish; only the counts are shown.";
 
 export const SCREEN_NOTE =
   "The detector is a screen: it picks out unusual counts for a person to look at. A flag is not proof of an event, and a finding says what was associated with a spike, not what caused it.";

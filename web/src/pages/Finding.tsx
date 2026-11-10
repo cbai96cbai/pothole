@@ -3,17 +3,22 @@ import { PointsMap } from "../components/PointsMap";
 import { SeriesChart } from "../components/SeriesChart";
 import { small, usd } from "../format";
 import type { Finding as FindingData } from "../types";
-import { SCREEN_NOTE } from "../wording";
+import { SCREEN_NOTE, UNFINISHED } from "../wording";
 
 export function Finding({ finding: f }: { finding: FindingData }) {
   return (
     <>
       <p><a href="#/findings">All findings</a></p>
       <h1>
-        {f.complaint_type}, {f.borough} board {f.board}
+        {f.complaint_type}, {f.borough} community district {f.board}
       </h1>
       <p className="muted">{f.day}</p>
-      <p>{f.summary}</p>
+      {f.status === "unfinished" ? (
+        <p className="notice">{UNFINISHED}</p>
+      ) : (
+        <p>{f.summary}</p>
+      )}
+      {f.notes.length > 0 && <p className="muted">Not computed: {f.notes.join("; ")}.</p>}
       <dl className="facts">
         <div><dt>Filed</dt><dd>{f.observed}</dd></div>
         <div><dt>Expected</dt><dd>{f.expected.toFixed(1)}</dd></div>
@@ -47,15 +52,19 @@ export function Finding({ finding: f }: { finding: FindingData }) {
         </ul>
       )}
 
-      <h2>What the summary relied on</h2>
-      {f.evidence.length === 0 ? (
-        <p className="muted">No evidence recorded.</p>
-      ) : (
-        <ul>
-          {f.evidence.map((e, i) => (
-            <li key={i}><code>{e.tool}</code>: {e.excerpt}</li>
-          ))}
-        </ul>
+      {f.status === "investigated" && (
+        <>
+          <h2>What the summary relied on</h2>
+          {f.evidence.length === 0 ? (
+            <p className="muted">No evidence recorded.</p>
+          ) : (
+            <ul>
+              {f.evidence.map((e, i) => (
+                <li key={i}><code>{e.tool}</code>: {e.excerpt}</li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
 
       <h2>Trace</h2>

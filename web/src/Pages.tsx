@@ -31,7 +31,7 @@ export function Pages({
 function Body({ route, data, finding }: { route: Route; data: SiteData; finding?: FindingData | null }) {
   switch (route.page) {
     case "board":
-      return <Board board={data.board} backtest={data.backtest} nullSimulation={data.nullSimulation} />;
+      return <Board board={data.board} backtest={data.backtest} nullSimulation={data.nullSimulation} facts={data.meta.facts} />;
     case "incidents":
       return <Incidents items={data.incidents.incidents} />;
     case "drills":
@@ -45,7 +45,7 @@ function Body({ route, data, finding }: { route: Route; data: SiteData; finding?
     case "repairs":
       return <Repairs repairs={data.repairs} />;
     case "about":
-      return <About delay={data.delay} nullSimulation={data.nullSimulation} />;
+      return <About delay={data.delay} nullSimulation={data.nullSimulation} facts={data.meta.facts} />;
     case "notfound":
       return <NotFound path={route.path} />;
   }

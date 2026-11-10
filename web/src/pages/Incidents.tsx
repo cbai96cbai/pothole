@@ -23,7 +23,9 @@ export function IncidentList({ items, empty }: { items: IncidentItem[]; empty: s
             Cost {usd(i.ai_cost)}.
           </p>
           {i.repair.url ? (
-            <a href={i.repair.url} rel="noopener">The pull request or issue</a>
+            <a href={i.repair.url} rel="noopener">
+              {i.repair.action === "patch" ? "The pull request" : "The issue"}
+            </a>
           ) : (
             <span className="muted">No pull request or issue was opened.</span>
           )}

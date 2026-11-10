@@ -72,13 +72,32 @@ if (data.drills.drills.length > 0) {
 expect(text("#/findings").includes("Nothing notable today") === data.findingsIndex.days.some((d) => d.findings.length === 0), "findings: quiet days not shown");
 expect(text("#/repairs").includes("Rule-based fixer"), "repairs: no baseline");
 if (!data.repairs.agent_run) expect(text("#/repairs").includes("not yet run"), "repairs: no 'not yet run' for the agent");
-expect(text("#/").includes("$4 a month"), "board: monthly cost limit not stated");
-expect(text("#/about").includes("$4 a month"), "about: monthly cost limit not stated");
-expect(text("#/").includes("Simulated quiet days") && text("#/").includes("Backtest"), "board: quiet-day rate or backtest missing");
+const f = data.meta.facts;
+const limit = `$${Number(f.monthly_limit).toFixed(2)} a month`;
+expect(text("#/").includes(limit), "board: monthly cost limit not stated from the data");
+expect(text("#/about").includes(limit), "about: monthly cost limit not stated from the data");
+for (const figure of [f.window_days, f.complaint_types, f.districts, f.max_investigations]) {
+  expect(text("#/about").includes(String(figure)), `about: ${figure} from the facts is not shown`);
+}
+expect(!/repairs (itself|its own)|fixes itself/i.test(text("#/about")), "about: says the pipeline repairs itself");
+expect(text("#/about").includes("reviews and merges"), "about: repairs are not described as reviewed pull requests");
+expect(text("#/").includes("On simulated quiet days") && text("#/").includes("On past days"), "board: quiet-day rate or backtest missing");
+const UNFINISHED = "The investigation did not finish; only the counts are shown.";
 for (const id of ids) {
   const h = `#/findings/${id}`;
-  expect((pages.get(h) ?? "").includes('aria-label="Daily complaint counts'), `${h}: no series chart`);
-  expect((pages.get(h) ?? "").includes("Map of"), `${h}: no map`);
+  const html = pages.get(h) ?? "";
+  const file = read<Finding>(`findings/${id}.json`);
+  expect(html.includes('aria-label="Daily complaint counts'), `${h}: no series chart`);
+  expect(html.includes("Map of"), `${h}: no map`);
+  if (file.status === "unfinished") {
+    expect(html.includes(UNFINISHED), `${h}: unfinished finding not marked`);
+    expect(!html.includes("What the summary relied on"), `${h}: unfinished finding lists evidence`);
+    expect(file.summary === "" || !html.includes(file.summary), `${h}: unfinished finding shows a summary`);
+    expect(file.notes.length === 0 || html.includes("Not computed:"), `${h}: notes not shown`);
+  } else {
+    expect(!html.includes(UNFINISHED), `${h}: finished finding marked unfinished`);
+    expect(html.includes("What the summary relied on") && html.includes(file.summary), `${h}: summary or evidence missing`);
+  }
 }
 
 // link crawl: every internal link goes to a real page, every other link is https

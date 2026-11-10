@@ -31,12 +31,12 @@ body {
   font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 a { color: var(--accent); }
-main, .top { max-width: 52rem; margin: 0 auto; padding: 0 16px; }
-main { padding-bottom: 4rem; }
+main { max-width: 52rem; margin: 0 auto; padding: 0 16px 4rem; }
 h1 { font-size: 1.7rem; margin: 1.2rem 0 0.6rem; }
 h2 { font-size: 1.25rem; margin: 2rem 0 0.5rem; }
 h3 { font-size: 1.05rem; margin: 1rem 0 0.3rem; }
-.top { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; padding-top: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--line); max-width: none; }
+.top { border-bottom: 1px solid var(--line); padding: 14px 0 10px; }
+.top .inner { max-width: 52rem; margin: 0 auto; padding: 0 16px; display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; }
 .brand { font-weight: 700; font-size: 1.2rem; color: var(--fg); text-decoration: none; }
 nav { display: flex; flex-wrap: wrap; gap: 4px 16px; }
 nav a { text-decoration: none; padding: 4px 0; border-bottom: 2px solid transparent; }
@@ -73,7 +73,7 @@ figure { margin: 0; }
 .chart .mark { fill: var(--bad); stroke: var(--bg); stroke-width: 2; }
 .chart .axis { stroke: var(--line); }
 .chart .expected { stroke: var(--muted); stroke-dasharray: 4 4; }
-.chart .tick { fill: var(--muted); font-size: 11px; }
+.chart .tick { fill: var(--muted); font-size: 12px; }
 .map { height: min(60vh, 380px); border: 1px solid var(--line); border-radius: 8px; }
 pre { overflow-x: auto; background: var(--card); border: 1px solid var(--line); padding: 10px; font-size: 0.8rem; }
 details { margin: 6px 0; }
@@ -83,3 +83,5 @@ code { font-size: 0.9em; }
   h1 { font-size: 1.4rem; }
   .facts dd { font-size: 1.1rem; }
 }
+.chart svg { overflow: visible; }
+.rates th, .rates td { padding-right: 16px; }

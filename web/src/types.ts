@@ -36,7 +36,6 @@ export interface Board {
   latest_day: LatestDay | null;
   month: string | null;
   month_ai_cost: string;
-  monthly_limit: string;
 }
 export interface Repair {
   action: string;
@@ -171,7 +170,23 @@ export interface NullSimulation {
 export interface Runs {
   runs: RunSummary[];
 }
+export interface Facts {
+  window_days: number;
+  analysis_lag_days: number;
+  complaint_types: number;
+  districts: number;
+  max_investigations: number;
+  calls_per_run: number;
+  max_cost_per_call: string;
+  run_envelope: string;
+  run_ceiling: string;
+  ceiling_days: number;
+  monthly_limit: string;
+  price_input_per_million: string;
+  price_output_per_million: string;
+}
 export interface Meta {
+  facts: Facts;
   generated: string;
   last_success_finished: string | null;
   last_success_run_id: string | null;
@@ -197,8 +212,10 @@ export interface Finding {
   points: [number, number][];
   weather: { precip_mm: number | null; tmax_c: number | null; source: string } | null;
   events: { name: string; type: string; start: string; end: string }[];
+  status: "investigated" | "unfinished";
   trace: Record<string, unknown>[];
   cost: string;
+  notes: string[];
 }
 
 export interface SiteData {

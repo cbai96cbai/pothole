@@ -1,7 +1,8 @@
-import { num, small } from "../format";
+import { Counts } from "../components/Counts";
+import { small } from "../format";
 import { findingHref } from "../routes";
 import type { FindingsIndex } from "../types";
-import { NOTHING_NOTABLE, SCREEN_NOTE } from "../wording";
+import { NOTHING_NOTABLE, SCREEN_NOTE, UNFINISHED } from "../wording";
 
 export function Findings({ index }: { index: FindingsIndex }) {
   return (
@@ -13,7 +14,7 @@ export function Findings({ index }: { index: FindingsIndex }) {
         <section key={d.day} className="day">
           <h2>{d.day}</h2>
           <p className="muted">
-            {num(d.tested)} series tested, {d.cleared} cleared the bar.
+            <Counts tested={d.tested} cleared={d.cleared} />.
             {d.skipped_reason ? ` Skipped: ${d.skipped_reason}.` : ""}
           </p>
           {d.findings.length === 0 ? (
@@ -23,14 +24,14 @@ export function Findings({ index }: { index: FindingsIndex }) {
               <article key={f.id} className="card">
                 <h3>
                   <a href={findingHref(f.id)}>
-                    {f.complaint_type}, {f.borough} board {f.board}
+                    {f.complaint_type}, {f.borough} community district {f.board}
                   </a>
                 </h3>
                 <p>
                   {f.observed} filed against {f.expected.toFixed(1)} expected ({f.ratio.toFixed(1)}x,
                   screen score q = {small(f.q)}).
                 </p>
-                <p>{f.summary}</p>
+                {f.summary ? <p>{f.summary}</p> : <p className="muted">{UNFINISHED}</p>}
               </article>
             ))
           )}

@@ -9,14 +9,16 @@ export function Layout({ route, meta, children }: { route: Route; meta: Meta; ch
   return (
     <>
       <header className="top">
-        <a className="brand" href="#/">Pothole</a>
-        <nav aria-label="Pages">
-          {NAV.map((n) => (
-            <a key={n.href} href={n.href} aria-current={n.page === current ? "page" : undefined}>
-              {n.label}
-            </a>
-          ))}
-        </nav>
+        <div className="inner">
+          <a className="brand" href="#/">Pothole</a>
+          <nav aria-label="Pages">
+            {NAV.map((n) => (
+              <a key={n.href} href={n.href} aria-current={n.page === current ? "page" : undefined}>
+                {n.label}
+              </a>
+            ))}
+          </nav>
+        </div>
       </header>
       <main>
         <LastRun meta={meta} />

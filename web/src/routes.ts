@@ -38,3 +38,16 @@ export function match(hash: string): Route {
   }
   return { page: "notfound", path };
 }
+
+export function title(route: Route): string {
+  switch (route.page) {
+    case "board": return "Pothole: status";
+    case "incidents": return "Pothole: incidents";
+    case "drills": return "Pothole: drills";
+    case "findings": return "Pothole: findings";
+    case "finding": return `Pothole: finding ${route.id}`;
+    case "repairs": return "Pothole: repairs";
+    case "about": return "Pothole: about";
+    case "notfound": return "Pothole: page not found";
+  }
+}

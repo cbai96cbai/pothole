@@ -2,6 +2,12 @@ import { pct } from "../format";
 import type { RepairSummary, Repairs as RepairsData } from "../types";
 import { NOT_YET_RUN } from "../wording";
 
+const EXPECTED: Record<string, string> = {
+  patch: "propose a fix",
+  issue: "open an issue",
+  no_change: "leave unchanged",
+  nothing: "nothing to do",
+};
 const rate = (r: { rate: number | null } | null) => (r ? pct(r.rate) : "n/a");
 const frac = (r: { correct: number; of: number } | null) => (r ? `${r.correct} of ${r.of}` : "n/a");
 
@@ -53,7 +59,7 @@ function Families({ rows }: { rows: RepairSummary[] }) {
           {names.map((n) => (
             <tr key={n}>
               <td>{n.replace(/_/g, " ")}</td>
-              <td>{rows[0]?.per_family[n]?.expected ?? ""}</td>
+              <td>{(EXPECTED[rows[0]?.per_family[n]?.expected ?? ""] ?? rows[0]?.per_family[n]?.expected) ?? ""}</td>
               {rows.map((r) => {
                 const f = r.per_family[n];
                 return <td key={r.repairer}>{f ? `${f.correct} of ${f.cases}` : "n/a"}</td>;
@@ -74,9 +80,9 @@ export function Repairs({ repairs }: { repairs: RepairsData }) {
       <p>
         Each case is a <strong>Drill</strong>: a known fault planted in recorded data, then handed to
         a repairer, which must propose a fix, open an issue, or leave things alone. A judge then
-        checks the result against the data. The rule-based fixer uses fixed rules and no AI; it is
-        the baseline the agent has to beat. The development split was used while building; the test
-        split is run once.
+        checks the result automatically against a clean reference. The rule-based fixer uses fixed
+        rules and no AI; it is the baseline the agent has to beat. The cases are split into a
+        development set and a test set.
       </p>
       {!repairs.agent_run && (
         <p className="notice">Agent results: {NOT_YET_RUN}. Only the rule-based fixer is shown.</p>
