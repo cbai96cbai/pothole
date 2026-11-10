@@ -15,6 +15,8 @@ from datetime import date
 from pathlib import Path
 from typing import Literal
 
+import yaml
+
 from pothole.repair import render
 from pothole.repair.outcome import RepairOutcome
 from pothole.repair.validate import case_day
@@ -29,14 +31,14 @@ BOT_EMAIL = "41898282+github-actions[bot]@users.noreply.github.com"
 PYTEST = ["uv", "run", "pytest", "-q"]  # the whole suite, regression cases included
 
 
-def check_spec_command(batch_dir: str) -> list[str]:
+def check_spec_command(spec_path: str, batch_dir: str) -> list[str]:
     return [
         "uv",
         "run",
         "pothole",
         "check-spec",
         "--spec",
-        render.SPEC_PATH,
+        spec_path,
         "--batches",
         batch_dir,
     ]
@@ -60,25 +62,56 @@ def _name(drill: bool, day: date, suffix: str) -> str:
     return f"{'drill' if drill else 'repair'}/{day.isoformat()}-{suffix}"
 
 
+@dataclass(frozen=True)
+class Written:
+    paths: list[str]  # to commit, relative to the root
+    spec_path: str  # the patched spec, relative to the root
+    rows_dir: Path  # the case's rows as a dated batch
+
+
 def write_patch_files(
-    root: Path, branch: str, spec: PipelineSpec, outcome: RepairOutcome
-) -> tuple[list[str], Path]:
+    root: Path,
+    branch: str,
+    spec: PipelineSpec,
+    outcome: RepairOutcome,
+    *,
+    drill: bool,
+    verdict: str | None,
+) -> Written:
     """Write the patched spec, the regression case and the case's rows as a dated batch of their
-    own (so check-spec can run the patched spec on them). Returns the paths to commit (relative
-    to `root`) and the batch folder."""
+    own (so check-spec can run the patched spec on them). A real repair changes the live spec and
+    adds a case under tests/regression; a drill writes only under drills/runs/<branch>/, the
+    patched pinned spec, the case and the judge's verdict, and never touches the live spec."""
     assert outcome.regression is not None
     ident = branch.replace("/", "-")
     patched = ops.apply(spec, outcome.ops)
-    (root / "pipelines").mkdir(exist_ok=True)
-    (root / "tests" / "regression").mkdir(parents=True, exist_ok=True)
-    (root / render.SPEC_PATH).write_text(patched.to_yaml())
-    case = root / "tests" / "regression" / f"{ident}.json"
-    case.write_text(render.regression_file(outcome.regression))
-    rows_dir = root / "tests" / "regression" / "batches" / ident
+    if drill:
+        folder = root / render.DRILL_DIR / ident
+        spec_file, case_file, rows_dir = (
+            folder / "spec.yaml",
+            folder / "case.json",
+            folder / "batches",
+        )
+        committed = [folder]
+    else:
+        spec_file = root / render.SPEC_PATH
+        case_file = root / "tests" / "regression" / f"{ident}.json"
+        rows_dir = root / "tests" / "regression" / "batches" / ident
+        committed = [spec_file, case_file, rows_dir]
+    for directory in (spec_file.parent, case_file.parent):
+        directory.mkdir(parents=True, exist_ok=True)
     rows_dir.mkdir(parents=True)
+    if drill:
+        (spec_file.parent / "verdict.txt").write_text((verdict or "") + "\n")
+    spec_file.write_text(patched.to_yaml())
+    case_file.write_text(render.regression_file(outcome.regression, patched))
     day = case_day(patched, outcome.regression.rows).isoformat()
     batches.dump(rows_dir / f"{day}.jsonl.gz", outcome.regression.rows)
-    return [render.SPEC_PATH, *(str(p.relative_to(root)) for p in (case, rows_dir))], rows_dir
+    return Written(
+        [str(p.relative_to(root)) for p in committed],
+        str(spec_file.relative_to(root)),
+        rows_dir,
+    )
 
 
 class LocalSink:
@@ -106,7 +139,7 @@ class LocalSink:
         branch = _name(drill, day, secrets.token_hex(3))
         root = self.dir / f"pr-{branch.replace('/', '-')}"
         root.mkdir(parents=True)
-        write_patch_files(root, branch, spec, outcome)
+        write_patch_files(root, branch, spec, outcome, drill=drill, verdict=verdict)
         body = render.pr_body(
             outcome, before, after, drill=drill, verdict=verdict, sha=None, tests=None
         )
@@ -206,6 +239,19 @@ class GitHubSink:
             self._run(["git", "branch", "-D", branch])
             shutil.rmtree(work.parent, ignore_errors=True)
 
+    def _changed_since_diagnosis(self, work: Path, diagnosed: PipelineSpec) -> str | None:
+        """Why a real patch cannot be applied to the base as it stands, or None when it can: the
+        patch is applied only to the spec the agent diagnosed, identified by its digest."""
+        try:
+            base = PipelineSpec.load(work / render.SPEC_PATH)
+        except (OSError, ValueError, yaml.YAMLError) as exc:
+            return (
+                f"The spec on {self.base} cannot be read ({type(exc).__name__}); no patch applied."
+            )
+        if render.spec_digest(base) != render.spec_digest(diagnosed):
+            return f"The spec changed since diagnosis: {self.base} is not the spec the agent saw."
+        return None
+
     def _propose(
         self,
         branch: str,
@@ -219,14 +265,22 @@ class GitHubSink:
         verdict: str | None,
     ) -> Filed:
         assert outcome.regression is not None
-        paths, rows_dir = write_patch_files(work, branch, spec, outcome)
-        self._must(["git", "add", *paths], work)
+        if not drill:
+            changed = self._changed_since_diagnosis(work, spec)
+            if changed:
+                return self.open_issue(changed, before, day=day, drill=drill)
+            spec = PipelineSpec.load(work / render.SPEC_PATH)  # the very spec that was diagnosed
+        written = write_patch_files(work, branch, spec, outcome, drill=drill, verdict=verdict)
+        self._must(["git", "add", *written.paths], work)
         who = ["-c", f"user.name={BOT_NAME}", "-c", f"user.email={BOT_EMAIL}"]
         message = render.pr_title(outcome, drill)
         self._must(["git", *who, "commit", "-m", message], work)
         sha = self._must(["git", "rev-parse", "HEAD"], work)
         output = ""
-        gates = [PYTEST, check_spec_command(str(rows_dir.relative_to(work)))]
+        gates = [
+            PYTEST,
+            check_spec_command(written.spec_path, str(written.rows_dir.relative_to(work))),
+        ]
         for gate in gates:
             # the branch's own source, whatever else is installed in the environment
             done = self._run(gate, work, {"PYTHONPATH": str(work / "src")})

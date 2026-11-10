@@ -94,3 +94,9 @@ def reproduces(spec: PipelineSpec, case: RegressionCase) -> bool:
         engine.run(spec, case.rows, [], case_now(case_day(spec, case.rows))).table
     )
     return bool(json.loads(json.dumps(got)) == json.loads(json.dumps(case.expected)))
+
+
+def case_reproduces(data: dict[str, Any]) -> bool:
+    """A regression case file: the spec it carries turns its rows into its expected rows."""
+    spec = PipelineSpec.from_yaml(data["spec"])
+    return reproduces(spec, RegressionCase(data["rows"], data["expected"]))

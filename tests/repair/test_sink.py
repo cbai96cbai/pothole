@@ -12,7 +12,7 @@ import pytest
 from pothole.repair import render
 from pothole.repair.outcome import RegressionCase, RepairOutcome, table_rows
 from pothole.repair.sink import GitHubSink, LocalSink
-from pothole.spec import engine
+from pothole.spec import engine, ops
 from pothole.spec.model import PipelineSpec
 from pothole.spec.ops import MapField
 
@@ -52,13 +52,18 @@ def test_local_sink_writes_a_pull_request_and_an_issue(tmp_path, spec, outcome, 
     pr = sink.open_pr(outcome, spec, results, [], day=DAY, drill=True, verdict="matches")
     root = Path(pr.ref)
     assert re.fullmatch(r"drill/2026-11-08-[0-9a-f]{6}", pr.branch or "")
-    assert "agency_name" in (root / render.SPEC_PATH).read_text()
+    folder = root / "drills" / "runs" / (pr.branch or "").replace("/", "-")
+    assert "agency_name" in (folder / "spec.yaml").read_text()
+    assert (folder / "verdict.txt").read_text().strip() == "matches"
+    assert not (root / render.SPEC_PATH).exists() and not (root / "tests").exists()
     body = (root / "PR.md").read_text()
     assert "Drill" in body and "matches" in body and "required" in body
-    case = json.loads(next((root / "tests" / "regression").glob("*.json")).read_text())
-    assert case["spec"] == render.SPEC_PATH and len(case["rows"]) == 4
+    case = json.loads((folder / "case.json").read_text())
+    assert "agency_name" in case["spec"] and len(case["rows"]) == 4  # the spec it was written for
     second = sink.open_pr(outcome, spec, results, [], day=DAY)
     assert "Proposed, not judged" in (Path(second.ref) / "PR.md").read_text()
+    assert "agency_name" in (Path(second.ref) / render.SPEC_PATH).read_text()
+    assert not (Path(second.ref) / "drills").exists()
     issue = sink.open_issue("Source down", results, day=DAY)
     assert "Source down" in Path(issue.ref).read_text()
 
@@ -226,3 +231,77 @@ def test_outage_issue_has_reason_and_failing_checks(tmp_path, results):
     filed = sink_for(remote).open_issue("The source did not answer.", results, day=DAY)
     assert filed.kind == "issue" and "did not answer" in remote.bodies[0]
     assert "required" in remote.bodies[0]
+
+
+def changed_files(remote: Remote, branch: str) -> list[str]:
+    return remote.git_out("diff", "--name-only", f"main...{branch}").splitlines()
+
+
+def test_a_drill_pull_request_writes_only_under_its_own_folder(tmp_path, spec, outcome, results):
+    remote = Remote(tmp_path, gates="real")
+    live_before = remote.git_out("show", f"main:{render.SPEC_PATH}")
+    filed = sink_for(remote).open_pr(
+        outcome, spec, results, [], day=DAY, drill=True, verdict="correct: exact"
+    )
+    assert filed.kind == "pr", remote.bodies
+    folder = f"drills/runs/{(filed.branch or '').replace('/', '-')}/"
+    files = changed_files(remote, filed.branch or "")
+    assert files and all(f.startswith(folder) for f in files), files
+    assert {f.removeprefix(folder) for f in files if "/" not in f.removeprefix(folder)} == {
+        "spec.yaml",
+        "case.json",
+        "verdict.txt",
+    }
+    assert remote.git_out("show", f"{filed.branch}:{render.SPEC_PATH}") == live_before
+    assert "check-spec" in remote.bodies[0] and f"{folder}spec.yaml" in "".join(
+        " ".join(c) for c in remote.calls if c[:3] == ["uv", "run", "pothole"]
+    )
+
+
+def test_a_real_patch_is_applied_to_the_live_spec_the_agent_diagnosed(
+    tmp_path, spec, failing, results
+):
+    new = make_outcome(spec, failing, "agency_zz")
+    remote = Remote(tmp_path, gates="real")
+    filed = sink_for(remote).open_pr(new, spec, results, [], day=DAY)
+    assert filed.kind == "pr", remote.bodies
+    expected = ops.apply(spec, new.ops).to_yaml()
+    assert remote.git_out("show", f"{filed.branch}:{render.SPEC_PATH}") + "\n" == expected
+    case = json.loads(
+        remote.git_out(
+            "show", f"{filed.branch}:tests/regression/{(filed.branch or '').replace('/', '-')}.json"
+        )
+    )
+    assert case["spec"] == expected
+
+
+def test_a_real_patch_is_refused_when_main_moved_since_the_diagnosis(
+    tmp_path, spec, outcome, results
+):
+    remote = Remote(tmp_path)
+    moved = spec.model_copy(deep=True)
+    moved.column("agency").required = not moved.column("agency").required
+    (remote.repo / render.SPEC_PATH).write_text(moved.to_yaml())
+    git = ["git", "-c", "user.name=t", "-c", "user.email=t@t", "-C", str(remote.repo)]
+    subprocess.run([*git, "commit", "-q", "-am", "someone else changed the spec"], check=True)
+    subprocess.run([*git, "push", "-q", "origin", "HEAD:main"], check=True)
+    before = remote.git_out("rev-parse", "main")
+    filed = sink_for(remote).open_pr(outcome, spec, results, [], day=DAY)
+    assert filed.kind == "issue" and "spec changed since diagnosis" in remote.bodies[0]
+    assert not any(
+        c[:2] == ["git", "push"] or c[:3] == ["gh", "pr", "create"] for c in remote.calls
+    )
+    assert remote.branches() == ["main"] and remote.git_out("rev-parse", "main") == before
+
+
+def test_a_drill_is_not_refused_when_main_moved(tmp_path, spec, outcome, results):
+    remote = Remote(tmp_path)
+    moved = spec.model_copy(deep=True)
+    moved.column("agency").required = not moved.column("agency").required
+    (remote.repo / render.SPEC_PATH).write_text(moved.to_yaml())
+    git = ["git", "-c", "user.name=t", "-c", "user.email=t@t", "-C", str(remote.repo)]
+    subprocess.run([*git, "commit", "-q", "-am", "someone else changed the spec"], check=True)
+    subprocess.run([*git, "push", "-q", "origin", "HEAD:main"], check=True)
+    filed = sink_for(remote).open_pr(outcome, spec, results, [], day=DAY, drill=True, verdict="ok")
+    assert filed.kind == "pr"
+    assert render.SPEC_PATH not in changed_files(remote, filed.branch or "")

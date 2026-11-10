@@ -1,13 +1,16 @@
 """The text of a pull request, an issue and a regression file."""
 
+import hashlib
 import json
 import re
 from typing import Any
 
 from pothole.repair.outcome import RegressionCase, RepairOutcome
 from pothole.spec.checks import CheckResult
+from pothole.spec.model import PipelineSpec
 
 SPEC_PATH = "pipelines/311.yaml"
+DRILL_DIR = "drills/runs"  # a drill's files live here, one folder per branch, never at SPEC_PATH
 NOT_JUDGED = "Proposed, not judged"
 LABELS_REAL = ("repair", "not-judged")
 LABELS_DRILL = ("drill",)
@@ -37,8 +40,15 @@ def ops_block(outcome: RepairOutcome) -> str:
     return fenced("\n".join(o.model_dump_json() for o in outcome.ops))
 
 
-def regression_file(case: RegressionCase) -> str:
-    data: dict[str, Any] = {"spec": SPEC_PATH, "rows": case.rows, "expected": case.expected}
+def spec_digest(spec: PipelineSpec) -> str:
+    """The sha256 of the spec as written out, so two readings of one file agree."""
+    return hashlib.sha256(spec.to_yaml().encode()).hexdigest()
+
+
+def regression_file(case: RegressionCase, spec: PipelineSpec) -> str:
+    """A case carries the spec it was written against (the patched one), inline: it guards that
+    transform whatever the live spec becomes later."""
+    data: dict[str, Any] = {"spec": spec.to_yaml(), "rows": case.rows, "expected": case.expected}
     return json.dumps(data, indent=2, sort_keys=True) + "\n"
 
 
