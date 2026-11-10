@@ -2,6 +2,12 @@ import { useEffect, useRef, useState } from "react";
 
 const STYLE = "https://tiles.openfreemap.org/styles/positron";
 
+declare global {
+  interface Window {
+    __potholeMap?: import("maplibre-gl").Map;
+  }
+}
+
 export function PointsMap({ points }: { points: [number, number][] }) {
   const box = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
@@ -17,18 +23,24 @@ export function PointsMap({ points }: { points: [number, number][] }) {
           import("maplibre-gl/dist/maplibre-gl.css"),
         ]);
         if (gone || !box.current) return;
+        if (import.meta.env.PROD) {
+          maplibre.setWorkerUrl(`${import.meta.env.BASE_URL}maplibre/maplibre-gl-worker.mjs`);
+        }
         const lngLat = points.map(([lat, lon]) => [lon, lat] as [number, number]);
-        map = new maplibre.Map({
+        const made = new maplibre.Map({
           container: box.current,
           style: STYLE,
           center: lngLat[0] ?? [-73.97, 40.73],
           zoom: 11,
           attributionControl: { compact: true },
         });
-        map.addControl(new maplibre.NavigationControl({ showCompass: false }));
-        map.on("load", () => {
-          if (!map) return;
-          map.addSource("pts", {
+        map = made;
+        if (import.meta.env.VITE_TEST_HOOKS === "1") window.__potholeMap = made;
+        made.addControl(new maplibre.NavigationControl({ showCompass: false }));
+        made.on("error", (e) => console.error(`map error (style ${STYLE}):`, e.error));
+        // the points are added after the style has loaded; the view is fitted to them
+        made.on("load", () => {
+          made.addSource("pts", {
             type: "geojson",
             data: {
               type: "FeatureCollection",
@@ -39,24 +51,29 @@ export function PointsMap({ points }: { points: [number, number][] }) {
               })),
             },
           });
-          map.addLayer({
+          made.addLayer({
             id: "pts",
             type: "circle",
             source: "pts",
             paint: {
-              "circle-radius": 5,
+              "circle-radius": 6,
               "circle-color": "#c2410c",
-              "circle-opacity": 0.75,
+              "circle-opacity": 0.8,
               "circle-stroke-color": "#ffffff",
-              "circle-stroke-width": 1,
+              "circle-stroke-width": 1.5,
             },
           });
-          const b = new maplibre.LngLatBounds(lngLat[0], lngLat[0]);
-          lngLat.forEach((c) => b.extend(c));
-          map.fitBounds(b, { padding: 40, maxZoom: 15, duration: 0 });
+          made.resize();
+          const bounds = new maplibre.LngLatBounds(lngLat[0], lngLat[0]);
+          lngLat.forEach((c) => bounds.extend(c));
+          made.fitBounds(bounds, {
+            padding: { top: 50, bottom: 80, left: 50, right: 60 },
+            maxZoom: 15,
+            duration: 0,
+          });
         });
-        map.on("error", () => undefined);
-      } catch {
+      } catch (e) {
+        console.error("the map could not start:", e);
         if (!gone) setFailed(true);
       }
     })();
