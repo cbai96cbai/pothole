@@ -1,12 +1,12 @@
 import pytest
-from helpers import SPEC_PATH, make_row
+from helpers import PINNED_SPEC, make_row
 
 from pothole.spec.model import PipelineSpec
 
 
 @pytest.fixture
 def spec() -> PipelineSpec:
-    return PipelineSpec.load(SPEC_PATH)
+    return PipelineSpec.load(PINNED_SPEC)
 
 
 @pytest.fixture

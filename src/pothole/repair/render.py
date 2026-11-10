@@ -34,7 +34,7 @@ def results_block(results: list[CheckResult]) -> str:
 
 
 def ops_block(outcome: RepairOutcome) -> str:
-    return "\n".join(f"- `{o.model_dump_json()}`" for o in outcome.ops)
+    return fenced("\n".join(o.model_dump_json() for o in outcome.ops))
 
 
 def regression_file(case: RegressionCase) -> str:

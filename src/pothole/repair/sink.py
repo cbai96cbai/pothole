@@ -60,6 +60,27 @@ def _name(drill: bool, day: date, suffix: str) -> str:
     return f"{'drill' if drill else 'repair'}/{day.isoformat()}-{suffix}"
 
 
+def write_patch_files(
+    root: Path, branch: str, spec: PipelineSpec, outcome: RepairOutcome
+) -> tuple[list[str], Path]:
+    """Write the patched spec, the regression case and the case's rows as a dated batch of their
+    own (so check-spec can run the patched spec on them). Returns the paths to commit (relative
+    to `root`) and the batch folder."""
+    assert outcome.regression is not None
+    ident = branch.replace("/", "-")
+    patched = ops.apply(spec, outcome.ops)
+    (root / "pipelines").mkdir(exist_ok=True)
+    (root / "tests" / "regression").mkdir(parents=True, exist_ok=True)
+    (root / render.SPEC_PATH).write_text(patched.to_yaml())
+    case = root / "tests" / "regression" / f"{ident}.json"
+    case.write_text(render.regression_file(outcome.regression))
+    rows_dir = root / "tests" / "regression" / "batches" / ident
+    rows_dir.mkdir(parents=True)
+    day = case_day(patched, outcome.regression.rows).isoformat()
+    batches.dump(rows_dir / f"{day}.jsonl.gz", outcome.regression.rows)
+    return [render.SPEC_PATH, *(str(p.relative_to(root)) for p in (case, rows_dir))], rows_dir
+
+
 class LocalSink:
     """Writes each pull request and issue as a folder or file under `directory`."""
 
@@ -84,11 +105,8 @@ class LocalSink:
             raise ValueError("a pull request needs a patch outcome with a regression case")
         branch = _name(drill, day, secrets.token_hex(3))
         root = self.dir / f"pr-{branch.replace('/', '-')}"
-        (root / "tests" / "regression").mkdir(parents=True)
-        (root / "pipelines").mkdir()
-        (root / render.SPEC_PATH).write_text(ops.apply(spec, outcome.ops).to_yaml())
-        case_file = root / "tests" / "regression" / f"{branch.replace('/', '-')}.json"
-        case_file.write_text(render.regression_file(outcome.regression))
+        root.mkdir(parents=True)
+        write_patch_files(root, branch, spec, outcome)
         body = render.pr_body(
             outcome, before, after, drill=drill, verdict=verdict, sha=None, tests=None
         )
@@ -196,18 +214,7 @@ class GitHubSink:
         verdict: str | None,
     ) -> Filed:
         assert outcome.regression is not None
-        ident = branch.replace("/", "-")
-        (work / "pipelines").mkdir(exist_ok=True)
-        (work / "tests" / "regression").mkdir(parents=True, exist_ok=True)
-        (work / render.SPEC_PATH).write_text(ops.apply(spec, outcome.ops).to_yaml())
-        case = work / "tests" / "regression" / f"{ident}.json"
-        case.write_text(render.regression_file(outcome.regression))
-        # the case's rows as a batch of their own, so check-spec can run the patched spec on them
-        rows_dir = work / "tests" / "regression" / "batches" / ident
-        rows_dir.mkdir(parents=True)
-        when = case_day(ops.apply(spec, outcome.ops), outcome.regression.rows).isoformat()
-        batches.dump(rows_dir / f"{when}.jsonl.gz", outcome.regression.rows)
-        paths = [render.SPEC_PATH, *(str(p.relative_to(work)) for p in (case, rows_dir))]
+        paths, rows_dir = write_patch_files(work, branch, spec, outcome)
         self._must(["git", "add", *paths], work)
         who = ["-c", f"user.name={BOT_NAME}", "-c", f"user.email={BOT_EMAIL}"]
         message = render.pr_title(outcome, drill)

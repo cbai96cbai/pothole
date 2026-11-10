@@ -19,7 +19,7 @@ FAILING_DAY = "2026-11-07.jsonl.gz"
 
 @pytest.fixture(scope="session")
 def spec() -> PipelineSpec:
-    return PipelineSpec.load(ROOT / "pipelines" / "311.yaml")
+    return PipelineSpec.load(ROOT / "fixtures" / "batches" / "spec.yaml")
 
 
 @pytest.fixture(scope="session")

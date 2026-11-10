@@ -2,7 +2,7 @@ from datetime import datetime
 from pathlib import Path
 
 NOW = datetime(2026, 11, 10, 12, 0, 0)
-SPEC_PATH = Path(__file__).parents[2] / "pipelines" / "311.yaml"
+PINNED_SPEC = Path(__file__).parents[2] / "fixtures" / "batches" / "spec.yaml"
 
 
 def make_row(i: int, **over: str) -> dict[str, str]:

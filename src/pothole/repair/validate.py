@@ -59,13 +59,12 @@ def failing_columns(spec: PipelineSpec, results: list[CheckResult]) -> set[str]:
 
 
 def case_day(spec: PipelineSpec, rows: list[dict[str, str]]) -> date:
-    """The day the case's rows were created: the latest `created_date` among them."""
-    source = spec.column("created_date").source
-    days = [r[source][:10] for r in rows if r.get(source)]
-    try:
-        return max(date.fromisoformat(d) for d in days)
-    except ValueError as exc:
-        raise ToolError("the chosen rows have no readable created_date") from exc
+    """The day the case's rows were created: the latest `created_date` as the spec reads it."""
+    created = engine.run(spec, rows, [], datetime(2100, 1, 1)).table.column("created_date")
+    newest = max((v for v in created.to_pylist() if v is not None), default=None)
+    if newest is None:
+        raise ToolError("the chosen rows have no readable created_date")
+    return newest.date()  # type: ignore[no-any-return]
 
 
 def case_now(day: date) -> datetime:

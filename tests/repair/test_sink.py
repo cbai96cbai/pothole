@@ -52,11 +52,11 @@ def test_local_sink_writes_a_pull_request_and_an_issue(tmp_path, spec, outcome, 
     pr = sink.open_pr(outcome, spec, results, [], day=DAY, drill=True, verdict="matches")
     root = Path(pr.ref)
     assert re.fullmatch(r"drill/2026-11-08-[0-9a-f]{6}", pr.branch or "")
-    assert "agency_name" in (root / "pipelines" / "311.yaml").read_text()
+    assert "agency_name" in (root / render.SPEC_PATH).read_text()
     body = (root / "PR.md").read_text()
     assert "Drill" in body and "matches" in body and "required" in body
     case = json.loads(next((root / "tests" / "regression").glob("*.json")).read_text())
-    assert case["spec"] == "pipelines/311.yaml" and len(case["rows"]) == 4
+    assert case["spec"] == render.SPEC_PATH and len(case["rows"]) == 4
     second = sink.open_pr(outcome, spec, results, [], day=DAY)
     assert "Proposed, not judged" in (Path(second.ref) / "PR.md").read_text()
     issue = sink.open_issue("Source down", results, day=DAY)
@@ -86,7 +86,7 @@ class Remote:
         subprocess.run(["git", "init", "-q", "--bare", "-b", "main", str(self.origin)], check=True)
         subprocess.run(["git", "clone", "-q", str(self.origin), str(self.repo)], check=True)
         (self.repo / "pipelines").mkdir()
-        shutil.copy(ROOT / "pipelines" / "311.yaml", self.repo / "pipelines" / "311.yaml")
+        shutil.copy(ROOT / "fixtures/batches/spec.yaml", self.repo / render.SPEC_PATH)
         (self.repo / "tests" / "regression").mkdir(parents=True)
         shutil.copy(ROOT / "tests/regression/test_cases.py", self.repo / "tests/regression/")
         subprocess.run([*git, "-C", str(self.repo), "add", "."], check=True)
@@ -193,8 +193,8 @@ def test_both_gates_really_run_for_a_rename_to_a_field_the_old_fixtures_lack(
     body = remote.bodies[0]
     assert "pytest -q" in body and "check-spec" in body and "ok" in body
     tree = remote.git_out("ls-tree", "-r", "--name-only", filed.branch or "")
-    assert "tests/regression/batches/" in tree and "pipelines/311.yaml" in tree
-    assert "agency_zz" in remote.git_out("show", f"{filed.branch}:pipelines/311.yaml")
+    assert "tests/regression/batches/" in tree and render.SPEC_PATH in tree
+    assert "agency_zz" in remote.git_out("show", f"{filed.branch}:{render.SPEC_PATH}")
 
 
 def test_outage_issue_has_reason_and_failing_checks(tmp_path, results):

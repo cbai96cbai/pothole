@@ -233,3 +233,20 @@ def test_old_tool_results_are_trimmed_to_fit_the_input_limit(spec, failing, fail
     assert any(
         "[trimmed]" in m["content"] for m in model.sent[1]["messages"] if m["role"] == "tool"
     )
+
+
+def test_a_created_date_reformat_can_be_submitted(spec, failing, fields):
+    from datetime import datetime
+
+    from pothole.spec import engine
+
+    def us(raw: str) -> str:
+        return datetime.fromisoformat(raw).strftime("%m/%d/%Y %H:%M:%S")
+
+    rows = [dict(r, created_date=us(r["created_date"])) for r in failing.rows]
+    checks = engine.run(spec, rows, [], failing.now).checks
+    fmt = {"op": "set_format", "column": "created_date", "format": "%m/%d/%Y %H:%M:%S"}
+    sub = {"action": "patch", "ops": [RENAME, fmt], "regression_keys": keys(failing), "reason": "r"}
+    model = Scripted([reply(call("submit", sub))])
+    out = repair(spec, rows, checks, fields, model, now=failing.now)  # type: ignore[arg-type]
+    assert out.action == "patch" and out.regression is not None
