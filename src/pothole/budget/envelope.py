@@ -1,6 +1,6 @@
 """The most one daily run may spend, computed from its configuration.
 
-The run refuses to start when the envelope is above the ceiling: $4 a month over 31 days.
+The run refuses to start when the envelope is above the ceiling: the monthly limit over 31 days.
 """
 
 from collections.abc import Sequence
@@ -11,7 +11,7 @@ from pothole.budget.limits import DEFAULT_LIMITS, PRICE, CallLimits, Price, call
 
 MONTHLY_LIMIT = Decimal("4")
 CEILING_DAYS = 31
-CEILING = Decimal("0.129")  # MONTHLY_LIMIT / CEILING_DAYS, rounded to the cent of a cent
+CEILING = MONTHLY_LIMIT / CEILING_DAYS  # what one run may spend: the month's limit over its days
 
 
 class EnvelopeExceeded(Exception):
