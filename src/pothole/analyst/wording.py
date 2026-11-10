@@ -1,14 +1,16 @@
 """A screen for causal wording in a summary. It is a screen, not a guarantee: the prompt's
 instruction to say "associated with" is the main control, and a paraphrase can get past a list.
 
-The text is normalised first (Unicode NFKC, case-folded, invisible characters dropped, dashes and
-every kind of whitespace read as one space) so spacing and hyphen tricks do not hide a phrase.
+The text is normalised first (Unicode NFKC, case-folded, dashes and every kind of whitespace read
+as one space) so spacing and hyphen tricks do not hide a phrase. An invisible character can join
+two words or split one, so the text is checked both with invisible characters read as a space and
+with them dropped.
 """
 
 import re
 import unicodedata
 
-_PHRASES = (
+PHRASES = (
     "caused",
     "causing",
     "cause of",
@@ -24,18 +26,22 @@ _PHRASES = (
     "as a result",
     "triggered by",
 )
-_BANNED = re.compile(r"\b(" + "|".join(_PHRASES) + r")\b")
+_BANNED = re.compile(r"\b(" + "|".join(PHRASES) + r")\b")
 _DASHES = re.compile(r"[‐-―−\-_]")
 _SPACE = re.compile(r"\s+")
 
 
-def normalise(text: str) -> str:
+def normalise(text: str, invisible: str = "") -> str:
+    """`invisible` replaces each invisible format character: "" drops it, " " reads it as one."""
     folded = unicodedata.normalize("NFKC", text).casefold()
-    folded = "".join(ch for ch in folded if unicodedata.category(ch) != "Cf")
+    folded = "".join(invisible if unicodedata.category(ch) == "Cf" else ch for ch in folded)
     return _SPACE.sub(" ", _DASHES.sub(" ", folded)).strip()
 
 
 def causal_phrase(text: str) -> str | None:
     """The first banned phrase in `text`, or None."""
-    hit = _BANNED.search(normalise(text))
-    return hit.group(1) if hit else None
+    for invisible in ("", " "):
+        hit = _BANNED.search(normalise(text, invisible))
+        if hit:
+            return hit.group(1)
+    return None

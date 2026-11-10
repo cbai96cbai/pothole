@@ -3,6 +3,7 @@
 from typing import Any
 
 from pothole.analyst.tools import BREAKDOWN_BY, MAX_DAYS, MAX_TOP
+from pothole.analyst.wording import PHRASES
 
 SYSTEM_PROMPT = """\
 You look into one unusual day in the public NYC 311 service-request data: one complaint type in \
@@ -16,8 +17,8 @@ in the district that day).
 
 Rules for the finding:
 - Say what the spike is associated with, using only what the tools returned. Use the words \
-"associated with" or "coincided with". Never write "caused", "because of" or "due to": a \
-submission containing them is refused.
+"associated with" or "coincided with". Never write any of these: {banned}. A submission \
+containing one is refused.
 - If the tools show nothing that goes with the spike, say so plainly. Do not guess.
 - Two to four plain sentences, at most 600 characters, with the numbers you rely on.
 - evidence lists the tool_call_id of each tool call the summary relies on (ids you were given in \
@@ -25,7 +26,7 @@ this conversation). Set wording_check to true only after you re-read the summary
 words.
 Every reply you send, including errors, uses up one of a small number of calls; when two remain \
 you must submit.\
-"""
+""".format(banned=", ".join(f'"{p}"' for p in PHRASES))
 
 CALLS_LEFT = "You have {n} calls left."
 SUBMIT_NEXT = "You have 2 calls left: call submit_finding now."
@@ -73,7 +74,7 @@ TOOLS: list[dict[str, Any]] = [
     _tool("events", "City-permitted events in this district that overlap the spike day.", {}, []),
     _tool(
         "submit_finding",
-        "Submit the finding. Refused if it says caused, because of or due to.",
+        "Submit the finding. Refused if it says any of: " + ", ".join(PHRASES) + ".",
         {
             "summary": {"type": "string", "description": "2 to 4 plain sentences, 600 chars max"},
             "evidence": {
