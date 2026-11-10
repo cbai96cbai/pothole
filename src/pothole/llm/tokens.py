@@ -49,9 +49,13 @@ def _message_tokens(message: Mapping[str, Any]) -> int:
 
 
 def count_input_tokens(
-    messages: Sequence[Mapping[str, Any]], tools: Sequence[Mapping[str, Any]] | None
+    messages: Sequence[Mapping[str, Any]],
+    tools: Sequence[Mapping[str, Any]] | None,
+    tool_choice: Mapping[str, Any] | str | None = None,
 ) -> int:
     total = FRAMING + sum(_message_tokens(m) for m in messages)
     if tools:
         total += count_text_tokens(json.dumps(tools))
+    if tool_choice is not None:
+        total += count_text_tokens(json.dumps(tool_choice))
     return total

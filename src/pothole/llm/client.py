@@ -106,8 +106,9 @@ class LLMClient:
         messages: Sequence[Mapping[str, Any]],
         tools: Sequence[Mapping[str, Any]] | None = None,
         limits: CallLimits = DEFAULT_LIMITS,
+        tool_choice: Mapping[str, Any] | str | None = None,
     ) -> CallResult:
-        counted = count_input_tokens(messages, tools)
+        counted = count_input_tokens(messages, tools, tool_choice)
         if counted > limits.input_tokens:
             raise InputTooLarge(f"{counted} input tokens exceed the {limits.input_tokens} limit")
         max_cost = call_max_cost(limits)
@@ -120,6 +121,10 @@ class LLMClient:
             kwargs["reasoning_effort"] = limits.reasoning_effort
         if tools:
             kwargs["tools"] = list(tools)
+        if tool_choice is not None:
+            kwargs["tool_choice"] = (
+                tool_choice if isinstance(tool_choice, str) else dict(tool_choice)
+            )
         started = time.monotonic()
         completion = self._send(kwargs, max_cost)
         latency = time.monotonic() - started

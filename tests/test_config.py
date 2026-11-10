@@ -16,6 +16,11 @@ def test_defaults_when_env_empty(monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     assert s.state == tmp_path / ".cache" / "pothole"
 
 
+def test_default_state_is_expanded(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("HOME", str(tmp_path))
+    assert "~" not in str(Settings().state)
+
+
 def test_env_values_and_empty_means_default(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("AZURE_OPENAI_ENDPOINT", "https://x")
     monkeypatch.setenv("AZURE_OPENAI_API_KEY", "k")

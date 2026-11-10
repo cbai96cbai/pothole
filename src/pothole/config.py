@@ -11,7 +11,7 @@ class Settings:
     azure_api_key: str = ""
     deployment: str = "pothole-agent"
     socrata_app_token: str | None = None
-    state: Path = Path("~/.cache/pothole")
+    state: Path = Path("~/.cache/pothole").expanduser()
 
     @classmethod
     def from_env(cls) -> "Settings":

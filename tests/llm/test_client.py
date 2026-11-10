@@ -184,3 +184,22 @@ def test_tools_passed_through_and_tool_calls_in_message() -> None:
     assert sdk.calls[0]["tools"] == TOOLS
     assert r.message["tool_calls"][0]["function"]["name"] == "f"
     assert r.finish_reason == "tool_calls"
+
+
+def test_tool_choice_reaches_the_sdk_only_when_given() -> None:
+    force = {"type": "function", "function": {"name": "submit"}}
+    c, sdk = client([ok(), ok()])
+    c.call(MSGS, TOOLS)
+    c.call(MSGS, TOOLS, tool_choice=force)
+    assert "tool_choice" not in sdk.calls[0]
+    assert sdk.calls[1]["tool_choice"] == force and sdk.calls[1]["tools"] == TOOLS
+
+
+def test_tool_choice_is_counted_and_survives_a_retry() -> None:
+    from pothole.llm.tokens import count_input_tokens
+
+    force = {"type": "function", "function": {"name": "submit"}}
+    assert count_input_tokens(MSGS, TOOLS, force) > count_input_tokens(MSGS, TOOLS)
+    c, sdk = client([status_error(429), ok()])
+    c.call(MSGS, TOOLS, tool_choice="required")
+    assert [k["tool_choice"] for k in sdk.calls] == ["required", "required"]
