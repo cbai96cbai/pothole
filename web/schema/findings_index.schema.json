@@ -7,6 +7,10 @@
           "title": "Id",
           "type": "string"
         },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
         "borough": {
           "title": "Borough",
           "type": "string"
@@ -49,6 +53,7 @@
         "observed",
         "q",
         "ratio",
+        "status",
         "summary"
       ],
       "title": "FindingCard",

@@ -31,7 +31,11 @@ export function Findings({ index }: { index: FindingsIndex }) {
                   {f.observed} filed against {f.expected.toFixed(1)} expected ({f.ratio.toFixed(1)}x,
                   screen score q = {small(f.q)}).
                 </p>
-                {f.summary ? <p>{f.summary}</p> : <p className="muted">{UNFINISHED}</p>}
+                {f.status === "unfinished" ? (
+                  <p className="muted">{UNFINISHED}</p>
+                ) : (
+                  <p>{f.summary}</p>
+                )}
               </article>
             ))
           )}

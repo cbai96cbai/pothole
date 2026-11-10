@@ -58,7 +58,7 @@ def test_no_page_source_holds_a_figure_that_belongs_in_a_data_file() -> None:
         if "data" in path.relative_to(WEB / "src").parts[:1]:
             continue
         for n, line in enumerate(path.read_text().splitlines(), start=1):
-            code = line.split("//")[0]
+            code = "" if line.lstrip().startswith(("//", "*", "/*")) else line
             for pattern in LITERALS:
                 if re.search(pattern, code, flags=re.IGNORECASE):
                     hits.append(f"{path.name}:{n}: {line.strip()}")

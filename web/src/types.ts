@@ -60,6 +60,7 @@ export interface Drills {
 }
 export interface FindingCard {
   id: string;
+  status: "investigated" | "unfinished";
   borough: string;
   board: number;
   complaint_type: string;

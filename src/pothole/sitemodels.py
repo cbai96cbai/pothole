@@ -81,6 +81,7 @@ class Drills(Model):
 
 class FindingCard(Model):
     id: str
+    status: str
     borough: str
     board: int
     complaint_type: str

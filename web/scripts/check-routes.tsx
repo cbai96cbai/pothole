@@ -69,6 +69,8 @@ if (data.drills.drills.length > 0) {
   const n = (pages.get("#/drills") ?? "").split('class="badge drill"').length - 1;
   expect(n >= data.drills.drills.length + 1, "drills: an entry is not labeled Drill");
 }
+expect(!text("#/findings").includes("leftover summary"), "findings: an unfinished finding shows its summary");
+expect(text("#/findings").includes("did not finish"), "findings: unfinished finding not marked");
 expect(text("#/findings").includes("Nothing notable today") === data.findingsIndex.days.some((d) => d.findings.length === 0), "findings: quiet days not shown");
 expect(text("#/repairs").includes("Rule-based fixer"), "repairs: no baseline");
 if (!data.repairs.agent_run) expect(text("#/repairs").includes("not yet run"), "repairs: no 'not yet run' for the agent");
@@ -93,7 +95,9 @@ for (const id of ids) {
     expect(html.includes(UNFINISHED), `${h}: unfinished finding not marked`);
     expect(!html.includes("What the summary relied on"), `${h}: unfinished finding lists evidence`);
     expect(file.summary === "" || !html.includes(file.summary), `${h}: unfinished finding shows a summary`);
-    expect(file.notes.length === 0 || html.includes("Not computed:"), `${h}: notes not shown`);
+    const shown = file.notes.filter((n) => !n.startsWith("unfinished:"));
+    expect(shown.length === 0 || html.includes("Not computed:"), `${h}: notes not shown`);
+    expect(!html.includes("Not computed: unfinished"), `${h}: notes repeat "unfinished"`);
   } else {
     expect(!html.includes(UNFINISHED), `${h}: finished finding marked unfinished`);
     expect(html.includes("What the summary relied on") && html.includes(file.summary), `${h}: summary or evidence missing`);

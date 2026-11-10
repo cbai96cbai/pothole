@@ -6,6 +6,8 @@ import type { Finding as FindingData } from "../types";
 import { SCREEN_NOTE, UNFINISHED } from "../wording";
 
 export function Finding({ finding: f }: { finding: FindingData }) {
+  // the banner already says the investigation did not finish
+  const notes = f.notes.filter((n) => !n.startsWith("unfinished:"));
   return (
     <>
       <p><a href="#/findings">All findings</a></p>
@@ -18,7 +20,7 @@ export function Finding({ finding: f }: { finding: FindingData }) {
       ) : (
         <p>{f.summary}</p>
       )}
-      {f.notes.length > 0 && <p className="muted">Not computed: {f.notes.join("; ")}.</p>}
+      {notes.length > 0 && <p className="muted">Not computed: {notes.join("; ")}.</p>}
       <dl className="facts">
         <div><dt>Filed</dt><dd>{f.observed}</dd></div>
         <div><dt>Expected</dt><dd>{f.expected.toFixed(1)}</dd></div>

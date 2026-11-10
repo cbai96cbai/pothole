@@ -43,7 +43,7 @@ def finding(status: str = "investigated") -> Finding:
         expected=6.5,
         ratio=4.77,
         q=0.0004,
-        summary=""
+        summary="a leftover summary that must not be shown"
         if unfinished
         else "Heat complaints in Brooklyn 12 were associated with a cold night.",
         evidence=[]

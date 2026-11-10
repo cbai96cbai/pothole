@@ -24,6 +24,6 @@ export function small(n: number): string {
 
 /** A dollar amount from a data file, with at least the cents. */
 export function money(amount: string): string {
-  const [whole = "0", frac = ""] = Number(amount).toString().split(".");
+  const [whole = "0", frac = ""] = Number(Number(amount).toFixed(3)).toString().split(".");
   return `$${whole}.${frac.padEnd(2, "0")}`;
 }

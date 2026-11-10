@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -163,7 +164,7 @@ def test_facts_come_from_the_code_and_files_that_define_them(built: Path) -> Non
     assert facts["max_investigations"] == 2
     assert facts["monthly_limit"] == "4" and facts["ceiling_days"] == 31
     assert facts["max_cost_per_call"] == "0.008" and facts["run_envelope"] == "0.128"
-    assert facts["run_ceiling"] == "0.129"
+    assert abs(Decimal(facts["run_ceiling"]) * 31 - 4) < Decimal("1e-20")
     assert (
         facts["price_input_per_million"] == "0.25" and facts["price_output_per_million"] == "2.00"
     )
