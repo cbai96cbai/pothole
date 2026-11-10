@@ -115,3 +115,52 @@ def test_a_day_whose_first_run_failed_before_its_analysis_is_analysed_by_the_rer
     second = daily.run(env)
     assert analysis_path(repo).exists() and second.notes == []
     assert date.fromisoformat(second.analyst_day or "") == date(2026, 11, 8)
+
+
+def test_a_failed_analysis_writes_neither_file_and_the_retry_pairs_them_on_fresh_data(
+    repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import pyarrow as pa
+    import pyarrow.compute as pc
+
+    from pothole import dailycounts
+    from pothole.analyst import universe
+    from pothole.store import counts, db
+
+    rows = window_rows(TUESDAY)
+    env, _, fake = env_for(repo, isolated_state, rows)
+    counts_file = dailycounts.counts_path(repo / "data", date(2026, 11, 8))
+    with monkeypatch.context() as m:
+        m.setattr(daily, "screen", lambda *a: (_ for _ in ()).throw(RuntimeError("broke")))
+        with pytest.raises(RuntimeError):
+            daily.run(env)
+    assert not analysis_path(repo).exists() and not counts_file.exists()
+    assert not list((repo / "data").rglob("*.tmp"))
+    fake.rows.extend(  # late arrivals for the analysed day, between the failure and the retry
+        r | {"unique_key": f"late-{i}", ":id": f"late-{i}"}
+        for i, r in enumerate(rows[:5])
+        if r["created_date"].startswith("2026-11-08")
+    )
+    env.attempt = 2
+    daily.run(env)
+    con = db.open(isolated_state / "raw.duckdb", read_only=True)
+    window = counts.regenerate(con, universe.load(repo / "data" / "universe.json"))
+    con.close()
+    day_rows = window.filter(pc.equal(window["date"], pa.scalar(date(2026, 11, 8))))
+    assert analysis_path(repo).exists()
+    assert dailycounts.read_counts(counts_file).equals(day_rows)  # the data the analysis saw
+
+
+def test_a_second_record_for_one_attempt_is_refused_across_two_runs(
+    repo: Path, isolated_state: Path
+) -> None:
+    env, _, _ = env_for(repo, isolated_state, window_rows(TUESDAY))
+    first = daily.run(env)
+    second = daily.run(env)  # the same run id and attempt
+    assert runrecord.read(repo / "data" / "runs.jsonl") == [first]
+    assert second.run_id == first.run_id
+    with pytest.raises(runrecord.AlreadyRecorded):
+        runrecord.append(repo / "data" / "runs.jsonl", first)
+    board = json.loads((repo / "site" / "board.json").read_text())
+    assert len(json.loads((repo / "site" / "runs.json").read_text())["runs"]) == 1
+    assert board["last_run"]["run_id"] == first.run_id

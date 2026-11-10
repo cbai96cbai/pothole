@@ -79,7 +79,18 @@ class RunRecord:
             raise ValueError(f"unknown repair action: {self.repair.action!r}")
 
 
+class AlreadyRecorded(ValueError):
+    """The file already holds a record for this (run id, attempt): one terminal record each."""
+
+
+def recorded(path: Path, run_id: str, attempt: int) -> bool:
+    return any(r.run_id == run_id and r.attempt == attempt for r in read(path))
+
+
 def append(path: Path, record: RunRecord) -> None:
+    """Append the record; a second one for the same (run id, attempt) raises AlreadyRecorded."""
+    if recorded(path, record.run_id, record.attempt):
+        raise AlreadyRecorded(f"run {record.run_id} attempt {record.attempt} already has a record")
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as f:
         f.write(json.dumps(to_json(record), sort_keys=True) + "\n")

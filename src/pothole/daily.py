@@ -36,7 +36,7 @@ from pothole.analyst.holidays import is_holiday
 from pothole.budget.envelope import DEFAULT_STEPS, RunConfig, run_envelope
 from pothole.budget.tally import Tally, settle_if_complete
 from pothole.dailyai import Sink, Spend
-from pothole.dailycounts import refresh_counts, write_json, write_vintage
+from pothole.dailycounts import day_counts, refresh_counts, write_json, write_vintage
 from pothole.dailyerror import Progress, describe
 from pothole.llm.client import LLMClient
 from pothole.logs import get_logger
@@ -146,6 +146,8 @@ def _append_error(data: Path, failure: RunRecord, message: str) -> bool:
     so the second failure never hides the first."""
     try:
         runrecord.append(data / "runs.jsonl", failure)
+    except runrecord.AlreadyRecorded:
+        log.warning("this attempt already has its record", extra={"error": message})
     except Exception as write_exc:
         log.error(
             "the error record could not be written",
@@ -235,8 +237,11 @@ def _run(env: Env, ai: LLMClient | None, spend: Spend, p: Progress) -> RunRecord
     def finish(status: Status) -> RunRecord:
         p.step = "record and site"
         record = _record(env, ai, spend, p, status)
-        _site(env, now, pending=record)
-        runrecord.append(env.data / "runs.jsonl", record)
+        path = env.data / "runs.jsonl"
+        already = runrecord.recorded(path, env.run_id, env.attempt)  # an earlier call's record
+        _site(env, now, pending=None if already else record)
+        if not already:
+            runrecord.append(path, record)
         p.recorded = True
         return record
 
@@ -276,17 +281,18 @@ def _run(env: Env, ai: LLMClient | None, spend: Spend, p: Progress) -> RunRecord
         p.step = "counts"
         uni = universe.load(env.data / "universe.json")
         analysed = day - timedelta(days=load.ANALYSIS_LAG_DAYS)
-        table = refresh_counts(con, env.data, result.generation, uni, analysed)
+        table = refresh_counts(con, env.data, result.generation, uni)
         write_vintage(env.data, env.run_id, con, day)
         p.step = "analysis"
         p.analyst_day = analysed.isoformat()
         path = env.data / "analyst" / f"{analysed.isoformat()}.json"
-        if path.exists():  # the day's analysis and its counts file are one pair, written once
-            p.notes.append(f"already analysed: {analysed.isoformat()} is not analysed again")
-        else:
-            analyst, closed = _analyse(env, con, live(), table, uni, analysed, spend, p)
-            p.step = "analyst file"
-            write_json(path, to_json(analyst))
+        with day_counts(env.data, table, analysed):  # the pair is written only if both succeed
+            if path.exists():
+                p.notes.append(f"already analysed: {analysed.isoformat()} is not analysed again")
+            else:
+                analyst, closed = _analyse(env, con, live(), table, uni, analysed, spend, p)
+                p.step = "analyst file"
+                write_json(path, to_json(analyst))
         return finish("checks_failed" if failing else "success")
     finally:
         if not closed:

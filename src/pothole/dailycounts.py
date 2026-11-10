@@ -10,6 +10,9 @@ file. `data/state.json` names the store generation the last run derived its coun
 import gzip
 import io
 import json
+import os
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import date
 from pathlib import Path
 
@@ -51,18 +54,35 @@ def read_counts(path: Path) -> pa.Table:
 
 
 def refresh_counts(
-    con: db.Connection, data: Path, generation: str, uni: universe.Universe, day: date
+    con: db.Connection, data: Path, generation: str, uni: universe.Universe
 ) -> pa.Table:
-    """The whole window's counts, derived from the store, for the analyst; and `day`'s own file
-    when it has none and there are rows to put in it."""
+    """The whole window's counts, derived from the store, for the analyst."""
     table = counts.regenerate(con, uni)
+    write_json(data / "state.json", {"generation": generation})
+    return table
+
+
+@contextmanager
+def day_counts(data: Path, table: pa.Table, day: date) -> Iterator[None]:
+    """A day's counts file and its analysis are one pair. The file is staged from the same table
+    the analysis uses and committed only if the block (the analysis and its file) succeeded; on
+    any failure neither exists, so a retry computes both from the same data. A day that already
+    has its file, or has no rows, stages nothing."""
     path = counts_path(data, day)
+    staged: Path | None = None
     if not path.exists():
         rows = table.filter(pc.equal(table["date"], pa.scalar(day, pa.date32())))
         if rows.num_rows:
-            write_counts(path, rows)
-    write_json(data / "state.json", {"generation": generation})
-    return table
+            staged = path.with_name(path.name + ".tmp")
+            write_counts(staged, rows)
+    try:
+        yield
+    except BaseException:
+        if staged is not None:
+            staged.unlink(missing_ok=True)
+        raise
+    if staged is not None:
+        os.replace(staged, path)
 
 
 def write_vintage(data: Path, run_id: str, con: db.Connection, day: date) -> None:
