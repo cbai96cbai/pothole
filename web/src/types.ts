@@ -12,9 +12,10 @@ export interface RunSummary {
   ai_cost: string;
   generation: string | null;
 }
+export type Level = "pass" | "warn" | "fail";
 export interface Check {
   name: string;
-  level: string;
+  level: Level;
   detail: string;
 }
 export interface LastCheck extends Check {

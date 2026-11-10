@@ -175,8 +175,8 @@ def test_board_incidents_and_drills(built: Path) -> None:
     assert board["dataset_status"] == "success"
     assert board["last_success"]["run_id"] == "run-3"
     assert {c["name"]: c["level"] for c in board["checks"]} == {
-        "borough_values": "error",
-        "row_count": "ok",
+        "borough_values": "fail",
+        "row_count": "pass",
     }
     assert board["latest_day"]["day"] == "2026-11-07"
     assert board["month_ai_cost"] == "0.063"

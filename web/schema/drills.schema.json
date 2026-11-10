@@ -8,6 +8,11 @@
           "type": "string"
         },
         "level": {
+          "enum": [
+            "pass",
+            "warn",
+            "fail"
+          ],
           "title": "Level",
           "type": "string"
         },

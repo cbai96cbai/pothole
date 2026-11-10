@@ -22,11 +22,19 @@ STATUSES: tuple[str, ...] = (
 ACTIONS: tuple[str, ...] = ("patch", "issue", "no_change", "none")
 
 
+Level = Literal["pass", "warn", "fail"]  # the engine's own words
+LEVELS: tuple[str, ...] = ("pass", "warn", "fail")
+
+
 @dataclass(frozen=True)
 class CheckResult:
     name: str
-    level: str
+    level: Level
     detail: str
+
+    def __post_init__(self) -> None:
+        if self.level not in LEVELS:
+            raise ValueError(f"unknown check level: {self.level!r}")
 
 
 @dataclass(frozen=True)

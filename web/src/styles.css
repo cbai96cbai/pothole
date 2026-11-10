@@ -49,9 +49,9 @@ th, td { text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var
 .badge { display: inline-block; padding: 0 8px; margin-left: 6px; border: 1px solid var(--line); border-radius: 999px; font-size: 0.78rem; background: var(--card); }
 .badge.drill { border-color: var(--accent); color: var(--accent); font-weight: 700; margin-left: 0; }
 .badge.pending { border-color: var(--warn); color: var(--warn); }
-.level-ok { color: var(--good); }
-.level-error, .level-fail { color: var(--bad); }
-.level-warn, .level-warning { color: var(--warn); }
+.level-pass { color: var(--good); }
+.level-fail { color: var(--bad); }
+.level-warn { color: var(--warn); }
 .status { font-size: 1.1rem; font-weight: 600; padding: 10px 14px; border-left: 4px solid var(--line); background: var(--card); }
 .status-success { border-left-color: var(--good); }
 .status-checks_failed, .status-error, .status-incomplete_load { border-left-color: var(--bad); }

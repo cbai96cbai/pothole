@@ -12,8 +12,8 @@ from pothole.repair.render import SPEC_PATH
 from pothole.runrecord import CheckResult, RepairRecord, RunRecord
 
 REAL = Path(__file__).resolve().parents[2]
-OK = CheckResult("row_count", "ok", "48,210 rows")
-BAD = CheckResult("borough_values", "error", "borough had 9 new values")
+OK = CheckResult("row_count", "pass", "48,210 rows")
+BAD = CheckResult("borough_values", "fail", "borough had 9 new values")
 
 
 def _run(n: int, day: int, **kw: object) -> RunRecord:
@@ -88,7 +88,20 @@ def make(root: Path, *, with_agent: bool = False) -> Path:
     (analyst / "2026-11-07.json").write_text(json.dumps(to_json(quiet)))
     busy = AnalystDay(date(2026, 11, 6), 1460, 3, [finding(), finding("unfinished")])
     (analyst / "2026-11-06.json").write_text(json.dumps(to_json(busy)))
-    (root / SPEC_PATH).parent.mkdir()
+    scratch_repo(root)
+    if with_agent:
+        src = json.loads((REAL / "results/baseline-test/summary.json").read_text())
+        dest = root / "results" / "agent-test"
+        dest.mkdir(parents=True)
+        (dest / "summary.json").write_text(json.dumps({**src, "repairer": "agent"}))
+    return root
+
+
+def scratch_repo(root: Path) -> Path:
+    """The files a run reads from a checkout: the pinned spec at the spec path, the universe, the
+    measurement files and the baselines."""
+    (root / SPEC_PATH).parent.mkdir(parents=True, exist_ok=True)
+    (root / "data").mkdir(exist_ok=True)
     shutil.copy(REAL / "fixtures" / "batches" / "spec.yaml", root / SPEC_PATH)  # pinned copy
     shutil.copy(REAL / "data" / "universe.json", root / "data")
     for name in ("backtest", "delay", "null_simulation"):
@@ -97,9 +110,4 @@ def make(root: Path, *, with_agent: bool = False) -> Path:
         dest = root / "results" / f"baseline-{split}"
         dest.mkdir(parents=True)
         shutil.copy(REAL / "results" / f"baseline-{split}" / "summary.json", dest)
-    if with_agent:
-        src = json.loads((REAL / "results/baseline-test/summary.json").read_text())
-        dest = root / "results" / "agent-test"
-        dest.mkdir(parents=True)
-        (dest / "summary.json").write_text(json.dumps({**src, "repairer": "agent"}))
     return root

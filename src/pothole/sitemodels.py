@@ -5,6 +5,8 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
+from pothole.runrecord import Level
+
 
 class Model(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -12,7 +14,7 @@ class Model(BaseModel):
 
 class Check(Model):
     name: str
-    level: str
+    level: Level
     detail: str
 
 
@@ -30,7 +32,7 @@ class RunSummary(Model):
 
 class LastCheck(Model):
     name: str
-    level: str
+    level: Level
     detail: str
     run_id: str
     finished: str

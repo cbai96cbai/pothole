@@ -160,7 +160,7 @@ def _items(runs: list[RunRecord], drill: bool) -> list[m.IncidentItem]:
             started=r.started,
             status=r.status,
             repair=m.Repair(**to_json(r.repair)),
-            failed_checks=[m.Check(**to_json(c)) for c in r.checks if c.level != "ok"],
+            failed_checks=[m.Check(**to_json(c)) for c in r.checks if c.level == "fail"],
             ai_cost=r.ai_cost,
         )
         for r in reversed(runs)
