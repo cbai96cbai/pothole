@@ -9,7 +9,9 @@ import typer
 
 from pothole.config import Settings
 from pothole.socrata import batches
-from pothole.socrata.client import Socrata
+from pothole.socrata.client import Socrata, SourceRejected, SourceUnavailable
+from pothole.spec.model import PipelineSpec
+from pothole.store import db, load
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 
@@ -58,3 +60,27 @@ def record_batches(
         path = out / f"{day}.jsonl.gz"
         batches.dump(path, rows)
         typer.echo(f"{path}: {len(rows)} rows")
+
+
+@app.command("load")
+def load_command(
+    spec_path: Annotated[Path, typer.Option("--spec", help="The pipeline spec.")] = Path(
+        "pipelines/311.yaml"
+    ),
+) -> None:
+    """Load what changed in the 311 window into the local store (all of it on a cache miss)."""
+    settings = Settings.from_env()
+    spec = PipelineSpec.load(spec_path)
+    client = Socrata(spec.source.domain, settings.socrata_app_token)
+    now = datetime.now(NEW_YORK).replace(tzinfo=None)
+    con = db.open(settings.state / "raw.duckdb")
+    try:
+        result = load.incremental(con, client, spec, now)
+    except (SourceUnavailable, SourceRejected) as exc:
+        typer.echo(f"load stopped: {exc}", err=True)
+        raise typer.Exit(1) from exc
+    finally:
+        con.close()
+    typer.echo(f"rows {result.rows} pages {result.pages} cursor {result.cursor}")
+    for check in result.checks:
+        typer.echo(f"{check.level:4} {check.name}: {check.detail}")
