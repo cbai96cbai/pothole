@@ -12,7 +12,7 @@ export function PointsMap({ points }: { points: [number, number][] }) {
     let gone = false;
     (async () => {
       try {
-        const [{ default: maplibre }] = await Promise.all([
+        const [maplibre] = await Promise.all([
           import("maplibre-gl"),
           import("maplibre-gl/dist/maplibre-gl.css"),
         ]);
