@@ -94,6 +94,11 @@ class Tally:
         with self._locked() as fh:
             return self._total(fh)
 
+    def has(self, run_id: str) -> bool:
+        """Whether this run was ever admitted (settled or not)."""
+        with self._locked() as fh:
+            return any(f'"run_id": {json.dumps(run_id)}' in line for line in fh)
+
     def admit(
         self,
         run_id: str,
