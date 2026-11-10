@@ -10,3 +10,6 @@ dist/
 *.duckdb.wal
 web/node_modules
 web/dist
+.superpowers/
+CLAUDE.md
+.claude/
