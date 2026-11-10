@@ -226,6 +226,9 @@ def test_a_source_failure_is_reported_and_stops_the_remaining_candidates(
 
     first = [reply(tool_call(source, {}, "t1")), reply(tool_call("series", {}, "t2"))]
     model = Scripted([*first, reply(submit(OK, ["t2"])), *first, reply(submit(OK, ["t2"]))])
+    paid_after = []  # the number of model replies still unused when each call is made
+    real_call = model.call
+    model.call = lambda *a, **k: (paid_after.append(len(model.script)), real_call(*a, **k))[1]  # type: ignore[method-assign]
     cands = [candidate(12.0, 3), candidate(9.0, 2)]
     result = investigate.day(
         db, cands, model, analysed=cands[0].day, tested=100, cleared=2,  # type: ignore[arg-type]
@@ -234,7 +237,10 @@ def test_a_source_failure_is_reported_and_stops_the_remaining_candidates(
         on_source_failure=report, stop=lambda: bool(failures),
     )  # fmt: skip
     assert [f.board for f in result.findings] == [3]  # the second candidate was not started
-    assert result.skipped_reason == investigate.STOPPED and len(model.script) == 3
+    assert result.skipped_reason == investigate.STOPPED
+    [only] = result.findings  # the one paid call came before the failure; none came after it
+    assert only.status == "unfinished" and len(paid_after) == 1 and len(model.script) == 5
+    assert any("a source failed: no further model calls" in n for n in only.notes)
     assert failures and {label for label, _ in failures} == {source}
     assert failures[0][1] == "TimeoutError"
 

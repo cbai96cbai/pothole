@@ -70,8 +70,9 @@ def _brief(c: Candidate) -> str:
 
 class _Run:
     def __init__(
-        self, c: Candidate, box: Toolbox, client: LLMClient, limits: CallLimits, max_calls: int
-    ) -> None:
+        self, c: Candidate, box: Toolbox, client: LLMClient, limits: CallLimits, max_calls: int,
+        stop: Callable[[], bool] | None = None,
+    ) -> None:  # fmt: skip
         self.c, self.box, self.client, self.limits, self.max_calls = (
             c,
             box,
@@ -79,6 +80,7 @@ class _Run:
             limits,
             max_calls,
         )
+        self.stop = stop
         self.calls = 0
         self.cost = Decimal(0)
         self.trace: list[dict[str, Any]] = []
@@ -106,6 +108,9 @@ class _Run:
 
     def run(self) -> None:
         while self.calls < self.max_calls and self.summary is None:
+            if self.stop is not None and self.stop():  # checked before every paid call
+                self.reason = "a source failed: no further model calls"
+                return
             force = FORCE if self.max_calls - self.calls <= FORCE_WHEN_LEFT else None
             if not self._fit(force):
                 self.reason = "the conversation no longer fits the input limit"
@@ -218,6 +223,7 @@ def run(
     weather_for: WeatherFor | None = None,
     events_for: EventsFor | None = None,
     on_source_failure: SourceFailed | None = None,
+    stop: Callable[[], bool] | None = None,
 ) -> Finding:
     """Investigate one candidate against the store at `db`. `on_source_failure(label, exc)` is
     told of every failed weather or events lookup before the failure goes on."""
@@ -230,7 +236,7 @@ def run(
         ),
     )
     try:
-        state = _Run(candidate, box, client, limits, max_calls)
+        state = _Run(candidate, box, client, limits, max_calls, stop)
         state.run()
         notes: list[str] = []
         if state.summary is None:
@@ -310,5 +316,5 @@ def day(
     for c in top[:SENT_ON]:
         if findings and stop is not None and stop():
             return AnalystDay(analysed, tested, cleared, findings, skipped_reason=STOPPED)
-        findings.append(run(c, db, client, **kwargs))
+        findings.append(run(c, db, client, stop=stop, **kwargs))
     return AnalystDay(analysed, tested, cleared, findings)
