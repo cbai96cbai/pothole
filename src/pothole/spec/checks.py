@@ -10,6 +10,7 @@ from pothole.spec.model import Column, PipelineSpec, Volume
 Level = Literal["pass", "warn", "fail"]
 FAIL_SHARE = 0.01
 SAMPLE = 5
+OPTIONAL_MIN_ROWS = 100
 
 
 @dataclass
@@ -44,6 +45,7 @@ def schema(spec: PipelineSpec, rows: list[dict[str, str]]) -> list[CheckResult]:
     mapped = {c.source for c in spec.columns}
     missing = [c.source for c in spec.columns if c.required and c.source not in seen]
     unknown = sorted(seen - mapped)
+    gone = sorted(c.source for c in spec.columns if not c.required and c.source not in seen)
     out: list[CheckResult] = []
     if missing:
         detail = f"required source fields missing from all {len(rows)} rows: "
@@ -51,6 +53,9 @@ def schema(spec: PipelineSpec, rows: list[dict[str, str]]) -> list[CheckResult]:
     if unknown:
         detail = f"{len(unknown)} source fields not in the spec: " + ", ".join(unknown)
         out.append(_result("schema" if not missing else "schema:unknown_fields", "warn", detail))
+    if gone and len(rows) >= OPTIONAL_MIN_ROWS:  # a small page may simply hold only empty values
+        detail = f"optional source fields missing from all {len(rows)} rows: " + ", ".join(gone)
+        out.append(_result("schema:optional_missing", "warn", detail))
     if not out:
         out.append(
             _result("schema", "pass", f"all required source fields present in {len(rows)} rows")

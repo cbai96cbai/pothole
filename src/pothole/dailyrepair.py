@@ -97,10 +97,12 @@ def schema_change(
     env: "Env", spec: PipelineSpec, ai: LLMClient | None, now: datetime, spend: dailyai.Spend,
     p: Progress,
 ) -> bool:  # fmt: skip
-    """The source rejected the load naming a missing field. That is a schema change, not an
-    outage: take a raw sample of the latest complete day, run the engine's checks on it and send
-    the failures to repair like any failed check. Returns False when no diagnosis could be made
-    (no sample, or nothing failing on it); the caller then reports an outage."""
+    """The source rejected a query naming a field it no longer has (only fields the query must
+    name, such as the day field, can do this: the load itself takes every field). That is a
+    schema change, not an outage: take a raw sample of the latest complete day, run the engine's
+    checks on it and send the failures to repair like any failed check, or file an issue when
+    the sample passes. Returns False only when there is no sample to look at; the caller then
+    reports an outage."""
     try:
         sample_day = now.date() - timedelta(days=ANALYSIS_LAG_DAYS)
         rows = _strings(fetch_schema_sample(env.socrata, sample_day))
@@ -112,10 +114,15 @@ def schema_change(
         return False
     results = engine.run(spec, rows, [], now).checks
     failing = failed(results)
-    if not failing:
-        return False
     p.checks = [CheckResult(r.name, r.level, r.detail) for r in results]
-    p.repair = _file(env, spec, ai, failing, (rows, fields), now, spend, p)
+    if failing:
+        p.repair = _file(env, spec, ai, failing, (rows, fields), now, spend, p)
+    else:
+        reason = (
+            "The source rejected the load naming a field it no longer has, but a raw sample "
+            "passes every check; a person should look."
+        )
+        p.repair = _issue(env, reason, [], now.date())
     return True
 
 

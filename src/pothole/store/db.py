@@ -65,8 +65,9 @@ def set_cursor(con: Connection, ts: str, id_: str) -> None:
     set_meta(con, "cursor_id", id_)
 
 
-def select_clause(spec: PipelineSpec) -> str:
-    return ", ".join([*(c.source for c in spec.columns), *SYSTEM_FIELDS])
+# The load observes the source's schema instead of asserting it: every field the source has,
+# never a list of the spec's. A renamed or vanished field then reaches the engine's checks.
+SELECT_ALL = "*, " + ", ".join(SYSTEM_FIELDS)
 
 
 def spec_digest(spec: PipelineSpec) -> str:
@@ -127,7 +128,8 @@ def upsert(
     The caller owns the transaction. Rows without a key are not stored (the checks report them);
     a key repeated in the batch keeps its last row.
     """
-    plain = [{k: v for k, v in r.items() if k not in SYSTEM_FIELDS} for r in rows]
+    wanted = {c.source for c in spec.columns}
+    plain = [{k: v for k, v in r.items() if k in wanted} for r in rows]
     result = engine.run(spec, plain, [], now)
     table = result.table
     for name, field in (("_updated_at", ":updated_at"), ("_created_at", ":created_at")):

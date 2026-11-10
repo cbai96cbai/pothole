@@ -78,7 +78,7 @@ def weekly(
             rows = socrata.query(
                 dataset,
                 {
-                    "$select": db.select_clause(spec),
+                    "$select": db.SELECT_ALL,
                     "$where": f"{key} in ({', '.join(db.literal(k) for k in chunk)})",
                     "$limit": str(len(chunk)),
                 },

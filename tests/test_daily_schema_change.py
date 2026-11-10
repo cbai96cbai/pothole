@@ -26,6 +26,8 @@ class Renamed(FakeSocrata):
         self.old = old
 
     def query(self, dataset: str, params: Mapping[str, str]) -> list[dict[str, Any]]:
+        if params.get("$order") == ":updated_at DESC" and self.before_query:
+            self.before_query(len(self.queries), params)
         named = " ".join(params.get(k, "") for k in ("$select", "$where", "$order"))
         if re.search(rf"(?<![\w:]){self.old}(?!\w)", named):
             self.queries.append(dict(params))
@@ -46,7 +48,7 @@ def renamed_env(
     return env, sink, renamed
 
 
-def test_a_renamed_field_reaches_the_repair_agent_with_a_raw_sample(
+def test_a_renamed_required_field_fails_the_checks_and_reaches_the_repair_agent(
     repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     seen: list[Any] = []
@@ -62,15 +64,25 @@ def test_a_renamed_field_reaches_the_repair_agent_with_a_raw_sample(
     [(rows, failing)] = seen
     assert len(rows) == 20 and "agency_code" in rows[0] and "agency" not in rows[0]
     assert ":id" not in rows[0] and "schema" in failing
-    assert record.status == "checks_failed" and record.rows_loaded == 0
+    assert record.status == "checks_failed" and record.rows_loaded == 200
     assert record.repair is not None and record.repair.action == "issue"
     assert [c.name for c in record.checks if c.level == "fail"][:1] == ["schema"]
-    assert record.analyst_day is None and not (repo / "data" / "analyst").exists()
-    sample = next(q for q in fake.queries if q["$select"].startswith("*"))
-    assert sample["$select"] == "*, :id, :updated_at, :created_at"
-    assert sample["$order"] == "unique_key" and sample["$limit"] == "2000"
-    assert "2026-11-08T00:00:00" in sample["$where"]  # the latest complete day, run date - 2
+    selects = {q.get("$select", "") for q in fake.queries}
+    assert not any("agency" in x for x in selects)  # the load never lists the spec's fields
+    assert "*, :id, :updated_at, :created_at" in selects
     assert runrecord.read(repo / "data" / "runs.jsonl") == [record]
+
+
+def test_a_renamed_optional_field_is_a_warning_on_the_board_not_an_outage(
+    repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls = forbid_model(monkeypatch)
+    env, sink, _ = renamed_env(repo, isolated_state, "community_board", "district_board")
+    record = daily.run(env)
+    assert record.status == "success" and record.rows_loaded == 200 and record.repair is None
+    assert calls == [] and sink.issues == [] and sink.prs == []
+    [gone] = [c for c in record.checks if c.name == "schema:optional_missing"]
+    assert gone.level == "warn" and "community_board" in gone.detail
 
 
 def test_a_renamed_day_field_is_diagnosed_from_the_newest_rows(
@@ -130,10 +142,10 @@ def test_a_sample_that_cannot_be_fetched_leaves_an_outage_report(
     repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     calls = forbid_model(monkeypatch)
-    env, sink, fake = renamed_env(repo, isolated_state, "agency", "agency_code")
+    env, sink, fake = renamed_env(repo, isolated_state, "created_date", "created_on")
 
     def fail_the_sample(n: int, params: Mapping[str, str]) -> None:
-        if params.get("$select", "").startswith("*"):
+        if params.get("$order") == ":updated_at DESC":  # the fallback sample of the newest rows
             from pothole.socrata.client import SourceUnavailable
 
             raise SourceUnavailable("fake outage")

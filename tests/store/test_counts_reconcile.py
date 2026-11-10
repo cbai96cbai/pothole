@@ -50,6 +50,8 @@ def test_reconcile_deletes_and_adds(con, spec: PipelineSpec) -> None:
         "1020",
     ]
     assert result.days_checked == 2
+    rows_asked = [q["$select"] for q in fake.queries if q["$select"].startswith("*")]
+    assert rows_asked and set(rows_asked) == {db.SELECT_ALL}  # whole rows, never a field list
     again = reconcile.weekly(con, fake, spec, NOW)
     assert (again.days_fixed, again.deleted, again.added) == (0, 0, 0)
     assert db.get_meta(con, "last_success") is not None

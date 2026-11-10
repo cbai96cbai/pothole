@@ -115,14 +115,13 @@ def incremental(
     else:
         ts, id_ = _shift(saved[0], -OVERLAP), ""
     upper = meta.max_updated_at(socrata, dataset, f"created_date >= {db.literal(start)}")
-    select = db.select_clause(spec)
     worst: dict[str, CheckResult] = {}
     rows_read = pages = 0
     while True:
         page = socrata.query(
             dataset,
             {
-                "$select": select,
+                "$select": db.SELECT_ALL,
                 "$where": keyset_where(ts, id_, upper, start),
                 "$order": ":updated_at,:id",
                 "$limit": str(page_size),

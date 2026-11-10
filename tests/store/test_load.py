@@ -249,3 +249,10 @@ def test_rebuilding_the_table_is_one_transaction(con, spec: PipelineSpec) -> Non
         db.ensure_raw(Spy(con), fewer)  # type: ignore[arg-type]
     assert keys(con) == ["1000"]  # the old table and its cursor are still there
     assert db.cursor(con) is not None
+
+
+def test_the_load_asks_for_every_field_not_a_list_of_the_specs(con, spec: PipelineSpec) -> None:
+    fake = FakeSocrata([make_row(0, 0)])
+    load.incremental(con, fake, spec, NOW)
+    pages = [q["$select"] for q in fake.queries if "max(" not in q["$select"]]
+    assert pages == ["*, :id, :updated_at, :created_at"]

@@ -14,11 +14,9 @@ from pothole.analyst.finding import AnalystDay
 from pothole.socrata.client import SourceUnavailable
 
 
-def fail_when(select_starts: str = "", has: str = "") -> Any:
+def fail_when(order: str = "", has: str = "") -> Any:
     def hook(n: int, params: Mapping[str, str]) -> None:
-        if (select_starts and params.get("$select", "").startswith(select_starts)) or (
-            has and has in params
-        ):
+        if (order and params.get("$order") == order) or (has and has in params):
             raise SourceUnavailable("fake outage")
 
     return hook
@@ -68,7 +66,7 @@ def test_a_repair_sample_failure_bars_the_investigation(
     env, sink, fake = env_for(
         repo, isolated_state, window_rows(TUESDAY, spike=True, status=""), ai=True
     )
-    fake.before_query = fail_when(select_starts="*")  # yesterday's raw rows
+    fake.before_query = fail_when(order="unique_key")  # yesterday's raw rows
     record = daily.run(env)
     assert calls == [] and record.ai_cost == "0"
     assert record.repair is not None and record.repair.action == "issue"
