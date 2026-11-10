@@ -67,7 +67,13 @@ class Socrata:
         raise SourceUnavailable(f"{dataset}: {last} after {len(BACKOFF_S) + 1} tries")
 
     def query(self, dataset: str, params: Mapping[str, str]) -> list[dict[str, Any]]:
-        rows = self.get(dataset, params).json()
+        response = self.get(dataset, params)
+        try:
+            rows = response.json()
+        except ValueError as exc:
+            raise SourceUnavailable(
+                f"{dataset}: HTTP {response.status_code} body is not JSON: {response.text[:200]!r}"
+            ) from exc
         if not isinstance(rows, list):
             raise SourceRejected(f"{dataset}: expected a list of rows, got {type(rows).__name__}")
         return rows

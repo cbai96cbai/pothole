@@ -1,6 +1,5 @@
 """Command line: `pothole <command>`."""
 
-import json
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Annotated, Any
@@ -9,6 +8,7 @@ from zoneinfo import ZoneInfo
 import typer
 
 from pothole.config import Settings
+from pothole.socrata import batches
 from pothole.socrata.client import Socrata
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
@@ -41,7 +41,7 @@ def fetch_batch(client: Socrata, day: date) -> list[dict[str, Any]]:
 
 @app.command("record-batches")
 def record_batches(
-    out: Annotated[Path, typer.Option(help="Folder for <date>.json files.")] = Path(
+    out: Annotated[Path, typer.Option(help="Folder for <date>.jsonl.gz files.")] = Path(
         "fixtures/batches"
     ),
 ) -> None:
@@ -55,6 +55,6 @@ def record_batches(
         if len(rows) < BATCH_ROWS:
             typer.echo(f"{day}: only {len(rows)} rows, not a complete day", err=True)
             raise typer.Exit(1)
-        path = out / f"{day}.json"
-        path.write_text(json.dumps(rows, indent=2, sort_keys=True) + "\n")
+        path = out / f"{day}.jsonl.gz"
+        batches.dump(path, rows)
         typer.echo(f"{path}: {len(rows)} rows")

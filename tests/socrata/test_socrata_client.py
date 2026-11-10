@@ -42,10 +42,35 @@ def test_three_503s_raise_unavailable_after_all_retries(waits: list[float]) -> N
 
 
 @respx.mock
-def test_timeout_is_unavailable() -> None:
-    respx.get(URL).mock(side_effect=httpx.ConnectTimeout("slow"))
+def test_timeout_is_unavailable_after_all_retries(waits: list[float]) -> None:
+    route = respx.get(URL).mock(side_effect=httpx.ConnectTimeout("slow"))
     with pytest.raises(SourceUnavailable):
         Socrata().query("abcd-1234", {})
+    assert route.call_count == 4
+    assert waits == [2.0, 4.0, 8.0]
+
+
+@respx.mock
+def test_503_then_200_succeeds(waits: list[float]) -> None:
+    respx.get(URL).mock(side_effect=[httpx.Response(503), httpx.Response(200, json=[])])
+    assert Socrata().query("abcd-1234", {}) == []
+    assert waits == [2.0]
+
+
+@respx.mock
+def test_non_json_body_is_unavailable_with_a_clear_message() -> None:
+    respx.get(URL).mock(return_value=httpx.Response(200, text="<html>proxy error</html>"))
+    with pytest.raises(SourceUnavailable, match="body is not JSON.*proxy error"):
+        Socrata().query("abcd-1234", {})
+
+
+@respx.mock
+def test_pages_full_last_page_costs_exactly_one_extra_request() -> None:
+    route = respx.get(URL).mock(
+        side_effect=[httpx.Response(200, json=[{"i": 1}, {"i": 2}]), httpx.Response(200, json=[])]
+    )
+    assert list(Socrata().pages("abcd-1234", "i", "i > 0", "i", 2)) == [[{"i": 1}, {"i": 2}]]
+    assert route.call_count == 2
 
 
 @respx.mock
