@@ -1,0 +1,132 @@
+{
+  "$defs": {
+    "Check": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "level": {
+          "title": "Level",
+          "type": "string"
+        },
+        "detail": {
+          "title": "Detail",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "level",
+        "detail"
+      ],
+      "title": "Check",
+      "type": "object"
+    },
+    "IncidentItem": {
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "started": {
+          "title": "Started",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "repair": {
+          "$ref": "#/$defs/Repair"
+        },
+        "failed_checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "title": "Failed Checks",
+          "type": "array"
+        },
+        "ai_cost": {
+          "title": "Ai Cost",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id",
+        "started",
+        "status",
+        "repair",
+        "failed_checks",
+        "ai_cost"
+      ],
+      "title": "IncidentItem",
+      "type": "object"
+    },
+    "Repair": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "title": "Action",
+          "type": "string"
+        },
+        "drill": {
+          "title": "Drill",
+          "type": "boolean"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Url"
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Verdict"
+        },
+        "not_judged": {
+          "title": "Not Judged",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "action",
+        "drill",
+        "url",
+        "verdict",
+        "not_judged"
+      ],
+      "title": "Repair",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "drills": {
+      "items": {
+        "$ref": "#/$defs/IncidentItem"
+      },
+      "title": "Drills",
+      "type": "array"
+    }
+  },
+  "required": [
+    "drills"
+  ],
+  "title": "Drills",
+  "type": "object"
+}

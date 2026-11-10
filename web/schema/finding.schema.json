@@ -1,0 +1,232 @@
+{
+  "$defs": {
+    "Event": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "start": {
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "title": "End",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "start",
+        "end"
+      ],
+      "title": "Event",
+      "type": "object"
+    },
+    "Evidence": {
+      "description": "One tool call the summary relies on, with a short excerpt of its result.",
+      "properties": {
+        "tool": {
+          "title": "Tool",
+          "type": "string"
+        },
+        "args": {
+          "additionalProperties": true,
+          "title": "Args",
+          "type": "object"
+        },
+        "excerpt": {
+          "title": "Excerpt",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tool",
+        "args",
+        "excerpt"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "Weather": {
+      "properties": {
+        "precip_mm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Precip Mm"
+        },
+        "tmax_c": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Tmax C"
+        },
+        "source": {
+          "enum": [
+            "archive",
+            "forecast_past_days"
+          ],
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "precip_mm",
+        "tmax_c",
+        "source"
+      ],
+      "title": "Weather",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "day": {
+      "format": "date",
+      "title": "Day",
+      "type": "string"
+    },
+    "borough": {
+      "title": "Borough",
+      "type": "string"
+    },
+    "board": {
+      "title": "Board",
+      "type": "integer"
+    },
+    "complaint_type": {
+      "title": "Complaint Type",
+      "type": "string"
+    },
+    "observed": {
+      "title": "Observed",
+      "type": "integer"
+    },
+    "expected": {
+      "title": "Expected",
+      "type": "number"
+    },
+    "ratio": {
+      "title": "Ratio",
+      "type": "number"
+    },
+    "q": {
+      "title": "Q",
+      "type": "number"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "series": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "format": "date",
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Series",
+      "type": "array"
+    },
+    "points": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Points",
+      "type": "array"
+    },
+    "weather": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Weather"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/Event"
+      },
+      "title": "Events",
+      "type": "array"
+    },
+    "trace": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Trace",
+      "type": "array"
+    },
+    "cost": {
+      "default": "0",
+      "title": "Cost",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "day",
+    "borough",
+    "board",
+    "complaint_type",
+    "observed",
+    "expected",
+    "ratio",
+    "q",
+    "summary",
+    "evidence",
+    "series",
+    "points",
+    "weather",
+    "events"
+  ],
+  "title": "Finding",
+  "type": "object"
+}

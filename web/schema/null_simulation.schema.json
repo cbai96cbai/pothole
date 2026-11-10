@@ -1,0 +1,44 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "test_days": {
+      "title": "Test Days",
+      "type": "integer"
+    },
+    "analysed_days": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Analysed Days"
+    },
+    "dispersion": {
+      "title": "Dispersion",
+      "type": "string"
+    },
+    "rates": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Rates",
+      "type": "object"
+    }
+  },
+  "required": [
+    "label",
+    "test_days",
+    "analysed_days",
+    "dispersion",
+    "rates"
+  ],
+  "title": "NullSimulation",
+  "type": "object"
+}

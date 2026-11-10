@@ -1,0 +1,141 @@
+{
+  "$defs": {
+    "BacktestDay": {
+      "additionalProperties": false,
+      "properties": {
+        "day": {
+          "title": "Day",
+          "type": "string"
+        },
+        "series_tested": {
+          "title": "Series Tested",
+          "type": "integer"
+        },
+        "cleared_the_bar": {
+          "title": "Cleared The Bar",
+          "type": "integer"
+        },
+        "top": {
+          "items": {
+            "$ref": "#/$defs/FlagRow"
+          },
+          "title": "Top",
+          "type": "array"
+        }
+      },
+      "required": [
+        "day",
+        "series_tested",
+        "cleared_the_bar",
+        "top"
+      ],
+      "title": "BacktestDay",
+      "type": "object"
+    },
+    "FlagRow": {
+      "additionalProperties": false,
+      "properties": {
+        "borough": {
+          "title": "Borough",
+          "type": "string"
+        },
+        "board": {
+          "title": "Board",
+          "type": "integer"
+        },
+        "complaint_type": {
+          "title": "Complaint Type",
+          "type": "string"
+        },
+        "observed": {
+          "title": "Observed",
+          "type": "integer"
+        },
+        "expected": {
+          "title": "Expected",
+          "type": "number"
+        },
+        "ratio": {
+          "title": "Ratio",
+          "type": "number"
+        },
+        "q": {
+          "title": "Q",
+          "type": "number"
+        }
+      },
+      "required": [
+        "borough",
+        "board",
+        "complaint_type",
+        "observed",
+        "expected",
+        "ratio",
+        "q"
+      ],
+      "title": "FlagRow",
+      "type": "object"
+    },
+    "FlagsPerDay": {
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "title": "Min",
+          "type": "integer"
+        },
+        "median": {
+          "title": "Median",
+          "type": "number"
+        },
+        "max": {
+          "title": "Max",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "min",
+        "median",
+        "max"
+      ],
+      "title": "FlagsPerDay",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "window": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Window",
+      "type": "array"
+    },
+    "days_tested": {
+      "title": "Days Tested",
+      "type": "integer"
+    },
+    "flags_per_day": {
+      "$ref": "#/$defs/FlagsPerDay"
+    },
+    "days": {
+      "items": {
+        "$ref": "#/$defs/BacktestDay"
+      },
+      "title": "Days",
+      "type": "array"
+    }
+  },
+  "required": [
+    "label",
+    "window",
+    "days_tested",
+    "flags_per_day",
+    "days"
+  ],
+  "title": "Backtest",
+  "type": "object"
+}

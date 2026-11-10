@@ -1,0 +1,280 @@
+{
+  "$defs": {
+    "CaseFailure": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "family": {
+          "title": "Family",
+          "type": "string"
+        },
+        "expected": {
+          "title": "Expected",
+          "type": "string"
+        },
+        "detected": {
+          "title": "Detected",
+          "type": "boolean"
+        },
+        "action": {
+          "title": "Action",
+          "type": "string"
+        },
+        "correct": {
+          "title": "Correct",
+          "type": "boolean"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "family",
+        "expected",
+        "detected",
+        "action",
+        "correct",
+        "reason"
+      ],
+      "title": "CaseFailure",
+      "type": "object"
+    },
+    "Detected": {
+      "additionalProperties": false,
+      "properties": {
+        "detected": {
+          "title": "Detected",
+          "type": "integer"
+        },
+        "of": {
+          "title": "Of",
+          "type": "integer"
+        },
+        "rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Rate"
+        }
+      },
+      "required": [
+        "detected",
+        "of",
+        "rate"
+      ],
+      "title": "Detected",
+      "type": "object"
+    },
+    "Family": {
+      "additionalProperties": false,
+      "properties": {
+        "expected": {
+          "title": "Expected",
+          "type": "string"
+        },
+        "cases": {
+          "title": "Cases",
+          "type": "integer"
+        },
+        "correct": {
+          "title": "Correct",
+          "type": "integer"
+        },
+        "detected": {
+          "title": "Detected",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "expected",
+        "cases",
+        "correct",
+        "detected"
+      ],
+      "title": "Family",
+      "type": "object"
+    },
+    "Rate": {
+      "additionalProperties": false,
+      "properties": {
+        "correct": {
+          "title": "Correct",
+          "type": "integer"
+        },
+        "of": {
+          "title": "Of",
+          "type": "integer"
+        },
+        "rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Rate"
+        }
+      },
+      "required": [
+        "correct",
+        "of",
+        "rate"
+      ],
+      "title": "Rate",
+      "type": "object"
+    },
+    "RepairSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "repairer": {
+          "title": "Repairer",
+          "type": "string"
+        },
+        "split": {
+          "title": "Split",
+          "type": "string"
+        },
+        "cases": {
+          "title": "Cases",
+          "type": "integer"
+        },
+        "repair_success": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Rate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "issue_accuracy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Rate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "no_change_accuracy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Rate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "repairable_answered_with_issue": {
+          "$ref": "#/$defs/Share"
+        },
+        "crashed": {
+          "title": "Crashed",
+          "type": "integer"
+        },
+        "detection_coverage_fault_cases": {
+          "$ref": "#/$defs/Detected"
+        },
+        "detection_coverage_benign_control": {
+          "$ref": "#/$defs/Detected"
+        },
+        "per_family": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Family"
+          },
+          "title": "Per Family",
+          "type": "object"
+        },
+        "failures": {
+          "items": {
+            "$ref": "#/$defs/CaseFailure"
+          },
+          "title": "Failures",
+          "type": "array"
+        }
+      },
+      "required": [
+        "repairer",
+        "split",
+        "cases",
+        "repair_success",
+        "issue_accuracy",
+        "no_change_accuracy",
+        "repairable_answered_with_issue",
+        "crashed",
+        "detection_coverage_fault_cases",
+        "detection_coverage_benign_control",
+        "per_family",
+        "failures"
+      ],
+      "title": "RepairSummary",
+      "type": "object"
+    },
+    "Share": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "title": "Count",
+          "type": "integer"
+        },
+        "of": {
+          "title": "Of",
+          "type": "integer"
+        },
+        "rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Rate"
+        }
+      },
+      "required": [
+        "count",
+        "of",
+        "rate"
+      ],
+      "title": "Share",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "summaries": {
+      "items": {
+        "$ref": "#/$defs/RepairSummary"
+      },
+      "title": "Summaries",
+      "type": "array"
+    },
+    "agent_run": {
+      "title": "Agent Run",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "summaries",
+    "agent_run"
+  ],
+  "title": "Repairs",
+  "type": "object"
+}

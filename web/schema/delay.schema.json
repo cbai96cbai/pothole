@@ -1,0 +1,32 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "reload_at": {
+      "title": "Reload At",
+      "type": "string"
+    },
+    "rows_measured": {
+      "title": "Rows Measured",
+      "type": "integer"
+    },
+    "share_by_lag_days": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Share By Lag Days",
+      "type": "object"
+    }
+  },
+  "required": [
+    "label",
+    "reload_at",
+    "rows_measured",
+    "share_by_lag_days"
+  ],
+  "title": "Delay",
+  "type": "object"
+}

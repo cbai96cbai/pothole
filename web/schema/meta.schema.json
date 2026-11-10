@@ -1,0 +1,38 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "generated": {
+      "title": "Generated",
+      "type": "string"
+    },
+    "last_success_finished": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Last Success Finished"
+    },
+    "last_success_run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Last Success Run Id"
+    }
+  },
+  "required": [
+    "generated",
+    "last_success_finished",
+    "last_success_run_id"
+  ],
+  "title": "Meta",
+  "type": "object"
+}

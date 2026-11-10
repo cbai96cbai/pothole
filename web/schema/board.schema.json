@@ -1,0 +1,222 @@
+{
+  "$defs": {
+    "LastCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "level": {
+          "title": "Level",
+          "type": "string"
+        },
+        "detail": {
+          "title": "Detail",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "finished": {
+          "title": "Finished",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "level",
+        "detail",
+        "run_id",
+        "finished"
+      ],
+      "title": "LastCheck",
+      "type": "object"
+    },
+    "LatestDay": {
+      "additionalProperties": false,
+      "properties": {
+        "day": {
+          "title": "Day",
+          "type": "string"
+        },
+        "tested": {
+          "title": "Tested",
+          "type": "integer"
+        },
+        "cleared": {
+          "title": "Cleared",
+          "type": "integer"
+        },
+        "findings": {
+          "title": "Findings",
+          "type": "integer"
+        },
+        "skipped_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Skipped Reason"
+        }
+      },
+      "required": [
+        "day",
+        "tested",
+        "cleared",
+        "findings",
+        "skipped_reason"
+      ],
+      "title": "LatestDay",
+      "type": "object"
+    },
+    "RunSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "started": {
+          "title": "Started",
+          "type": "string"
+        },
+        "finished": {
+          "title": "Finished",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "rows_loaded": {
+          "title": "Rows Loaded",
+          "type": "integer"
+        },
+        "pages": {
+          "title": "Pages",
+          "type": "integer"
+        },
+        "analyst_day": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Analyst Day"
+        },
+        "ai_cost": {
+          "title": "Ai Cost",
+          "type": "string"
+        },
+        "generation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Generation"
+        }
+      },
+      "required": [
+        "run_id",
+        "started",
+        "finished",
+        "status",
+        "rows_loaded",
+        "pages",
+        "analyst_day",
+        "ai_cost",
+        "generation"
+      ],
+      "title": "RunSummary",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "dataset_status": {
+      "title": "Dataset Status",
+      "type": "string"
+    },
+    "last_run": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RunSummary"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "last_success": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RunSummary"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/LastCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "latest_day": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LatestDay"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "month": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Month"
+    },
+    "month_ai_cost": {
+      "title": "Month Ai Cost",
+      "type": "string"
+    },
+    "monthly_limit": {
+      "title": "Monthly Limit",
+      "type": "string"
+    }
+  },
+  "required": [
+    "dataset_status",
+    "last_run",
+    "last_success",
+    "checks",
+    "latest_day",
+    "month",
+    "month_ai_cost",
+    "monthly_limit"
+  ],
+  "title": "Board",
+  "type": "object"
+}

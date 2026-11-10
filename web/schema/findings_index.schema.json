@@ -1,0 +1,117 @@
+{
+  "$defs": {
+    "FindingCard": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "borough": {
+          "title": "Borough",
+          "type": "string"
+        },
+        "board": {
+          "title": "Board",
+          "type": "integer"
+        },
+        "complaint_type": {
+          "title": "Complaint Type",
+          "type": "string"
+        },
+        "observed": {
+          "title": "Observed",
+          "type": "integer"
+        },
+        "expected": {
+          "title": "Expected",
+          "type": "number"
+        },
+        "ratio": {
+          "title": "Ratio",
+          "type": "number"
+        },
+        "q": {
+          "title": "Q",
+          "type": "number"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "borough",
+        "board",
+        "complaint_type",
+        "observed",
+        "expected",
+        "ratio",
+        "q",
+        "summary"
+      ],
+      "title": "FindingCard",
+      "type": "object"
+    },
+    "FindingDay": {
+      "additionalProperties": false,
+      "properties": {
+        "day": {
+          "title": "Day",
+          "type": "string"
+        },
+        "tested": {
+          "title": "Tested",
+          "type": "integer"
+        },
+        "cleared": {
+          "title": "Cleared",
+          "type": "integer"
+        },
+        "skipped_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Skipped Reason"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/FindingCard"
+          },
+          "title": "Findings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "day",
+        "tested",
+        "cleared",
+        "skipped_reason",
+        "findings"
+      ],
+      "title": "FindingDay",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "days": {
+      "items": {
+        "$ref": "#/$defs/FindingDay"
+      },
+      "title": "Days",
+      "type": "array"
+    }
+  },
+  "required": [
+    "days"
+  ],
+  "title": "FindingsIndex",
+  "type": "object"
+}

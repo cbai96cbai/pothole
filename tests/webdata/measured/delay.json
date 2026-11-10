@@ -1,0 +1,15 @@
+{
+  "label": "share of a day's rows in the store within k days of the day they were filed",
+  "reload_at": "2026-09-11T21:33:54.256000",
+  "rows_measured": 638277,
+  "share_by_lag_days": {
+    "0": 0.0445,
+    "1": 0.9077,
+    "2": 0.9758,
+    "3": 0.9959,
+    "4": 0.9973,
+    "5": 0.9981,
+    "6": 0.9984,
+    "7": 0.9986
+  }
+}
