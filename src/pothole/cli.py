@@ -126,25 +126,31 @@ def daily_command(
     from pothole.budget.tally import Tally
     from pothole.llm.client import LLMClient
 
-    settings = Settings.from_env()
-    ai = os.environ.get("AI_ENABLED") == "true"
-    if ai and not (settings.azure_endpoint and settings.azure_api_key):
-        typer.echo("AI_ENABLED is true but the Azure endpoint or key is not set", err=True)
-        raise typer.Exit(1)
-    on_github = os.environ.get("GITHUB_ACTIONS") == "true"
     repo = repo.resolve()
-    env = daily.Env(
-        repo=repo,
-        state=settings.state,
-        socrata=Socrata(token=settings.socrata_app_token),
-        sink=_sink(settings, repo),
-        client=LLMClient(settings) if ai else None,
-        ai_enabled=ai,
-        tally=Tally() if ai and not on_github else None,
-        run_id=os.environ.get("GITHUB_RUN_ID") or uuid.uuid4().hex,
-        attempt=int(os.environ.get("GITHUB_RUN_ATTEMPT") or 1),
-        site_dir=site_dir,
-    )
+    run_id = os.environ.get("GITHUB_RUN_ID") or uuid.uuid4().hex
+    ai = os.environ.get("AI_ENABLED") == "true"
+    attempt = 1
+    try:
+        attempt = int(os.environ.get("GITHUB_RUN_ATTEMPT") or 1)
+        settings = Settings.from_env()
+        if ai and not (settings.azure_endpoint and settings.azure_api_key):
+            raise ValueError("AI_ENABLED is true but the Azure endpoint or key is not set")
+        env = daily.Env(
+            repo=repo,
+            state=settings.state,
+            socrata=Socrata(token=settings.socrata_app_token),
+            sink=_sink(settings, repo),
+            client=LLMClient(settings) if ai else None,
+            ai_enabled=ai,
+            tally=Tally() if ai and os.environ.get("GITHUB_ACTIONS") != "true" else None,
+            run_id=run_id,
+            attempt=attempt,
+            site_dir=site_dir,
+        )
+    except Exception as exc:  # a run that cannot start still leaves its record
+        daily.record_setup_failure(repo, run_id, attempt, ai, exc)
+        typer.echo(f"the run could not start: {type(exc).__name__}", err=True)
+        raise typer.Exit(1) from exc
     try:
         record = daily.run(env)
     except EnvelopeExceeded as exc:

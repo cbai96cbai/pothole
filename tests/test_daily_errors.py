@@ -11,8 +11,9 @@ import openai
 import pytest
 from daily_kit import SUNDAY, TUESDAY, env_for, window_rows
 from store.store_fake import outage_on
+from typer.testing import CliRunner
 
-from pothole import daily, dailyai, runrecord
+from pothole import cli, daily, dailyai, runrecord
 from pothole.dailyerror import describe
 
 
@@ -98,3 +99,66 @@ def test_the_error_text_has_no_secrets_and_no_service_bodies(
     request = httpx.Request("POST", "https://example.invalid/v1")
     api = openai.APIConnectionError(message="body with sk-very-secret-key", request=request)
     assert describe(api, "repair") == "repair: APIConnectionError"
+
+
+def test_a_failure_before_the_run_starts_is_recorded_as_setup(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("AI_ENABLED", "true")
+    monkeypatch.setenv("GITHUB_RUN_ID", "555")
+    monkeypatch.setenv("GITHUB_RUN_ATTEMPT", "2")
+    monkeypatch.delenv("AZURE_OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("AZURE_OPENAI_ENDPOINT", raising=False)
+    result = CliRunner().invoke(cli.app, ["daily", "--repo", str(tmp_path)])
+    assert result.exit_code == 1 and chained(result.exception, ValueError)
+    [last] = runrecord.read(tmp_path / "data" / "runs.jsonl")
+    assert last.status == "error" and last.run_id == "555" and last.attempt == 2
+    assert last.ai_enabled and last.ai_cost == "0"
+    assert last.error is not None and last.error.startswith("setup: ValueError: ")
+    assert "not set" in last.error
+
+
+def chained(exc: BaseException | None, kind: type[BaseException]) -> bool:
+    """Whether `kind` is anywhere in the chain of causes and contexts."""
+    while exc is not None:
+        if isinstance(exc, kind):
+            return True
+        exc = exc.__cause__ or exc.__context__
+    return False
+
+
+class FakeLog:
+    def __init__(self) -> None:
+        self.lines: list[dict[str, Any]] = []
+
+    def error(self, message: str, extra: dict[str, Any] | None = None) -> None:
+        self.lines.append({"message": message, **(extra or {})})
+
+
+def test_a_failed_record_write_never_hides_the_original_error(
+    repo: Path, isolated_state: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("SOCRATA_APP_TOKEN", "tok-secret-1234")
+    fake = FakeLog()
+    monkeypatch.setattr(daily, "log", fake)
+
+    def failing_append(*a: Any, **k: Any) -> None:
+        raise OSError("disk full")
+
+    def broken(*a: Any, **k: Any) -> Any:
+        raise RuntimeError("step broke for tok-secret-1234")
+
+    monkeypatch.setattr(daily.runrecord, "append", failing_append)
+    monkeypatch.setattr(daily, "refresh_counts", broken)
+    env, _, _ = env_for(repo, isolated_state, window_rows(TUESDAY))
+    with pytest.raises(RuntimeError, match="step broke"):  # the original error is the one raised
+        daily.run(env)
+    [line] = [x for x in fake.lines if x["message"] == "the error record could not be written"]
+    assert line["error"].startswith("counts: RuntimeError: step broke for ***")
+    assert line["record_error"] == "record write: OSError: disk full"
+    assert "tok-secret-1234" not in str(fake.lines)
+    # the same for a setup failure: the command still exits 1, chained to the setup error
+    monkeypatch.setenv("AI_ENABLED", "true")
+    monkeypatch.delenv("AZURE_OPENAI_API_KEY", raising=False)
+    result = CliRunner().invoke(cli.app, ["daily", "--repo", str(repo)])
+    assert result.exit_code == 1 and chained(result.exception, ValueError)

@@ -5,9 +5,8 @@ from pathlib import Path
 
 import pytest
 import yaml
-from typer.testing import CliRunner
 
-from pothole import cli, runrecord
+from pothole import runrecord
 from pothole.budget.tally import Tally
 from pothole.tallygithub import Admitted, tally_github
 
@@ -78,14 +77,6 @@ def test_each_attempt_of_a_rerun_is_its_own_charge_and_only_once(tmp_path: Path)
     again = tally_github("o/r", date(2026, 11, 10), path, tally, lambda args: out)
     assert again.admitted == [] and again.already == ["7-2", "7-3"]
     assert tally.total() == Decimal("0.128") * 2
-
-
-def test_daily_command_refuses_ai_without_credentials(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("AI_ENABLED", "true")
-    monkeypatch.delenv("AZURE_OPENAI_API_KEY", raising=False)
-    monkeypatch.delenv("AZURE_OPENAI_ENDPOINT", raising=False)
-    result = CliRunner().invoke(cli.app, ["daily"])
-    assert result.exit_code == 1 and "not set" in result.output
 
 
 def test_workflow_matches_the_plan() -> None:

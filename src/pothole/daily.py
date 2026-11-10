@@ -173,15 +173,42 @@ def run(env: Env) -> RunRecord:
         message = describe(exc, progress.step)
         log.error("daily run failed", extra={"error": message})
         failure = _record(env, ai, spend, progress, "error", error=message)
-        runrecord.append(env.data / "runs.jsonl", failure)
-        try:
-            _site(env, started.replace(tzinfo=None))
-        except Exception as site_exc:  # the record is written; the first failure is the one raised
-            log.error("site build after a failure also failed", extra={"error": str(site_exc)})
+        if _append_error(env.data, failure, message):
+            try:
+                _site(env, started.replace(tzinfo=None))
+            except Exception as site_exc:  # the first failure is the one raised
+                log.error("site build after a failure failed", extra={"error": str(site_exc)})
         raise
     if ai is not None and env.tally is not None:
         settle_if_complete(env.tally, env.run_id, spend.total, True)
     return record
+
+
+def _append_error(data: Path, failure: RunRecord, message: str) -> bool:
+    """Write the error record. If that fails too, say so in one log line with the original error,
+    so the second failure never hides the first."""
+    try:
+        runrecord.append(data / "runs.jsonl", failure)
+    except Exception as write_exc:
+        log.error(
+            "the error record could not be written",
+            extra={"error": message, "record_error": describe(write_exc, "record write")},
+        )
+        return False
+    return True
+
+
+def record_setup_failure(
+    repo: Path, run_id: str, attempt: int, ai_enabled: bool, exc: BaseException
+) -> None:
+    """A failure before `run()` could start (settings, clients, a missing key) is a run too."""
+    now = datetime.now(NEW_YORK).isoformat(timespec="seconds")
+    message = describe(exc, "setup")
+    log.error("daily run could not start", extra={"error": message})
+    failure = RunRecord(
+        run_id, now, now, "error", 0, 0, ai_enabled=ai_enabled, attempt=attempt, error=message
+    )
+    _append_error(repo / "data", failure, message)
 
 
 def _record(
