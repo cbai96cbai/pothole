@@ -14,12 +14,12 @@ MAX_RUN = Decimal("0.10")
 
 
 @pytest.mark.live
-def test_renamed_field_on_a_recorded_day(spec, failing, failed_checks, fields, healthy) -> None:
+def test_renamed_field_on_a_recorded_day(spec, failing, failed_checks, fields) -> None:
     tally = Tally()
     tally.admit("live-repair-smoke", Decimal("0.048"))  # six calls at the per-call maximum
     outcome = repair(
         spec, failing.rows, failed_checks, fields, LLMClient(Settings.from_env()),
-        now=failing.now, healthy=healthy,
+        now=failing.now,
     )  # fmt: skip
     tally.settle("live-repair-smoke", outcome.cost)
     assert outcome.cost <= MAX_RUN

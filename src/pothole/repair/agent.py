@@ -23,7 +23,7 @@ from pothole.repair.prompt import (
     TOOLS,
 )
 from pothole.repair.tools import Submission, Toolbox, cap, render_results
-from pothole.repair.validate import DEFAULT_HEALTHY, Batch, ToolError, load_batches
+from pothole.repair.validate import ToolError
 from pothole.spec.checks import CheckResult
 from pothole.spec.model import PipelineSpec
 
@@ -159,15 +159,13 @@ def repair(
     *,
     now: datetime | None = None,
     history: list[int] | None = None,
-    healthy: list[Batch] | None = None,
 ) -> RepairOutcome:
-    """Decide what to do about a failed batch. `healthy` defaults to the committed fixtures."""
+    """Decide what to do about a failed batch."""
     box = Toolbox(
         spec,
         failing_batch_rows,
         check_results,
         source_fields,
-        load_batches(DEFAULT_HEALTHY) if healthy is None else healthy,
         now,
         history or [],
     )

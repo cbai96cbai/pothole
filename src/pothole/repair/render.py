@@ -1,21 +1,36 @@
 """The text of a pull request, an issue and a regression file."""
 
 import json
+import re
 from typing import Any
 
 from pothole.repair.outcome import RegressionCase, RepairOutcome
 from pothole.spec.checks import CheckResult
 
 SPEC_PATH = "pipelines/311.yaml"
-NOT_JUDGED = "proposed, not judged"
+NOT_JUDGED = "Proposed, not judged"
+LABELS_REAL = ("repair", "not-judged")
+LABELS_DRILL = ("drill",)
 OUTPUT_CHARS = 3000
+
+
+def fenced(text: str) -> str:
+    """Text in a code block whose fence is longer than any run of backticks inside it, so model
+    or tool text can neither close the block nor render a mention or link."""
+    longest = max((len(m) for m in re.findall(r"`+", text)), default=0)
+    fence = "`" * max(3, longest + 1)
+    return f"{fence}\n{text}\n{fence}"
+
+
+def labels(drill: bool) -> tuple[str, ...]:
+    return LABELS_DRILL if drill else LABELS_REAL
 
 
 def results_block(results: list[CheckResult]) -> str:
     shown = [r for r in results if r.level != "pass"]
     if not shown:
         return "All checks pass."
-    return "\n".join(f"- {r.level} `{r.name}`: {r.detail}" for r in shown)
+    return fenced("\n".join(f"{r.level} {r.name}: {r.detail}" for r in shown))
 
 
 def ops_block(outcome: RepairOutcome) -> str:
@@ -44,19 +59,19 @@ def pr_body(
 ) -> str:
     parts = [
         "**Drill: this failure was injected on purpose.**" if drill else f"**{NOT_JUDGED}**",
-        f"Verdict: {verdict}" if verdict else f"Verdict: none yet ({NOT_JUDGED}).",
-        f"## Reasoning\n{outcome.reason}",
+        f"Verdict:\n{fenced(verdict)}" if verdict else f"Verdict: none yet. {NOT_JUDGED}.",
+        f"## Reasoning\n{fenced(outcome.reason)}",
         f"## Edits\n{ops_block(outcome)}",
         f"## Checks before\n{results_block(before)}",
         f"## Checks after\n{results_block(after)}",
     ]
     if tests is not None:
-        parts.append(f"## Test output on `{sha}`\n```\n{tests[-OUTPUT_CHARS:]}\n```")
+        parts.append(f"## Test output on `{sha}`\n{fenced(tests[-OUTPUT_CHARS:])}")
     return "\n\n".join(parts) + "\n"
 
 
 def issue_body(reason: str, failing: list[CheckResult], extra: str | None = None) -> str:
-    parts = [f"## Reason\n{reason}", f"## Failing checks\n{results_block(failing)}"]
+    parts = [f"## Reason\n{fenced(reason)}", f"## Failing checks\n{results_block(failing)}"]
     if extra:
-        parts.append(f"## Output\n```\n{extra[-OUTPUT_CHARS:]}\n```")
+        parts.append(f"## Output\n{fenced(extra[-OUTPUT_CHARS:])}")
     return "\n\n".join(parts) + "\n"

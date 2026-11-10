@@ -28,11 +28,6 @@ def all_batches() -> list[Batch]:
 
 
 @pytest.fixture(scope="session")
-def healthy(all_batches: list[Batch]) -> list[Batch]:
-    return [b for b in all_batches if b.name != FAILING_DAY][:2]
-
-
-@pytest.fixture(scope="session")
 def failing(all_batches: list[Batch]) -> Batch:
     """A real recorded day in which the source renamed `agency` to `agency_name`."""
     day = next(b for b in all_batches if b.name == FAILING_DAY)
@@ -69,7 +64,7 @@ def reply(*calls: dict[str, Any], content: str | None = None) -> CallResult:
 class Scripted:
     """A model that answers from a list; records what each call was sent."""
 
-    def __init__(self, script: list[CallResult | Callable[[], CallResult]]) -> None:
+    def __init__(self, script: list[CallResult | Exception | Callable[[], CallResult]]) -> None:
         self.script = list(script)
         self.sent: list[dict[str, Any]] = []
 
@@ -82,6 +77,8 @@ class Scripted:
     ) -> CallResult:
         self.sent.append({"messages": [dict(m) for m in messages], "tool_choice": tool_choice})
         nxt = self.script.pop(0)
+        if isinstance(nxt, Exception):
+            raise nxt
         return nxt() if callable(nxt) else nxt
 
 

@@ -25,7 +25,9 @@ an issue.
 
 How to work: read the check results, look at the spec, the source fields and a few failing rows, \
 then try your edits with try_patch and look at the checks it returns. A patch is accepted \
-only when no check fails on the failing batch and on earlier healthy batches. Submit a patch with \
+only when no check fails on the failing batch afterwards. You may edit only a column that a \
+failed check names, and map_field may only read a field the failing batch actually sends. \
+Submit a patch with \
 regression_keys: 3 to 10 keys (the key column's values) of rows from the failing batch that your \
 patch changes; they become a permanent test. Give a reason in one or two plain sentences that says \
 what changed in the data and what the edit does. Every reply you send, including errors, uses up \

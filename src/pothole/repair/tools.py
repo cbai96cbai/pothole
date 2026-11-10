@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import Any, get_args
 
 from pothole.repair.outcome import Action, Op, RegressionCase
-from pothole.repair.validate import Batch, ToolError, build_case, check_healthy, failed
+from pothole.repair.validate import ToolError, build_case, failed, failing_columns
 from pothole.spec import engine, ops
 from pothole.spec.checks import CheckResult
 from pothole.spec.model import PipelineSpec
@@ -46,12 +46,11 @@ class Toolbox:
         rows: list[dict[str, str]],
         results: list[CheckResult],
         source_fields: dict[str, str],
-        healthy: list[Batch],
         now: datetime | None,
         history: list[int],
     ) -> None:
         self.spec, self.rows, self.results = spec, rows, results
-        self.fields, self.healthy, self.now, self.history = source_fields, healthy, now, history
+        self.fields, self.now, self.history = source_fields, now, history
 
     def run(self, name: str, args: dict[str, Any]) -> str:
         if name == "read_spec":
@@ -89,10 +88,24 @@ class Toolbox:
             raise ToolError("ops must be a non-empty list of edit objects")
         try:
             parsed = [ops.parse(o) for o in raw]
+            self._allowed(parsed)
             patched = ops.apply(self.spec, parsed)
         except ops.ForbiddenEdit as exc:
             raise ToolError(f"ForbiddenEdit: {exc}") from exc
         return (patched, parsed), engine.run(patched, self.rows, self.history, self.now).checks
+
+    def _allowed(self, parsed: list[Op]) -> None:
+        """An edit touches only a column a failed check names, and remaps only to a field the
+        failing batch sends."""
+        allowed = failing_columns(self.spec, self.results)
+        sent = {f for r in self.rows for f in r}
+        for o in parsed:
+            if o.column not in allowed:
+                raise ops.ForbiddenEdit(
+                    f"{o.column!r} has no failed check; edits may touch only {sorted(allowed)}"
+                )
+            if isinstance(o, ops.MapField) and o.source not in sent:
+                raise ops.ForbiddenEdit(f"{o.source!r} is not a field the failing batch sends")
 
     def submit(self, args: dict[str, Any]) -> Submission:
         action: Any = args.get("action")
@@ -111,13 +124,8 @@ class Toolbox:
             raise ToolError(
                 "the patched spec still fails on the failing batch:\n" + render_results(still)
             )
-        problems = check_healthy(patched, parsed, self.healthy, self.history)
-        if problems:
-            raise ToolError(
-                "the patched spec fails on healthy earlier batches:\n" + "\n".join(problems[:5])
-            )
         keys = args.get("regression_keys")
         if not isinstance(keys, list) or not all(isinstance(k, str) for k in keys):
             raise ToolError("regression_keys must be a list of key strings")
-        case = build_case(self.spec, patched, self.rows, keys, self.now)
+        case = build_case(self.spec, patched, self.rows, keys)
         return Submission("patch", parsed, case, reason.strip())

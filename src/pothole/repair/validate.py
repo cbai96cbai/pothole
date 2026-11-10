@@ -3,18 +3,16 @@
 import json
 import re
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-from pothole.repair.outcome import Op, RegressionCase, table_rows
+from pothole.repair.outcome import RegressionCase, table_rows
 from pothole.socrata import batches
 from pothole.spec import engine
 from pothole.spec.checks import CheckResult
 from pothole.spec.model import PipelineSpec
-from pothole.spec.ops import MapField, SetFormat
 
-DEFAULT_HEALTHY = Path(__file__).parents[3] / "fixtures" / "batches"
 MIN_CASE, MAX_CASE = 3, 10
 
 
@@ -46,34 +44,32 @@ def failed(results: list[CheckResult]) -> list[CheckResult]:
     return [r for r in results if r.level == "fail"]
 
 
-def _tolerated(op_list: list[Op], res: CheckResult) -> bool:
-    """Older data cannot satisfy an edit that follows a change in the source: a remapped column's
-    source field is absent from it, and a new format does not read old values. Those checks
-    cannot pass on the healthy fixtures, and that is not a defect of the patch."""
-    moved = {o.column: o.source for o in op_list if isinstance(o, MapField)}
-    reformatted = {o.column for o in op_list if isinstance(o, SetFormat)}
-    kind, _, col = res.name.partition(":")
-    if kind in ("required", "null_rate") and col in moved:
-        return True
-    if kind in ("cast", "null_rate") and col in reformatted:
-        return True
-    if res.name == "freshness" and "created_date" in reformatted | set(moved):
-        return True
-    if res.name == "schema":
-        missing = set(re.split(r",\s*", res.detail.rsplit(": ", 1)[-1]))
-        return missing <= set(moved.values())
-    return False
+def failing_columns(spec: PipelineSpec, results: list[CheckResult]) -> set[str]:
+    """The columns a failed check names: the only ones an edit may touch."""
+    by_source = {c.source: c.name for c in spec.columns}
+    cols: set[str] = set()
+    for res in failed(results):
+        kind, _, col = res.name.partition(":")
+        if col and kind in ("required", "cast", "values", "range", "null_rate"):
+            cols.add(col)
+        elif res.name == "schema":
+            missing = re.split(r",\s*", res.detail.rsplit(": ", 1)[-1])
+            cols |= {by_source[m] for m in missing if m in by_source}
+    return cols
 
 
-def check_healthy(
-    patched: PipelineSpec, op_list: list[Op], healthy: list[Batch], history: list[int] | None = None
-) -> list[str]:
-    problems: list[str] = []
-    for b in healthy:
-        for res in failed(engine.run(patched, b.rows, history or [], b.now).checks):
-            if not _tolerated(op_list, res):
-                problems.append(f"{b.name}: {res.name}: {res.detail}")
-    return problems
+def case_day(spec: PipelineSpec, rows: list[dict[str, str]]) -> date:
+    """The day the case's rows were created: the latest `created_date` among them."""
+    source = spec.column("created_date").source
+    days = [r[source][:10] for r in rows if r.get(source)]
+    try:
+        return max(date.fromisoformat(d) for d in days)
+    except ValueError as exc:
+        raise ToolError("the chosen rows have no readable created_date") from exc
+
+
+def case_now(day: date) -> datetime:
+    return datetime(day.year, day.month, day.day) + timedelta(days=1, hours=30)
 
 
 def build_case(
@@ -81,7 +77,6 @@ def build_case(
     patched: PipelineSpec,
     rows: list[dict[str, str]],
     keys: list[str],
-    now: datetime | None,
 ) -> RegressionCase:
     if len(set(keys)) != len(keys) or not MIN_CASE <= len(keys) <= MAX_CASE:
         raise ToolError(f"regression_keys must be {MIN_CASE} to {MAX_CASE} different keys")
@@ -91,6 +86,13 @@ def build_case(
     if unknown:
         raise ToolError(f"regression_keys not in the failing batch: {unknown[:5]}")
     subset = [by_key[k] for k in keys]
+    now = case_now(case_day(patched, subset))
+    still = failed(engine.run(patched, subset, [], now).checks)
+    if still:
+        raise ToolError(
+            "these rows fail checks under the patched spec; pick others: "
+            + "; ".join(f"{r.name}: {r.detail}" for r in still[:3])
+        )
     expected = table_rows(engine.run(patched, subset, [], now).table)
     before = table_rows(engine.run(original, subset, [], now).table)
     if expected == before:
@@ -98,11 +100,13 @@ def build_case(
             "these rows come out the same with and without the patch; pick rows it fixes"
         )
     case = RegressionCase(subset, expected)
-    if not reproduces(patched, case, now):
+    if not reproduces(patched, case):
         raise ToolError("the regression case does not reproduce with the patched spec")
     return case
 
 
-def reproduces(spec: PipelineSpec, case: RegressionCase, now: datetime | None = None) -> bool:
-    got: Any = table_rows(engine.run(spec, case.rows, [], now).table)
+def reproduces(spec: PipelineSpec, case: RegressionCase) -> bool:
+    got: Any = table_rows(
+        engine.run(spec, case.rows, [], case_now(case_day(spec, case.rows))).table
+    )
     return bool(json.loads(json.dumps(got)) == json.loads(json.dumps(case.expected)))

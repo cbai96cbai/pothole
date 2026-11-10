@@ -5,6 +5,7 @@ and the pull request is opened for a person to merge.
 """
 
 import os
+import secrets
 import shutil
 import subprocess
 import tempfile
@@ -16,6 +17,8 @@ from typing import Literal
 
 from pothole.repair import render
 from pothole.repair.outcome import RepairOutcome
+from pothole.repair.validate import case_day
+from pothole.socrata import batches
 from pothole.spec import ops
 from pothole.spec.checks import CheckResult
 from pothole.spec.model import PipelineSpec
@@ -23,13 +26,20 @@ from pothole.spec.model import PipelineSpec
 Runner = Callable[..., "subprocess.CompletedProcess[str]"]
 BOT_NAME = "github-actions[bot]"
 BOT_EMAIL = "41898282+github-actions[bot]@users.noreply.github.com"
-CHECKS = (
-    ["uv", "run", "pytest", "-q", "tests/regression"],
-    [
-        "uv", "run", "pothole", "check-spec", "--spec", render.SPEC_PATH,
-        "--batches", "fixtures/batches",
-    ],
-)  # fmt: skip
+PYTEST = ["uv", "run", "pytest", "-q"]  # the whole suite, regression cases included
+
+
+def check_spec_command(batch_dir: str) -> list[str]:
+    return [
+        "uv",
+        "run",
+        "pothole",
+        "check-spec",
+        "--spec",
+        render.SPEC_PATH,
+        "--batches",
+        batch_dir,
+    ]
 
 
 @dataclass(frozen=True)
@@ -46,8 +56,8 @@ def run_process(
     return subprocess.run(args, cwd=cwd, env=env, capture_output=True, text=True, check=False)
 
 
-def _name(drill: bool, day: date, n: int) -> str:
-    return f"{'drill' if drill else 'repair'}/{day.isoformat()}-{n}"
+def _name(drill: bool, day: date, suffix: str) -> str:
+    return f"{'drill' if drill else 'repair'}/{day.isoformat()}-{suffix}"
 
 
 class LocalSink:
@@ -72,7 +82,7 @@ class LocalSink:
     ) -> Filed:
         if outcome.action != "patch" or outcome.regression is None:
             raise ValueError("a pull request needs a patch outcome with a regression case")
-        branch = _name(drill, day, self._next("pr"))
+        branch = _name(drill, day, secrets.token_hex(3))
         root = self.dir / f"pr-{branch.replace('/', '-')}"
         (root / "tests" / "regression").mkdir(parents=True)
         (root / "pipelines").mkdir()
@@ -120,11 +130,9 @@ class GitHubSink:
             )
         return (done.stdout or "").strip()
 
-    def _next_branch(self, drill: bool, day: date) -> str:
-        self._must(["git", "fetch", "origin", self.base])
-        prefix = _name(drill, day, 0).rsplit("-", 1)[0]
-        listed = self._must(["git", "branch", "-r", "--list", f"origin/{prefix}-*"])
-        return _name(drill, day, len([ln for ln in listed.splitlines() if ln.strip()]) + 1)
+    def _ensure_labels(self, names: Sequence[str]) -> None:
+        for name in names:
+            self._run(["gh", "label", "create", name, "--repo", self.repo, "--force"])
 
     def open_issue(
         self,
@@ -144,6 +152,7 @@ class GitHubSink:
             cmd = ["gh", "issue", "create", "--repo", self.repo, "--title", title]
             cmd += ["--body-file", str(body)]
             if drill:
+                self._ensure_labels(render.LABELS_DRILL)
                 cmd += ["--label", "drill"]
             url = self._must(cmd)
         return Filed("issue", url)
@@ -161,7 +170,8 @@ class GitHubSink:
     ) -> Filed:
         if outcome.action != "patch" or outcome.regression is None:
             raise ValueError("a pull request needs a patch outcome with a regression case")
-        branch = self._next_branch(drill, day)
+        self._must(["git", "fetch", "origin", self.base])
+        branch = _name(drill, day, secrets.token_hex(3))
         if not branch.startswith(("repair/", "drill/")):
             raise ValueError(f"refusing branch {branch!r}")
         work = Path(tempfile.mkdtemp(prefix="pothole-pr-")) / "tree"
@@ -186,37 +196,50 @@ class GitHubSink:
         verdict: str | None,
     ) -> Filed:
         assert outcome.regression is not None
+        ident = branch.replace("/", "-")
         (work / "pipelines").mkdir(exist_ok=True)
         (work / "tests" / "regression").mkdir(parents=True, exist_ok=True)
         (work / render.SPEC_PATH).write_text(ops.apply(spec, outcome.ops).to_yaml())
-        case = work / "tests" / "regression" / f"{branch.replace('/', '-')}.json"
+        case = work / "tests" / "regression" / f"{ident}.json"
         case.write_text(render.regression_file(outcome.regression))
-        self._must(["git", "add", render.SPEC_PATH, str(case.relative_to(work))], work)
+        # the case's rows as a batch of their own, so check-spec can run the patched spec on them
+        rows_dir = work / "tests" / "regression" / "batches" / ident
+        rows_dir.mkdir(parents=True)
+        when = case_day(ops.apply(spec, outcome.ops), outcome.regression.rows).isoformat()
+        batches.dump(rows_dir / f"{when}.jsonl.gz", outcome.regression.rows)
+        paths = [render.SPEC_PATH, *(str(p.relative_to(work)) for p in (case, rows_dir))]
+        self._must(["git", "add", *paths], work)
         who = ["-c", f"user.name={BOT_NAME}", "-c", f"user.email={BOT_EMAIL}"]
         message = render.pr_title(outcome, drill)
         self._must(["git", *who, "commit", "-m", message], work)
         sha = self._must(["git", "rev-parse", "HEAD"], work)
         output = ""
-        for check in CHECKS:
-            done = self._run(check, work)
-            output += f"$ {' '.join(check)}\n{done.stdout}{done.stderr}\n"
+        gates = [PYTEST, check_spec_command(str(rows_dir.relative_to(work)))]
+        for gate in gates:
+            done = self._run(gate, work)
+            output += f"$ {' '.join(gate)}\n{done.stdout}{done.stderr}\n"
             if done.returncode != 0:
                 reason = (
                     f"The patch failed its own tests on {branch} ({sha[:10]}): {outcome.reason}"
                 )
                 return self.open_issue(reason, before, day=day, drill=drill, output=output)
-        self._must(["git", "push", "origin", f"{branch}:refs/heads/{branch}"], work)
-        label = "drill" if drill else render.NOT_JUDGED
-        self._run(["gh", "label", "create", label, "--repo", self.repo, "--force"])
-        body = render.pr_body(
-            outcome, before, after, drill=drill, verdict=verdict, sha=sha, tests=output
-        )
-        with tempfile.TemporaryDirectory() as tmp:
-            path = Path(tmp) / "body.md"
-            path.write_text(body)
-            url = self._must(
-                ["gh", "pr", "create", "--repo", self.repo, "--base", self.base, "--head", branch,
-                 "--title", message, "--body-file", str(path), "--label", label],
-                work,
-            )  # fmt: skip
+        wanted = render.labels(drill)
+        try:
+            self._must(["git", "push", "origin", f"{branch}:refs/heads/{branch}"], work)
+            self._ensure_labels(wanted)
+            body = render.pr_body(
+                outcome, before, after, drill=drill, verdict=verdict, sha=sha, tests=output
+            )
+            with tempfile.TemporaryDirectory() as tmp:
+                path = Path(tmp) / "body.md"
+                path.write_text(body)
+                create = ["gh", "pr", "create", "--repo", self.repo, "--base", self.base]
+                create += ["--head", branch, "--title", message, "--body-file", str(path)]
+                for name in wanted:
+                    create += ["--label", name]
+                url = self._must(create, work)
+        except RuntimeError as exc:
+            self._run(["git", "push", "origin", "--delete", branch], work)  # no PR, no stray branch
+            reason = f"Could not open the pull request for {branch}: {exc}. {outcome.reason}"
+            return self.open_issue(reason, before, day=day, drill=drill, output=output)
         return Filed("pr", url, branch)
