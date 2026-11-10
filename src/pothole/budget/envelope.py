@@ -9,7 +9,9 @@ from decimal import Decimal
 
 from pothole.budget.limits import DEFAULT_LIMITS, PRICE, CallLimits, Price, call_max_cost
 
-CEILING = Decimal("0.129")
+MONTHLY_LIMIT = Decimal("4")
+CEILING_DAYS = 31
+CEILING = Decimal("0.129")  # MONTHLY_LIMIT / CEILING_DAYS, rounded to the cent of a cent
 
 
 class EnvelopeExceeded(Exception):

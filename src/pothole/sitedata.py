@@ -14,9 +14,19 @@ from pydantic import BaseModel, TypeAdapter
 from pothole import runrecord
 from pothole import sitemodels as m
 from pothole.analyst.finding import AnalystDay, Finding, to_json
+from pothole.budget.envelope import (
+    CEILING,
+    CEILING_DAYS,
+    DEFAULT_STEPS,
+    MONTHLY_LIMIT,
+    run_envelope,
+)
+from pothole.budget.limits import DEFAULT_LIMITS, PRICE, call_max_cost
+from pothole.repair.render import SPEC_PATH
 from pothole.runrecord import RunRecord
+from pothole.spec.model import PipelineSpec
+from pothole.store.load import ANALYSIS_LAG_DAYS
 
-MONTHLY_LIMIT = "4.00"
 FINDING_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]*$")
 # raw complaint fields the site never publishes (descriptor fields and coordinates are the
 # documented exception)
@@ -49,9 +59,46 @@ FILES: dict[str, type[BaseModel]] = {
 }
 
 
+def _strict(schema: Any) -> None:
+    """Every field of an object that lists its fields is required and no other is allowed: the
+    dataclasses' defaults are for the writers; a file the pages read must hold every field."""
+    if isinstance(schema, dict):
+        props = schema.get("properties")
+        if schema.get("type") == "object" and props is not None:
+            schema["required"] = sorted(props)
+            schema["additionalProperties"] = False
+        for v in schema.values():
+            _strict(v)
+    elif isinstance(schema, list):
+        for v in schema:
+            _strict(v)
+
+
+def _facts(root: Path) -> m.Facts:
+    spec = PipelineSpec.from_yaml((root / SPEC_PATH).read_text())
+    universe = json.loads((root / "data" / "universe.json").read_text())
+    return m.Facts(
+        window_days=spec.source.window_days,
+        analysis_lag_days=ANALYSIS_LAG_DAYS,
+        complaint_types=len(universe["complaint_types"]),
+        districts=len(universe["boards"]),
+        max_investigations=sum(s.name.startswith("investigation") for s in DEFAULT_STEPS),
+        calls_per_run=sum(s.calls for s in DEFAULT_STEPS),
+        max_cost_per_call=str(call_max_cost(DEFAULT_LIMITS)),
+        run_envelope=str(run_envelope()),
+        run_ceiling=str(CEILING),
+        ceiling_days=CEILING_DAYS,
+        monthly_limit=str(MONTHLY_LIMIT),
+        price_input_per_million=str(PRICE.input),
+        price_output_per_million=str(PRICE.output),
+    )
+
+
 def schemas() -> dict[str, dict[str, Any]]:
     out = {name: model.model_json_schema(mode="serialization") for name, model in FILES.items()}
     out["finding"] = TypeAdapter(Finding).json_schema(mode="serialization")
+    for schema in out.values():
+        _strict(schema)
     return out
 
 
@@ -103,7 +150,6 @@ def _board(runs: list[RunRecord], days: list[AnalystDay]) -> m.Board:
         else None,
         month=month,
         month_ai_cost=str(cost),
-        monthly_limit=MONTHLY_LIMIT,
     )
 
 
@@ -199,6 +245,7 @@ def build(repo_root: Path, out_dir: Path, now: datetime | None = None) -> None:
         ),
         "runs": m.Runs(runs=[_summary(r) for r in reversed(runs)]),
         "meta": m.Meta(
+            facts=_facts(repo_root),
             generated=(now or datetime.now(UTC)).isoformat(timespec="seconds"),
             last_success_finished=board.last_success.finished if board.last_success else None,
             last_success_run_id=board.last_success.run_id if board.last_success else None,

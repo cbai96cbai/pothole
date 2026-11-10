@@ -35,9 +35,9 @@
   "required": [
     "label",
     "reload_at",
+    "rows_by_lag_days",
     "rows_measured_at_lag_0",
     "rows_measured_note",
-    "rows_by_lag_days",
     "share_by_lag_days"
   ],
   "title": "Delay",

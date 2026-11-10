@@ -38,13 +38,13 @@
     }
   },
   "required": [
+    "days_simulated_after_lead_in",
+    "days_tested",
+    "dispersion",
     "label",
+    "rule",
     "seed",
     "series",
-    "days_tested",
-    "days_simulated_after_lead_in",
-    "rule",
-    "dispersion",
     "share_of_days_with_a_candidate"
   ],
   "title": "NullSimulation",

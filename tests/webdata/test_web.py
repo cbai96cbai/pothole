@@ -29,7 +29,7 @@ def test_every_route_renders_from_the_fixture_data(tmp_path: Path, with_agent: b
     sitedata.build(repo, tmp_path / "out")
     done = run("npx", "--no-install", "tsx", "scripts/check-routes.tsx", str(tmp_path / "out"))
     assert done.returncode == 0, done.stderr + done.stdout
-    assert "checked 10 routes" in done.stdout
+    assert "checked 11 routes" in done.stdout
 
 
 @needs_node
@@ -37,10 +37,32 @@ def test_an_empty_history_renders(tmp_path: Path) -> None:
     repo = site_repo.make(tmp_path / "repo")
     (repo / "data" / "runs.jsonl").unlink()
     sitedata.build(repo, tmp_path / "out")
-    done = run("npx", "--no-install", "tsx", "scripts/check-routes.tsx", str(tmp_path / "out"))
-    # no successful run: the pages must say so instead of a date, which the checker reports
-    assert "no last successful run date" in done.stderr
-    assert "TypeError" not in done.stderr
+    done = run("npx", "--no-install", "tsx", "scripts/render-page.tsx", str(tmp_path / "out"), "#/")
+    assert done.returncode == 0, done.stderr
+    assert "No successful run yet" in done.stdout and "No runs recorded yet" in done.stdout
+
+
+# figures that must come from a data file, not from the pages' source
+LITERALS = [
+    r"\b(90|25|59|31)\b",
+    r"\$\d",
+    r"\b0\.(25|008|128|129)\b",
+    r"\b2\.00\b",
+    r"\b(two|three|thirty-first)\b",
+]
+
+
+def test_no_page_source_holds_a_figure_that_belongs_in_a_data_file() -> None:
+    hits = []
+    for path in sorted((WEB / "src").rglob("*.ts*")):
+        if "data" in path.relative_to(WEB / "src").parts[:1]:
+            continue
+        for n, line in enumerate(path.read_text().splitlines(), start=1):
+            code = line.split("//")[0]
+            for pattern in LITERALS:
+                if re.search(pattern, code, flags=re.IGNORECASE):
+                    hits.append(f"{path.name}:{n}: {line.strip()}")
+    assert not hits, "\n".join(hits)
 
 
 DIST = WEB / "dist"
@@ -55,3 +77,9 @@ def test_built_references_all_exist() -> None:
         assert ref.startswith("/pothole/"), f"{ref} is not under the site's base path"
         assert (DIST / ref.removeprefix("/pothole/")).is_file(), f"{ref} is not in the build"
     assert "/pothole/#/404" in (DIST / "404.html").read_text()
+
+
+@pytest.mark.skipif(not (DIST / "index.html").exists(), reason="web/dist is missing: run the build")
+def test_the_map_worker_files_are_in_the_build() -> None:
+    for name in ("maplibre-gl-worker.mjs", "maplibre-gl-shared.mjs"):
+        assert (DIST / "maplibre" / name).is_file(), f"{name} is missing: the map cannot start"

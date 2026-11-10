@@ -6,8 +6,14 @@ from pathlib import Path
 
 TESTS = Path(__file__).parent
 # read the live spec: the parse check and the regression collector (which gets the path from
-# each case file). test_sink only uses the path as a location inside a scratch repository.
-ALLOWED = {"spec/test_live_spec.py", "regression/test_cases.py", "repair/test_sink.py"}
+# each case file). test_sink and the site fixture only use the path as a location inside a
+# scratch repository.
+ALLOWED = {
+    "spec/test_live_spec.py",
+    "regression/test_cases.py",
+    "repair/test_sink.py",
+    "webdata/site_repo.py",
+}
 NEEDLES = ("311" + ".yaml", "SPEC" + "_PATH")
 
 

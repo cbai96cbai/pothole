@@ -17,9 +17,9 @@
         }
       },
       "required": [
-        "name",
+        "detail",
         "level",
-        "detail"
+        "name"
       ],
       "title": "Check",
       "type": "object"
@@ -55,12 +55,12 @@
         }
       },
       "required": [
+        "ai_cost",
+        "failed_checks",
+        "repair",
         "run_id",
         "started",
-        "status",
-        "repair",
-        "failed_checks",
-        "ai_cost"
+        "status"
       ],
       "title": "IncidentItem",
       "type": "object"
@@ -106,9 +106,9 @@
       "required": [
         "action",
         "drill",
+        "not_judged",
         "url",
-        "verdict",
-        "not_judged"
+        "verdict"
       ],
       "title": "Repair",
       "type": "object"

@@ -20,13 +20,14 @@
         }
       },
       "required": [
+        "end",
         "name",
-        "type",
         "start",
-        "end"
+        "type"
       ],
       "title": "Event",
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Evidence": {
       "description": "One tool call the summary relies on, with a short excerpt of its result.",
@@ -46,12 +47,13 @@
         }
       },
       "required": [
-        "tool",
         "args",
-        "excerpt"
+        "excerpt",
+        "tool"
       ],
       "title": "Evidence",
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Weather": {
       "properties": {
@@ -88,11 +90,12 @@
       },
       "required": [
         "precip_mm",
-        "tmax_c",
-        "source"
+        "source",
+        "tmax_c"
       ],
       "title": "Weather",
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -196,6 +199,14 @@
       "title": "Events",
       "type": "array"
     },
+    "status": {
+      "enum": [
+        "investigated",
+        "unfinished"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
     "trace": {
       "items": {
         "additionalProperties": true,
@@ -208,25 +219,37 @@
       "default": "0",
       "title": "Cost",
       "type": "string"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
     }
   },
   "required": [
-    "id",
-    "day",
-    "borough",
     "board",
+    "borough",
     "complaint_type",
-    "observed",
-    "expected",
-    "ratio",
-    "q",
-    "summary",
+    "cost",
+    "day",
+    "events",
     "evidence",
-    "series",
+    "expected",
+    "id",
+    "notes",
+    "observed",
     "points",
-    "weather",
-    "events"
+    "q",
+    "ratio",
+    "series",
+    "status",
+    "summary",
+    "trace",
+    "weather"
   ],
   "title": "Finding",
-  "type": "object"
+  "type": "object",
+  "additionalProperties": false
 }

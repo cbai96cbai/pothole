@@ -55,15 +55,15 @@
         }
       },
       "required": [
+        "ai_cost",
+        "analyst_day",
+        "finished",
+        "generation",
+        "pages",
+        "rows_loaded",
         "run_id",
         "started",
-        "finished",
-        "status",
-        "rows_loaded",
-        "pages",
-        "analyst_day",
-        "ai_cost",
-        "generation"
+        "status"
       ],
       "title": "RunSummary",
       "type": "object"

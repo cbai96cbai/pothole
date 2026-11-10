@@ -52,7 +52,6 @@ class Board(Model):
     latest_day: LatestDay | None
     month: str | None
     month_ai_cost: str
-    monthly_limit: str
 
 
 class Repair(Model):
@@ -214,7 +213,26 @@ class Runs(Model):
     runs: list[RunSummary]
 
 
+class Facts(Model):
+    """Every figure the pages state in words, taken from the code and files that define it."""
+
+    window_days: int
+    analysis_lag_days: int
+    complaint_types: int
+    districts: int
+    max_investigations: int
+    calls_per_run: int
+    max_cost_per_call: str
+    run_envelope: str
+    run_ceiling: str
+    ceiling_days: int
+    monthly_limit: str
+    price_input_per_million: str
+    price_output_per_million: str
+
+
 class Meta(Model):
+    facts: Facts
     generated: str
     last_success_finished: str | None
     last_success_run_id: str | None

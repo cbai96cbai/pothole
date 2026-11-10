@@ -41,14 +41,14 @@
         }
       },
       "required": [
-        "id",
-        "borough",
         "board",
+        "borough",
         "complaint_type",
-        "observed",
         "expected",
-        "ratio",
+        "id",
+        "observed",
         "q",
+        "ratio",
         "summary"
       ],
       "title": "FindingCard",
@@ -89,11 +89,11 @@
         }
       },
       "required": [
-        "day",
-        "tested",
         "cleared",
+        "day",
+        "findings",
         "skipped_reason",
-        "findings"
+        "tested"
       ],
       "title": "FindingDay",
       "type": "object"

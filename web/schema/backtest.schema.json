@@ -24,9 +24,9 @@
         }
       },
       "required": [
+        "cleared_the_bar",
         "day",
         "series_tested",
-        "cleared_the_bar",
         "top"
       ],
       "title": "BacktestDay",
@@ -65,13 +65,13 @@
         }
       },
       "required": [
-        "borough",
         "board",
+        "borough",
         "complaint_type",
-        "observed",
         "expected",
-        "ratio",
-        "q"
+        "observed",
+        "q",
+        "ratio"
       ],
       "title": "FlagRow",
       "type": "object"
@@ -93,9 +93,9 @@
         }
       },
       "required": [
-        "min",
+        "max",
         "median",
-        "max"
+        "min"
       ],
       "title": "FlagsPerDay",
       "type": "object"
@@ -130,11 +130,11 @@
     }
   },
   "required": [
-    "label",
-    "window",
+    "days",
     "days_tested",
     "flags_per_day",
-    "days"
+    "label",
+    "window"
   ],
   "title": "Backtest",
   "type": "object"

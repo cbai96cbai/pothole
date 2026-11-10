@@ -25,11 +25,11 @@
         }
       },
       "required": [
-        "name",
-        "level",
         "detail",
-        "run_id",
-        "finished"
+        "finished",
+        "level",
+        "name",
+        "run_id"
       ],
       "title": "LastCheck",
       "type": "object"
@@ -66,11 +66,11 @@
         }
       },
       "required": [
-        "day",
-        "tested",
         "cleared",
+        "day",
         "findings",
-        "skipped_reason"
+        "skipped_reason",
+        "tested"
       ],
       "title": "LatestDay",
       "type": "object"
@@ -130,15 +130,15 @@
         }
       },
       "required": [
+        "ai_cost",
+        "analyst_day",
+        "finished",
+        "generation",
+        "pages",
+        "rows_loaded",
         "run_id",
         "started",
-        "finished",
-        "status",
-        "rows_loaded",
-        "pages",
-        "analyst_day",
-        "ai_cost",
-        "generation"
+        "status"
       ],
       "title": "RunSummary",
       "type": "object"
@@ -201,21 +201,16 @@
     "month_ai_cost": {
       "title": "Month Ai Cost",
       "type": "string"
-    },
-    "monthly_limit": {
-      "title": "Monthly Limit",
-      "type": "string"
     }
   },
   "required": [
+    "checks",
     "dataset_status",
     "last_run",
     "last_success",
-    "checks",
     "latest_day",
     "month",
-    "month_ai_cost",
-    "monthly_limit"
+    "month_ai_cost"
   ],
   "title": "Board",
   "type": "object"

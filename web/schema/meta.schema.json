@@ -1,6 +1,86 @@
 {
+  "$defs": {
+    "Facts": {
+      "additionalProperties": false,
+      "description": "Every figure the pages state in words, taken from the code and files that define it.",
+      "properties": {
+        "window_days": {
+          "title": "Window Days",
+          "type": "integer"
+        },
+        "analysis_lag_days": {
+          "title": "Analysis Lag Days",
+          "type": "integer"
+        },
+        "complaint_types": {
+          "title": "Complaint Types",
+          "type": "integer"
+        },
+        "districts": {
+          "title": "Districts",
+          "type": "integer"
+        },
+        "max_investigations": {
+          "title": "Max Investigations",
+          "type": "integer"
+        },
+        "calls_per_run": {
+          "title": "Calls Per Run",
+          "type": "integer"
+        },
+        "max_cost_per_call": {
+          "title": "Max Cost Per Call",
+          "type": "string"
+        },
+        "run_envelope": {
+          "title": "Run Envelope",
+          "type": "string"
+        },
+        "run_ceiling": {
+          "title": "Run Ceiling",
+          "type": "string"
+        },
+        "ceiling_days": {
+          "title": "Ceiling Days",
+          "type": "integer"
+        },
+        "monthly_limit": {
+          "title": "Monthly Limit",
+          "type": "string"
+        },
+        "price_input_per_million": {
+          "title": "Price Input Per Million",
+          "type": "string"
+        },
+        "price_output_per_million": {
+          "title": "Price Output Per Million",
+          "type": "string"
+        }
+      },
+      "required": [
+        "analysis_lag_days",
+        "calls_per_run",
+        "ceiling_days",
+        "complaint_types",
+        "districts",
+        "max_cost_per_call",
+        "max_investigations",
+        "monthly_limit",
+        "price_input_per_million",
+        "price_output_per_million",
+        "run_ceiling",
+        "run_envelope",
+        "window_days"
+      ],
+      "title": "Facts",
+      "type": "object"
+    }
+  },
   "additionalProperties": false,
   "properties": {
+    "facts": {
+      "$ref": "#/$defs/Facts"
+    },
     "generated": {
       "title": "Generated",
       "type": "string"
@@ -29,6 +109,7 @@
     }
   },
   "required": [
+    "facts",
     "generated",
     "last_success_finished",
     "last_success_run_id"

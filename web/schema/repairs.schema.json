@@ -33,12 +33,12 @@
         }
       },
       "required": [
-        "id",
-        "family",
-        "expected",
-        "detected",
         "action",
         "correct",
+        "detected",
+        "expected",
+        "family",
+        "id",
         "reason"
       ],
       "title": "CaseFailure",
@@ -96,10 +96,10 @@
         }
       },
       "required": [
-        "expected",
         "cases",
         "correct",
-        "detected"
+        "detected",
+        "expected"
       ],
       "title": "Family",
       "type": "object"
@@ -209,18 +209,18 @@
         }
       },
       "required": [
-        "repairer",
-        "split",
         "cases",
-        "repair_success",
+        "crashed",
+        "detection_coverage_benign_control",
+        "detection_coverage_fault_cases",
+        "failures",
         "issue_accuracy",
         "no_change_accuracy",
-        "repairable_answered_with_issue",
-        "crashed",
-        "detection_coverage_fault_cases",
-        "detection_coverage_benign_control",
         "per_family",
-        "failures"
+        "repair_success",
+        "repairable_answered_with_issue",
+        "repairer",
+        "split"
       ],
       "title": "RepairSummary",
       "type": "object"
@@ -272,8 +272,8 @@
     }
   },
   "required": [
-    "summaries",
-    "agent_run"
+    "agent_run",
+    "summaries"
   ],
   "title": "Repairs",
   "type": "object"

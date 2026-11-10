@@ -94,6 +94,7 @@ def test_every_file_matches_its_schema(built: Path) -> None:
         "runs.json": "runs",
         "meta.json": "meta",
         "findings/2026-11-06-brooklyn-12-heat.json": "finding",
+        "findings/2026-11-06-queens-6-noise.json": "finding",
     }
     written = {p.relative_to(built).as_posix() for p in built.rglob("*.json")}
     assert written == set(names)
@@ -119,6 +120,55 @@ def test_the_validator_rejects_a_wrong_file(built: Path) -> None:
         validate(finding, sitedata.schemas()["finding"])
 
 
+@pytest.mark.parametrize("field", ["trace", "cost", "notes", "status", "summary", "weather"])
+def test_a_finding_missing_a_field_the_pages_read_fails(built: Path, field: str) -> None:
+    finding = load(built, "findings/2026-11-06-brooklyn-12-heat.json")
+    del finding[field]
+    with pytest.raises(AssertionError, match=field):
+        validate(finding, sitedata.schemas()["finding"])
+
+
+def test_a_finding_with_an_unknown_field_or_status_fails(built: Path) -> None:
+    schema = sitedata.schemas()["finding"]
+    finding = load(built, "findings/2026-11-06-brooklyn-12-heat.json")
+    validate(finding, schema)
+    with pytest.raises(AssertionError, match="unexpected field"):
+        validate({**finding, "street_name": "x"}, schema)
+    with pytest.raises(AssertionError, match="status"):
+        validate({**finding, "status": "half"}, schema)
+    with pytest.raises(AssertionError, match="weather"):
+        validate({**finding, "weather": {"precip_mm": 0.0}}, schema)
+
+
+def test_every_schema_object_requires_all_its_fields() -> None:
+    def walk(node: object) -> None:
+        if isinstance(node, dict):
+            if node.get("type") == "object" and "properties" in node:
+                assert set(node["required"]) == set(node["properties"]), node.get("title")
+                assert node["additionalProperties"] is False
+            for v in node.values():
+                walk(v)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v)
+
+    for schema in sitedata.schemas().values():
+        walk(schema)
+
+
+def test_facts_come_from_the_code_and_files_that_define_them(built: Path) -> None:
+    facts = load(built, "meta.json")["facts"]
+    assert facts["window_days"] == 90
+    assert (facts["complaint_types"], facts["districts"]) == (25, 59)
+    assert facts["max_investigations"] == 2
+    assert facts["monthly_limit"] == "4" and facts["ceiling_days"] == 31
+    assert facts["max_cost_per_call"] == "0.008" and facts["run_envelope"] == "0.128"
+    assert facts["run_ceiling"] == "0.129"
+    assert (
+        facts["price_input_per_million"] == "0.25" and facts["price_output_per_million"] == "2.00"
+    )
+
+
 def test_board_incidents_and_drills(built: Path) -> None:
     board = load(built, "board.json")
     assert board["dataset_status"] == "success"
@@ -129,7 +179,7 @@ def test_board_incidents_and_drills(built: Path) -> None:
     }
     assert board["latest_day"]["day"] == "2026-11-07"
     assert board["month_ai_cost"] == "0.063"
-    assert board["monthly_limit"] == "4.00"
+    assert "monthly_limit" not in board
     incidents = load(built, "incidents.json")["incidents"]
     assert [i["run_id"] for i in incidents] == ["run-2"]
     assert incidents[0]["repair"]["not_judged"] is True
@@ -145,10 +195,13 @@ def test_board_incidents_and_drills(built: Path) -> None:
 
 def test_findings_feed_keeps_the_quiet_day(built: Path) -> None:
     days = load(built, "findings/index.json")["days"]
-    assert [(d["day"], len(d["findings"])) for d in days] == [("2026-11-07", 0), ("2026-11-06", 1)]
+    assert [(d["day"], len(d["findings"])) for d in days] == [("2026-11-07", 0), ("2026-11-06", 2)]
     finding = load(built, "findings/2026-11-06-brooklyn-12-heat.json")
     assert len(finding["points"]) == 20
     assert len(finding["series"]) == 21
+    assert finding["status"] == "investigated" and finding["notes"] == []
+    unfinished = load(built, "findings/2026-11-06-queens-6-noise.json")
+    assert unfinished["status"] == "unfinished" and unfinished["evidence"] == []
 
 
 def test_repairs_have_the_baseline_and_no_agent_yet(built: Path) -> None:
