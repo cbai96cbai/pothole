@@ -9,6 +9,8 @@ from pathlib import Path
 from typing import Any
 
 import duckdb
+import pyarrow as pa
+import pyarrow.compute as pc
 import pytest
 from store.store_fake import FakeSocrata, make_row, outage_on
 from webdata.site_repo import scratch_repo
@@ -166,12 +168,15 @@ def test_generation_mismatch_regenerates_counts(repo: Path, isolated_state: Path
     assert json.loads((data / "state.json").read_text())["generation"] == second.generation
     assert second.generation != first.generation
     con = db.open(isolated_state / "raw.duckdb", read_only=True)
-    want = counts.regenerate(con, universe.load(data / "universe.json"))
+    window = counts.regenerate(con, universe.load(data / "universe.json"))
     con.close()
-    assert daily.read_counts(day_file).equals(want)
+    got = daily.read_counts(day_file)
+    assert got.equals(window.filter(pc.equal(window["date"], pa.scalar(date(2026, 11, 8)))))
 
 
-def test_a_days_counts_file_is_never_rewritten(repo: Path, isolated_state: Path) -> None:
+def test_a_days_counts_file_holds_only_that_day_and_is_never_rewritten(
+    repo: Path, isolated_state: Path
+) -> None:
     import gzip
 
     env, _, _ = env_for(repo, isolated_state, window_rows(TUESDAY))
@@ -181,30 +186,13 @@ def test_a_days_counts_file_is_never_rewritten(repo: Path, isolated_state: Path)
     assert before[4:8] == b"\0\0\0\0"  # gzip mtime 0: the same table always gives the same bytes
     lines = gzip.decompress(before).decode().splitlines()
     assert lines[0] == '"date","borough","board","complaint_type","n"'
+    assert {ln.split(",")[0].strip('"') for ln in lines[1:]} == {"2026-11-08"}
     keys = [ln.split(",")[:3] for ln in lines[1:]]
     assert keys == sorted(keys)
-    path.write_bytes(before + b"")  # unchanged
     marker = path.stat().st_mtime_ns
-    (repo / "data" / "state.json").write_text(json.dumps({"generation": "other"}))
     daily.run(env)  # a later load of the same day: the committed file stays
     assert path.read_bytes() == before and path.stat().st_mtime_ns == marker
     assert sorted(p.name for p in (repo / "data" / "counts").iterdir()) == ["2026-11-08.csv.gz"]
-
-
-def test_a_matching_generation_reads_the_days_file(repo: Path, isolated_state: Path) -> None:
-    from pothole.analyst import universe
-
-    uni = universe.load(repo / "data" / "universe.json")
-    env, _, _ = env_for(repo, isolated_state, window_rows(TUESDAY))
-    record = daily.run(env)
-    path = daily.counts_path(repo / "data", date(2026, 11, 8))
-    marker = daily.read_counts(path).slice(0, 3)
-    daily.write_counts(path, marker)
-    con = db.open(isolated_state / "raw.duckdb")
-    assert record.generation is not None
-    kept = daily.refresh_counts(con, repo / "data", record.generation, uni, date(2026, 11, 8))
-    con.close()
-    assert kept.equals(marker)
 
 
 def run_with_fake_repair(

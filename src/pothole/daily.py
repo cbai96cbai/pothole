@@ -20,6 +20,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 import pyarrow as pa
+import pyarrow.compute as pc
 import pyarrow.csv as pacsv
 
 from pothole import dailyai, runrecord, sitedata
@@ -109,21 +110,16 @@ def read_counts(path: Path) -> pa.Table:
 def refresh_counts(
     con: db.Connection, data: Path, generation: str, uni: universe.Universe, day: date
 ) -> pa.Table:
-    """The counts the analyst sees for `day`. The file for a day is written once and never
-    rewritten: it is history. `data/state.json` names the store generation the last run saw; the
-    same generation with the day's file present reads that file, any other generation derives the
-    table from the store again (and writes the file only if the day has none)."""
-    state_path, path = data / "state.json", counts_path(data, day)
-    try:
-        held = json.loads(state_path.read_text()).get("generation")
-    except (FileNotFoundError, ValueError):
-        held = None
-    if held == generation and path.exists():
-        return read_counts(path)
+    """The counts of the whole window, derived from the store, for the analyst; and the day's own
+    file. `data/counts/<day>.csv.gz` holds only the rows created on `day`, as counted at this run,
+    and is written once: a day's file is its count as seen at its own run, later arrivals are never
+    back-filled and a committed file is never rewritten. `data/state.json` names the store
+    generation this run derived the counts from."""
     table = counts.regenerate(con, uni)
+    path = counts_path(data, day)
     if not path.exists():
-        write_counts(path, table)
-    _write_json(state_path, {"generation": generation})
+        write_counts(path, table.filter(pc.equal(table["date"], pa.scalar(day, pa.date32()))))
+    _write_json(data / "state.json", {"generation": generation})
     return table
 
 
