@@ -1,0 +1,47 @@
+[project]
+name = "pothole"
+version = "0.1.0"
+description = "A daily pipeline over public NYC 311 data, with a repair agent and an analyst."
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "Camellia Bai", email = "138811454+cbai96cbai@users.noreply.github.com" }
+]
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "openai>=3.45.0",
+    "pydantic>=2.14.2",
+    "tiktoken>=0.14.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "mypy>=2.4.1",
+    "pytest>=9.2.0",
+    "ruff>=0.17.3",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+files = ["src"]
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-m 'not live and not live_api'"
+markers = [
+    "live: calls the Azure OpenAI API (excluded by default and in CI)",
+    "live_api: calls the public NYC Open Data or Open-Meteo APIs (excluded by default and in CI)",
+]
