@@ -105,6 +105,8 @@ def _file(
         raise ValueError("a drill is filed only with the judge's verdict")
     if outcome.action == "patch":
         filed = sink.open_pr(outcome, spec, before, after, day=day, drill=drill, verdict=verdict)
+        if filed.kind != "pr":  # gates or pull request creation failed: only an issue exists
+            return RepairRecord("issue", drill, filed.ref, verdict, False)
         return RepairRecord("patch", drill, filed.ref, verdict, not drill)
     if outcome.action == "issue":
         filed = sink.open_issue(outcome.reason or "no reason given", before, day=day, drill=drill)
