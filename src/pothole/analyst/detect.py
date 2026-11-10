@@ -31,12 +31,12 @@ from pothole.store.db import Connection
 from pothole.store.load import ANALYSIS_LAG_DAYS
 
 BASELINE_DAYS = 8
-FDR = 0.05
+BH_LEVEL = 0.05
 MIN_OBSERVED = 10
 MIN_RATIO = 2.0
 SENT_ON = 2  # the investigator takes this many, largest ratio first
 K_RANGE = (0.5, 1e6)  # the upper end is Poisson for practical purposes
-CALIBRATION_PATH = Path(__file__).parents[3] / "data" / "calibration.json"
+BACKTEST_PATH = Path(__file__).parents[3] / "data" / "backtest.json"
 
 Key = tuple[str, int, str]  # borough, district number, complaint type
 Floats = NDArray[np.float64]
@@ -173,7 +173,11 @@ def evaluate(panel: Panel, day: date) -> Evaluation | None:
 
 
 def _flagged(panel: Panel, ev: Evaluation, day: date) -> list[Candidate]:
-    keep = (ev.q <= FDR) & (ev.observed >= MIN_OBSERVED) & (ev.observed / ev.expected >= MIN_RATIO)
+    keep = (
+        (ev.q <= BH_LEVEL)
+        & (ev.observed >= MIN_OBSERVED)
+        & (ev.observed / ev.expected >= MIN_RATIO)
+    )
     out = []
     for k in np.flatnonzero(keep):
         borough, board, ctype = panel.keys[int(ev.series[k])]
@@ -188,7 +192,11 @@ def _flagged(panel: Panel, ev: Evaluation, day: date) -> list[Candidate]:
 
 def candidates(table: pa.Table, day: date, universe: Universe) -> list[Candidate]:
     """Everything that clears the bar on `day`, largest ratio first; the caller takes SENT_ON."""
-    panel = Panel.from_table(table, universe)
+    return screen(Panel.from_table(table, universe), day)
+
+
+def screen(panel: Panel, day: date) -> list[Candidate]:
+    """The full rule on one day: BH filter, observed >= 10, ratio >= 2; largest ratio first."""
     ev = evaluate(panel, day)
     return [] if ev is None else _flagged(panel, ev, day)
 
@@ -243,6 +251,6 @@ def _row(c: Candidate) -> dict[str, object]:
     }
 
 
-def save_backtest(result: dict[str, object], path: Path = CALIBRATION_PATH) -> None:
+def save_backtest(result: dict[str, object], path: Path = BACKTEST_PATH) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(result, indent=2) + "\n")

@@ -1,7 +1,18 @@
 {
   "label": "share of a day's rows in the store within k days of the day they were filed",
   "reload_at": "2026-09-11T21:33:54.256000",
-  "rows_measured": 638277,
+  "rows_measured_at_lag_0": 638277,
+  "rows_measured_note": "rows filed after the reload, from days more than k days older than the latest arrival day; the row count for each lag is below",
+  "rows_by_lag_days": {
+    "0": 638277,
+    "1": 628382,
+    "2": 619232,
+    "3": 609677,
+    "4": 599156,
+    "5": 588236,
+    "6": 578210,
+    "7": 566411
+  },
   "share_by_lag_days": {
     "0": 0.0445,
     "1": 0.9077,

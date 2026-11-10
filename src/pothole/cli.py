@@ -112,4 +112,4 @@ def check_spec(
 def null_simulation_command() -> None:
     """Measure how often the detector flags something on simulated days with no events."""
     body = null_simulation.run()
-    typer.echo(json.dumps(body["share_of_days_with_any_flag"]))
+    typer.echo(json.dumps(body["share_of_days_with_a_candidate"]))

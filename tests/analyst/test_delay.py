@@ -34,6 +34,7 @@ def test_reload_is_the_most_common_arrival_and_only_later_rows_count() -> None:
     assert d.share_by_lag[0] == 6 / 12
     assert d.share_by_lag[1] == 11 / 12
     assert d.share_by_lag[2] == 1.0
+    assert d.rows_by_lag == dict.fromkeys(range(7), 12)  # lag 7 needs a day more than 7 old
 
 
 def test_empty_store_has_no_delay() -> None:
@@ -43,5 +44,7 @@ def test_empty_store_has_no_delay() -> None:
 
 def test_save_writes_the_shares(tmp_path: Path) -> None:
     path = tmp_path / "delay.json"
-    delay.save(delay.Delay(datetime(2026, 9, 11, 21, 33), 100, {0: 0.04, 1: 0.9}), path)
+    delay.save(
+        delay.Delay(datetime(2026, 9, 11, 21, 33), 100, {0: 0.04, 1: 0.9}, {0: 100, 1: 90}), path
+    )
     assert '"1": 0.9' in path.read_text()

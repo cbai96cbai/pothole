@@ -84,3 +84,28 @@ def test_predictive_variance_never_below_poisson() -> None:
         assert np.allclose(r * (1 - p) / p, mean)  # the predictive mean is the baseline mean
         variance = r * (1 - p) / p**2
         assert (variance > mean).all()
+
+
+def test_dispersion_pools_by_type_and_clamps() -> None:
+    types = np.array([0, 0, 1, 1, 2])
+    mean = np.array([10.0, 20.0, 5.0, 5.0, 8.0])
+    var = np.array([20.0, 60.0, 5.0, 4.0, 8.5])
+    k = detect.type_dispersion(mean, var, types)
+    assert k[0] == (100 + 400) / (10 + 40)  # pooled over both series of type 0
+    assert k[1] == detect.K_RANGE[1]  # no series above Poisson: zero excess, Poisson
+    assert k[2] == 64 / 0.5  # a little excess: k is large but inside the range
+    big = detect.type_dispersion(np.array([100.0]), np.array([100.001]), np.array([0]))
+    assert big[0] == detect.K_RANGE[1]  # 1e4 / 0.001 clamps at the top
+    low = detect.type_dispersion(np.array([1.0]), np.array([100.0]), np.array([0]))
+    assert low[0] == detect.K_RANGE[0]  # 1 / 99 clamps at the bottom
+
+
+def test_today_enters_neither_baseline_nor_dispersion() -> None:
+    day = START + timedelta(66)
+    quiet = Panel.from_table(steady(), UNIVERSE)
+    loud = Panel.from_table(steady(spike={day: 5000}), UNIVERSE)
+    a, b = detect.evaluate(quiet, day), detect.evaluate(loud, day)
+    assert a is not None and b is not None
+    assert np.array_equal(a.expected, b.expected)
+    others = [i for i, s in enumerate(a.series) if quiet.keys[int(s)] != SERIES[0]]
+    assert np.array_equal(a.p[others], b.p[others])  # the type's k did not move
