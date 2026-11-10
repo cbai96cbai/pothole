@@ -78,3 +78,12 @@ def test_no_event_in_the_district_is_an_empty_list() -> None:
 @pytest.mark.live_api
 def test_live_events_query_runs() -> None:
     assert isinstance(events.on("Manhattan", 1, date.today()), list)
+
+
+def test_a_full_page_of_rows_is_flagged_as_possibly_incomplete(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(events, "LIMIT", len(ROWS))
+    assert events.on("Brooklyn", 3, date(2026, 11, 7), socrata([])).truncated
+    monkeypatch.setattr(events, "LIMIT", len(ROWS) + 1)
+    assert not events.on("Brooklyn", 3, date(2026, 11, 7), socrata([])).truncated

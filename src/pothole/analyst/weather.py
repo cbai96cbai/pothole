@@ -4,8 +4,9 @@ A day at least 6 days old comes from the archive endpoint; a newer one from the 
 endpoint with past_days, because the archive lags by a few days. A missing value stays None.
 """
 
-from datetime import date
+from datetime import date, datetime
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import httpx
 
@@ -34,7 +35,7 @@ def _value(daily: dict[str, Any], name: str, index: int) -> float | None:
 
 
 def daily(day: date, *, today: date | None = None, http: httpx.Client | None = None) -> Weather:
-    today = today or date.today()
+    today = today or datetime.now(ZoneInfo("America/New_York")).date()
     age = (today - day).days
     source: WeatherSource = "archive" if age >= ARCHIVE_MIN_AGE_DAYS else "forecast_past_days"
     params = {

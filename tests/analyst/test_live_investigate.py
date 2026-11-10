@@ -9,6 +9,7 @@ import pytest
 
 from pothole.analyst import investigate
 from pothole.analyst.detect import Candidate
+from pothole.analyst.wording import causal_phrase
 from pothole.budget.tally import Tally
 from pothole.config import Settings
 from pothole.llm.client import LLMClient
@@ -36,6 +37,6 @@ def test_three_recent_days() -> None:
         c = Candidate("Brooklyn", int(raw[:2]), ctype, day, int(n), float(n) / 2, 2.0, 0.0, 0.0)
         finding = investigate.run(c, Path(db), client)
         spent += finding.cost
-        assert finding.summary and not investigate.BANNED.search(finding.summary)
+        assert finding.summary and not causal_phrase(finding.summary)
     tally.settle("live-investigate", spent)
     assert spent <= BUDGET

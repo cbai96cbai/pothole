@@ -29,6 +29,7 @@ from pothole.analyst.prompt import (
     TOOLS,
 )
 from pothole.analyst.tools import Toolbox
+from pothole.analyst.wording import causal_phrase
 from pothole.budget.limits import DEFAULT_LIMITS, CallLimits
 from pothole.llm.client import CallFailed, CallResult, InputTooLarge, LLMClient
 from pothole.llm.tokens import count_input_tokens
@@ -42,7 +43,7 @@ FORCE: dict[str, Any] = {"type": "function", "function": {"name": "submit_findin
 MAX_SUMMARY = 600
 EXCERPT = 300
 TRIMMED = 240
-BANNED = re.compile(r"\b(caused|because of|due to)\b", re.IGNORECASE)
+UNFINISHED = "The investigation did not finish; only the counts are shown."
 
 log = get_logger(__name__)
 WeatherFor = Callable[[date], Weather]
@@ -188,11 +189,9 @@ class _Run:
             raise ToolError("summary is required")
         if len(summary) > MAX_SUMMARY:
             raise ToolError(f"summary is {len(summary)} characters; the limit is {MAX_SUMMARY}")
-        hit = BANNED.search(summary)
+        hit = causal_phrase(summary)
         if hit:
-            raise ToolError(
-                f"the summary says {hit.group(0)!r}; say what the spike is associated with"
-            )
+            raise ToolError(f"the summary says {hit!r}; say what the spike is associated with")
         if args.get("wording_check") is not True:
             raise ToolError("wording_check must be true once you have re-read the summary")
         if not isinstance(refs, list) or not refs or not all(isinstance(r, str) for r in refs):
@@ -227,10 +226,15 @@ def run(
     try:
         state = _Run(candidate, box, client, limits, max_calls)
         state.run()
-        weather, found = _context(box)
-        summary = state.summary or (
-            f"The investigation did not finish ({state.reason}). Only the counts are shown."
-        )
+        notes: list[str] = []
+        if state.summary is None:
+            notes.append(f"unfinished: {state.reason}")
+        series: list[tuple[date, int]] = _part(notes, "series", box.series_rows, [])
+        points: list[tuple[float, float]] = _part(notes, "points", box.points, [])
+        weather: Weather | None = _part(notes, "weather", box.weather, None)
+        found: list[Event] = _part(notes, "events", box.events, [])
+        if getattr(found, "truncated", False):
+            notes.append("events: the query hit its row limit; the list may be incomplete")
         return Finding(
             id=finding_id(candidate),
             day=candidate.day,
@@ -241,32 +245,30 @@ def run(
             expected=candidate.expected,
             ratio=candidate.ratio,
             q=candidate.q,
-            summary=summary,
+            summary=state.summary or UNFINISHED,
             evidence=state.evidence,
-            series=box.series_rows(),
-            points=box.points(),
+            series=series,
+            points=points,
             weather=weather,
-            events=found,
+            events=list(found),
+            status="investigated" if state.summary else "unfinished",
             trace=state.trace,
             cost=state.cost,
+            notes=notes,
         )
     finally:
         box.close()
 
 
-def _context(box: Toolbox) -> tuple[Weather | None, list[Event]]:
-    """Weather and events for the finding; a lookup that fails leaves its part empty."""
-    weather: Weather | None = None
-    found: list[Event] = []
+def _part[T](notes: list[str], label: str, get: Callable[[], T], default: T) -> T:
+    """One part of the finding. Whatever fails leaves its default and a note: the model calls
+    are already paid for and the trace must not be lost."""
     try:
-        weather = box.weather()
+        return get()
     except Exception as exc:
-        log.warning("weather unavailable", extra={"error": str(exc)})
-    try:
-        found = box.events()
-    except Exception as exc:
-        log.warning("events unavailable", extra={"error": str(exc)})
-    return weather, found
+        log.warning(f"{label} unavailable", extra={"error": str(exc)})
+        notes.append(f"{label} unavailable: {type(exc).__name__}: {exc}")
+        return default
 
 
 def day(

@@ -146,6 +146,8 @@ class Toolbox:
         return found
 
     def run(self, name: str, args: dict[str, Any], call_id: str) -> str:
+        if call_id in self.calls:
+            raise ToolError(f"tool call id {call_id!r} was already used")
         if name == "series":
             days = _int(args, "days", 30, MAX_DAYS)
             result = json.dumps([[d.isoformat(), n] for d, n in self.series_rows(days)])

@@ -7,6 +7,7 @@ from decimal import Decimal
 from typing import Any, Literal
 
 WeatherSource = Literal["archive", "forecast_past_days"]
+Status = Literal["investigated", "unfinished"]
 
 
 @dataclass(frozen=True)
@@ -50,8 +51,10 @@ class Finding:
     points: list[tuple[float, float]]
     weather: Weather | None
     events: list[Event]
+    status: Status  # unfinished: the model never produced an accepted submission
     trace: list[dict[str, Any]] = field(default_factory=list)
     cost: Decimal = Decimal("0")
+    notes: list[str] = field(default_factory=list)  # parts that could not be produced, and why
 
 
 @dataclass(frozen=True)

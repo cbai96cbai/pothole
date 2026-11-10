@@ -10,11 +10,17 @@ DATASET = "tvpp-9vvx"
 LIMIT = 5000
 
 
+class EventList(list[Event]):
+    """Events found; `truncated` is set when the query hit its row limit."""
+
+    truncated = False
+
+
 def _quote(text: str) -> str:
     return "'" + text.replace("'", "''") + "'"
 
 
-def on(borough: str, board: int, day: date, client: Socrata | None = None) -> list[Event]:
+def on(borough: str, board: int, day: date, client: Socrata | None = None) -> EventList:
     """Events in `borough` whose time span touches `day` and whose community boards include
     the district. Event rows list boards as text such as "1,2,"."""
     client = client or Socrata()
@@ -30,7 +36,8 @@ def on(borough: str, board: int, day: date, client: Socrata | None = None) -> li
             "$limit": str(LIMIT),
         },
     )
-    found: list[Event] = []
+    found = EventList()
+    found.truncated = len(rows) >= LIMIT
     for row in rows:
         if (borough, board) not in event_boards([row.get("community_board")], borough):
             continue

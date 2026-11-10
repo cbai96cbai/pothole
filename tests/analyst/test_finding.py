@@ -22,12 +22,14 @@ def test_a_day_serialises_to_json_with_dates_and_decimals_as_strings() -> None:
         points=[(40.83, -73.86)],
         weather=Weather(0.0, 3.1, "forecast_past_days"),
         events=[],
+        status="investigated",
         cost=Decimal("0.031"),
     )
     out = to_json(AnalystDay(date(2026, 11, 7), 1400, 3, [f]))
     assert out["day"] == "2026-11-07"
     assert out["findings"][0]["series"][1] == ["2026-11-07", 89]
     assert out["findings"][0]["cost"] == "0.031"
+    assert out["findings"][0]["status"] == "investigated" and out["findings"][0]["notes"] == []
     assert out["findings"][0]["weather"]["source"] == "forecast_past_days"
     json.dumps(out)
 
