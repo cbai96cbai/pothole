@@ -1,0 +1,89 @@
+name: daily
+
+on:
+  schedule:
+    - cron: "17 11 * * *" # 06:17 New York in winter, 07:17 in summer
+  workflow_dispatch: # runs without AI: the model steps run only on the schedule
+
+concurrency:
+  group: daily
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  pages: write
+  id-token: write
+
+env:
+  # Model steps run on the schedule, and only while the repository variable AI_ENABLED is 'true'.
+  AI_ENABLED: ${{ github.event_name == 'schedule' && vars.AI_ENABLED == 'true' && 'true' || 'false' }}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --frozen
+      - name: Restore the raw store
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.cache/pothole
+          key: raw-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: raw-v1-
+      - name: Daily run
+        run: uv run pothole daily
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
+      - name: Commit data and results
+        if: ${{ !cancelled() }}
+        run: |
+          git add data results
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+          else
+            git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit -m "Daily run $(date -u +%Y-%m-%d)"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+      - name: Save the raw store
+        if: ${{ !cancelled() }}
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.cache/pothole
+          key: raw-v1-${{ github.run_id }}-${{ github.run_attempt }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+        working-directory: web
+      - run: npm run build
+        working-directory: web
+      - name: Upload the site
+        if: ${{ vars.PAGES_ENABLED == 'true' }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+  deploy:
+    needs: run
+    if: ${{ vars.PAGES_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
