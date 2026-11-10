@@ -95,3 +95,22 @@ def test_a_swap_in_one_patch_is_valid(spec):
     )
     assert out.column("latitude").source == "longitude"
     assert out.column("longitude").source == "latitude"
+
+
+def test_two_ops_on_one_column_apply_in_order_and_the_last_wins(spec):
+    out = ops.apply(
+        spec,
+        [
+            ops.SetFormat(column="created_date", format="%m/%d/%Y"),
+            ops.SetFormat(column="created_date", format="%Y-%m-%d"),
+        ],
+    )
+    assert out.column("created_date").format == "%Y-%m-%d"
+    out = ops.apply(
+        spec,
+        [
+            ops.AddValueMapping(column="borough", raw="X", value="Queens"),
+            ops.AddValueMapping(column="borough", raw="X", value="Bronx"),
+        ],
+    )
+    assert out.column("borough").values["X"] == "Bronx"

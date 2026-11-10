@@ -41,7 +41,7 @@ def test_cast_failures_under_one_percent_pass_over_fail(spec):
     rows = [make_row(i) for i in range(200)]
     rows[0]["latitude"] = "abc"
     result, checks = run(spec, rows, [200] * 4)
-    assert checks["cast:latitude"].level == "pass"
+    assert checks["cast:latitude"].level == "warn"
     assert checks["cast:latitude"].detail == "latitude: 1 of 200 rows could not be read as float"
     assert result.table.column("latitude")[0].as_py() is None
     rows[1]["latitude"] = "xyz"
@@ -75,7 +75,7 @@ def test_range_violation_pass_and_fail(spec):
     rows = [make_row(i) for i in range(100)]
     rows[0]["longitude"] = "-70.0"
     _, checks = run(spec, rows, [100] * 4)
-    assert checks["range:longitude"].level == "pass"
+    assert checks["range:longitude"].level == "warn"
     rows[1]["longitude"] = "0"
     _, checks = run(spec, rows, [100] * 4)
     assert checks["range:longitude"].level == "fail"
@@ -207,3 +207,31 @@ def test_volume_uses_only_the_last_weeks_of_history(spec):
     _, checks = run(spec, rows, [1000, 1000, 10, 10, 10, 10])
     assert checks["volume"].level == "pass"
     assert checks["volume"].detail.endswith("over 4 earlier same-weekday counts; allowed 5 to 20")
+
+
+def test_row_checks_warn_up_to_one_percent_and_fail_above():
+    from pothole.spec.checks import _share_level
+
+    assert [_share_level(n, 200) for n in (0, 1, 2, 3)] == ["pass", "warn", "warn", "fail"]
+
+
+def test_closed_date_compared_at_the_minute(spec):
+    rows = [make_row(i) for i in range(200)]
+    rows[0].update(created_date="2026-11-09T08:30:12.000", closed_date="2026-11-09T08:30:00.000")
+    _, checks = run(spec, rows, [200] * 4)
+    assert checks["closed_not_before_created"].level == "pass"
+    rows[0]["closed_date"] = "2026-11-09T08:28:59.000"
+    _, checks = run(spec, rows, [200] * 4)
+    assert checks["closed_not_before_created"].level == "warn"
+    assert checks["closed_not_before_created"].detail == (
+        "closed_date: 1 of 200 rows closed before they were created"
+    )
+    assert checks["closed_not_before_created"].sample_keys == ["1000"]
+
+
+def test_created_in_the_future_warns_at_one_row_in_two_hundred(spec):
+    rows = [make_row(i) for i in range(200)]
+    rows[0].update(created_date="2026-11-12T10:00:00.000", closed_date="<omit>")
+    rows[0].pop("closed_date", None)
+    _, checks = run(spec, rows, [200] * 4)
+    assert checks["created_not_future"].level == "warn"

@@ -32,6 +32,13 @@ def _result(name: str, level: Level, detail: str, keys: list[str] | None = None)
     return CheckResult(name, level, detail, (keys or [])[:SAMPLE])
 
 
+def _share_level(bad: int, total: int) -> Level:
+    """One threshold for every row-level value check: over 1% of rows fails, any fewer warns."""
+    if not bad:
+        return "pass"
+    return "fail" if bad / total > FAIL_SHARE else "warn"
+
+
 def schema(spec: PipelineSpec, rows: list[dict[str, str]]) -> list[CheckResult]:
     seen = {field for row in rows for field in row}
     mapped = {c.source for c in spec.columns}
@@ -68,12 +75,10 @@ def cast_and_values(col: Column, cast: Cast, total: int) -> list[CheckResult]:
     out: list[CheckResult] = []
     if col.type != "text":
         n = len(cast.cast_failed)
-        share = n / total if total else 0.0
-        level: Level = "fail" if share > FAIL_SHARE else "pass"
         out.append(
             _result(
                 f"cast:{col.name}",
-                level,
+                _share_level(n, total),
                 f"{col.name}: {n} of {total} rows could not be read as {col.type}",
                 cast.cast_failed,
             )
@@ -104,9 +109,8 @@ def null_rate(name: str, cast: Cast, limit: float, keys: list[str]) -> CheckResu
 def in_range(name: str, cast: Cast, low: float, high: float, keys: list[str]) -> CheckResult:
     present = [(k, v) for k, v in zip(keys, cast.values, strict=True) if v is not None]
     bad = [k for k, v in present if not low <= v <= high]
-    share = len(bad) / len(present) if present else 0.0
     detail = f"{name}: {len(bad)} of {len(present)} values outside [{low}, {high}]"
-    return _result(f"range:{name}", "fail" if share > FAIL_SHARE else "pass", detail, bad)
+    return _result(f"range:{name}", _share_level(len(bad), len(present)), detail, bad)
 
 
 def freshness(created: Cast, max_hours: float, now: datetime) -> CheckResult:
@@ -121,14 +125,20 @@ def freshness(created: Cast, max_hours: float, now: datetime) -> CheckResult:
 def created_not_future(created: Cast, keys: list[str], now: datetime) -> CheckResult:
     bad = [k for k, v in zip(keys, created.values, strict=True) if v is not None and v > now]
     detail = f"created_date: {len(bad)} of {len(keys)} rows are dated in the future"
-    return _result("created_not_future", "fail" if bad else "pass", detail, bad)
+    return _result("created_not_future", _share_level(len(bad), len(keys)), detail, bad)
 
 
 def closed_not_before_created(casts: dict[str, Cast], keys: list[str]) -> CheckResult:
     pairs = zip(keys, casts["created_date"].values, casts["closed_date"].values, strict=True)
-    bad = [k for k, c, d in pairs if c is not None and d is not None and d < c]
+    # Some agencies record closed_date only to the minute: compare at that precision.
+    bad = [
+        k
+        for k, c, d in pairs
+        if c is not None and d is not None and d < c.replace(second=0, microsecond=0)
+    ]
     detail = f"closed_date: {len(bad)} of {len(keys)} rows closed before they were created"
-    return _result("closed_not_before_created", "fail" if bad else "pass", detail, bad)
+    level = _share_level(len(bad), len(keys))
+    return _result("closed_not_before_created", level, detail, bad)
 
 
 def unique_key(name: str, keys: list[str]) -> CheckResult:
