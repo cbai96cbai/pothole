@@ -7,10 +7,10 @@ issue. A Sunday with no failure and no real repair earlier that day runs one jud
 analyst works on the day two days back, only after a complete load. `last_success` is written by
 the load itself, after the whole window loaded and the checks ran.
 
-Every run that starts leaves a record. Any exception after the envelope check ends in a record
+Every run that starts leaves a record. Any exception ends in a record
 with status `error` (the step, the exception's class and a cut, secret-free message, the cost so
-far), then the exception goes on and the job fails. The envelope refusal happens before anything
-runs and leaves no record.
+far), then the exception goes on and the job fails. That includes the envelope refusal, which
+happens before anything is loaded or paid for.
 """
 
 import uuid
@@ -156,16 +156,18 @@ def _site(env: Env, now: datetime) -> None:
 
 
 def run(env: Env) -> RunRecord:
-    """Run once. Raises EnvelopeExceeded before doing anything when the configuration could spend
-    more than the ceiling; after that, a failure is recorded as an error run and re-raised."""
-    envelope = run_envelope(env.config)
+    """Run once. The envelope check comes first: a configuration that could spend more than the
+    ceiling is refused before anything loads or is paid for. A refusal, like any failure, is
+    recorded as an error run and re-raised."""
     ai = env.client if env.ai_enabled else None
-    if ai is not None and env.tally is not None:
-        env.tally.admit(env.run_id, envelope)
     spend = Spend()
     started = env.clock()
-    progress = Progress(started)
+    progress = Progress(started, step="envelope")
     try:
+        envelope = run_envelope(env.config)  # first: a refused run loads and spends nothing
+        if ai is not None and env.tally is not None:
+            progress.step = "tally"
+            env.tally.admit(env.run_id, envelope)
         record = _run(env, ai, spend, progress)
     except Exception as exc:
         message = describe(exc, progress.step)

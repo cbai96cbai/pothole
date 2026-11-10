@@ -51,7 +51,10 @@ def test_daily_refuses_over_envelope(repo: Path, isolated_state: Path) -> None:
     with pytest.raises(EnvelopeExceeded):
         daily.run(env)
     assert fake.queries == [] and not (isolated_state / "raw.duckdb").exists()
-    assert not (repo / "data" / "runs.jsonl").exists()
+    [last] = runrecord.read(repo / "data" / "runs.jsonl")
+    assert last.status == "error" and last.ai_cost == "0" and last.run_id == env.run_id
+    assert last.error is not None and last.error.startswith("envelope: EnvelopeExceeded: ")
+    assert "0.136" in last.error and "0.129" in last.error  # the envelope and the ceiling
 
 
 def test_generation_mismatch_regenerates_counts(repo: Path, isolated_state: Path) -> None:
