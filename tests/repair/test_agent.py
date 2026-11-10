@@ -107,7 +107,7 @@ def test_edits_are_limited_to_columns_with_a_failed_check_and_fields_the_batch_s
     )
     run(model, spec, failing, failed_checks, fields)
     assert "has no failed check" in model.sent[1]["messages"][-1]["content"]
-    assert "not a field the failing batch sends" in model.sent[2]["messages"][-1]["content"]
+    assert "does not send" in model.sent[2]["messages"][-1]["content"]
 
 
 def test_a_patch_that_leaves_a_failure_is_refused(spec, failing, failed_checks, fields):

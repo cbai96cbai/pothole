@@ -7,8 +7,8 @@ from datetime import datetime
 from typing import Any, get_args
 
 from pothole.repair.outcome import Action, Op, RegressionCase
-from pothole.repair.validate import ToolError, build_case, failed, failing_columns
-from pothole.spec import engine, ops
+from pothole.repair.validate import ToolError, build_case, failed
+from pothole.spec import engine, ops, scope
 from pothole.spec.checks import CheckResult
 from pothole.spec.model import PipelineSpec
 
@@ -95,17 +95,11 @@ class Toolbox:
         return (patched, parsed), engine.run(patched, self.rows, self.history, self.now).checks
 
     def _allowed(self, parsed: list[Op]) -> None:
-        """An edit touches only a column a failed check names, and remaps only to a field the
-        failing batch sends."""
-        allowed = failing_columns(self.spec, self.results)
+        """The shared scope rule: only columns with a failed check, only fields the batch sends."""
         sent = {f for r in self.rows for f in r}
-        for o in parsed:
-            if o.column not in allowed:
-                raise ops.ForbiddenEdit(
-                    f"{o.column!r} has no failed check; edits may touch only {sorted(allowed)}"
-                )
-            if isinstance(o, ops.MapField) and o.source not in sent:
-                raise ops.ForbiddenEdit(f"{o.source!r} is not a field the failing batch sends")
+        problems = scope.check(list(parsed), self.results, sent, self.spec)
+        if problems:
+            raise ops.ForbiddenEdit("; ".join(problems))
 
     def submit(self, args: dict[str, Any]) -> Submission:
         action: Any = args.get("action")

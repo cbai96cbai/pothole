@@ -8,7 +8,7 @@ from typer.testing import CliRunner
 from pothole import cli
 from pothole.store import db
 
-SPEC_PATH = Path(__file__).parents[2] / "pipelines" / "311.yaml"
+PINNED_SPEC = Path(__file__).parents[2] / "fixtures" / "batches" / "spec.yaml"
 
 
 def recent_rows() -> list[dict[str, str]]:
@@ -21,7 +21,7 @@ def test_load_command_loads_into_the_state_folder(
 ) -> None:
     fake = FakeSocrata(recent_rows())
     monkeypatch.setattr(cli, "Socrata", lambda *a, **k: fake)
-    result = CliRunner().invoke(cli.app, ["load", "--spec", str(SPEC_PATH)])
+    result = CliRunner().invoke(cli.app, ["load", "--spec", str(PINNED_SPEC)])
     assert result.exit_code == 0, result.output
     assert "rows 3 pages 1" in result.output
     assert "pass unique_key" in result.output
@@ -36,6 +36,6 @@ def test_load_command_exits_1_when_the_source_is_down(
     fake = FakeSocrata(recent_rows())
     fake.before_query = outage_on(0)
     monkeypatch.setattr(cli, "Socrata", lambda *a, **k: fake)
-    result = CliRunner().invoke(cli.app, ["load", "--spec", str(SPEC_PATH)])
+    result = CliRunner().invoke(cli.app, ["load", "--spec", str(PINNED_SPEC)])
     assert result.exit_code == 1
     assert "load stopped" in result.output

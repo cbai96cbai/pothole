@@ -87,6 +87,7 @@ def load_command(
     for check in result.checks:
         typer.echo(f"{check.level:4} {check.name}: {check.detail}")
 
+
 @app.command("check-spec")
 def check_spec(
     spec: Annotated[Path, typer.Option(help="The pipeline spec to run.")],

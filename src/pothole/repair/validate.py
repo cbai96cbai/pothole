@@ -1,7 +1,6 @@
 """What a proposed patch must satisfy before it is accepted, and the shared batch helpers."""
 
 import json
-import re
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -42,20 +41,6 @@ def load_batches(directory: Path) -> list[Batch]:
 
 def failed(results: list[CheckResult]) -> list[CheckResult]:
     return [r for r in results if r.level == "fail"]
-
-
-def failing_columns(spec: PipelineSpec, results: list[CheckResult]) -> set[str]:
-    """The columns a failed check names: the only ones an edit may touch."""
-    by_source = {c.source: c.name for c in spec.columns}
-    cols: set[str] = set()
-    for res in failed(results):
-        kind, _, col = res.name.partition(":")
-        if col and kind in ("required", "cast", "values", "range", "null_rate"):
-            cols.add(col)
-        elif res.name == "schema":
-            missing = re.split(r",\s*", res.detail.rsplit(": ", 1)[-1])
-            cols |= {by_source[m] for m in missing if m in by_source}
-    return cols
 
 
 def case_day(spec: PipelineSpec, rows: list[dict[str, str]]) -> date:

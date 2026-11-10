@@ -5,12 +5,12 @@ import pytest
 from pothole.spec.model import PipelineSpec
 from pothole.store import db
 
-SPEC_PATH = Path(__file__).parents[2] / "pipelines" / "311.yaml"
+PINNED_SPEC = Path(__file__).parents[2] / "fixtures" / "batches" / "spec.yaml"
 
 
 @pytest.fixture
 def spec() -> PipelineSpec:
-    return PipelineSpec.load(SPEC_PATH)
+    return PipelineSpec.load(PINNED_SPEC)
 
 
 @pytest.fixture
