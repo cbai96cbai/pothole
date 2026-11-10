@@ -1,0 +1,91 @@
+"""The words the investigator is given: instructions, tool schemas and nudges."""
+
+from typing import Any
+
+from pothole.analyst.tools import BREAKDOWN_BY, MAX_DAYS, MAX_TOP
+
+SYSTEM_PROMPT = """\
+You look into one unusual day in the public NYC 311 service-request data: one complaint type in \
+one community district had far more requests than the usual for that weekday. Use the tools to \
+look at the day, then write a short finding with submit_finding.
+
+Tools: series (daily counts), breakdown (the day's requests split by descriptor, zip code, hour, \
+agency, location type or status), neighbours (the same complaint type that day in other \
+districts), weather (rain and the day's high at Central Park) and events (city-permitted events \
+in the district that day).
+
+Rules for the finding:
+- Say what the spike is associated with, using only what the tools returned. Use the words \
+"associated with" or "coincided with". Never write "caused", "because of" or "due to": a \
+submission containing them is refused.
+- If the tools show nothing that goes with the spike, say so plainly. Do not guess.
+- Two to four plain sentences, at most 600 characters, with the numbers you rely on.
+- evidence lists the tool_call_id of each tool call the summary relies on (ids you were given in \
+this conversation). Set wording_check to true only after you re-read the summary for the banned \
+words.
+Every reply you send, including errors, uses up one of a small number of calls; when two remain \
+you must submit.\
+"""
+
+CALLS_LEFT = "You have {n} calls left."
+SUBMIT_NEXT = "You have 2 calls left: call submit_finding now."
+LAST_CALL = "This is your last call: submit_finding now."
+NUDGE_NO_TOOL = "Call one of the tools."
+NUDGE_LENGTH = "Your reply was cut off. Answer with a shorter tool call."
+
+
+def _tool(
+    name: str, description: str, properties: dict[str, Any], required: list[str]
+) -> dict[str, Any]:
+    return {
+        "type": "function",
+        "function": {
+            "name": name,
+            "description": description,
+            "parameters": {"type": "object", "properties": properties, "required": required},
+        },
+    }
+
+
+TOOLS: list[dict[str, Any]] = [
+    _tool(
+        "series",
+        "Daily counts of this complaint type in this district, ending on the spike day.",
+        {"days": {"type": "integer", "description": f"how many days, 1 to {MAX_DAYS}"}},
+        ["days"],
+    ),
+    _tool(
+        "breakdown",
+        "The spike day's requests in this district and type, counted by one field.",
+        {
+            "by": {"type": "string", "enum": list(BREAKDOWN_BY)},
+            "top": {"type": "integer", "description": f"how many values, 1 to {MAX_TOP}"},
+        },
+        ["by", "top"],
+    ),
+    _tool(
+        "neighbours",
+        "Counts of this complaint type on the spike day in the other districts, largest first.",
+        {},
+        [],
+    ),
+    _tool("weather", "Rain (mm) and the high (C) at Central Park on the spike day.", {}, []),
+    _tool("events", "City-permitted events in this district that overlap the spike day.", {}, []),
+    _tool(
+        "submit_finding",
+        "Submit the finding. Refused if it says caused, because of or due to.",
+        {
+            "summary": {"type": "string", "description": "2 to 4 plain sentences, 600 chars max"},
+            "evidence": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "tool_call_id of each tool call the summary relies on",
+            },
+            "wording_check": {
+                "type": "boolean",
+                "description": "true once you re-read the summary for the banned words",
+            },
+        },
+        ["summary", "evidence", "wording_check"],
+    ),
+]
