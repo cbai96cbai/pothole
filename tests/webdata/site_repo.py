@@ -79,7 +79,7 @@ def make(root: Path, *, with_agent: bool = False) -> Path:
     busy = AnalystDay(date(2026, 11, 6), 1460, 3, [finding()])
     (analyst / "2026-11-06.json").write_text(json.dumps(to_json(busy)))
     for name in ("backtest", "delay", "null_simulation"):
-        shutil.copy(Path(__file__).parent / "measured" / f"{name}.json", root / "data")
+        shutil.copy(REAL / "data" / f"{name}.json", root / "data")
     for split in ("dev", "test"):
         dest = root / "results" / f"baseline-{split}"
         dest.mkdir(parents=True)

@@ -5,39 +5,47 @@
       "title": "Label",
       "type": "string"
     },
-    "test_days": {
-      "title": "Test Days",
+    "seed": {
+      "title": "Seed",
       "type": "integer"
     },
-    "analysed_days": {
-      "anyOf": [
-        {
-          "type": "integer"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "title": "Analysed Days"
+    "series": {
+      "title": "Series",
+      "type": "integer"
+    },
+    "days_tested": {
+      "title": "Days Tested",
+      "type": "integer"
+    },
+    "days_simulated_after_lead_in": {
+      "title": "Days Simulated After Lead In",
+      "type": "integer"
+    },
+    "rule": {
+      "title": "Rule",
+      "type": "string"
     },
     "dispersion": {
       "title": "Dispersion",
       "type": "string"
     },
-    "rates": {
+    "share_of_days_with_a_candidate": {
       "additionalProperties": {
         "type": "number"
       },
-      "title": "Rates",
+      "title": "Share Of Days With A Candidate",
       "type": "object"
     }
   },
   "required": [
     "label",
-    "test_days",
-    "analysed_days",
+    "seed",
+    "series",
+    "days_tested",
+    "days_simulated_after_lead_in",
+    "rule",
     "dispersion",
-    "rates"
+    "share_of_days_with_a_candidate"
   ],
   "title": "NullSimulation",
   "type": "object"

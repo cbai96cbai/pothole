@@ -1,7 +1,0 @@
-{
-  "label": "measured on simulated days with no events; not a guarantee about real data",
-  "test_days": 200,
-  "analysed_days": 193,
-  "dispersion": "negative binomial, noise described at the median series",
-  "share_of_days_candidate_rule_fires": {"1x": 0.005, "1.5x": 0.07, "2x": 0.17, "3x": 0.32}
-}

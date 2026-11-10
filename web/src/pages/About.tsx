@@ -43,8 +43,8 @@ export function About({ delay, nullSimulation }: { delay: Delay; nullSimulation:
       <h2>Schedule and late data</h2>
       <p>
         The pipeline runs once a day. It analyses the day two days before the run, because complaints
-        arrive in the data after they are filed. Measured over {num(delay.rows_measured)} rows, the
-        share of a day's complaints already present is:
+        arrive in the data after they are filed. The share of a day's complaints already present is
+        below; rows measured: {delay.rows_measured_note}.
       </p>
       <div className="scroll">
         <table>
@@ -55,6 +55,10 @@ export function About({ delay, nullSimulation }: { delay: Delay; nullSimulation:
             <tr>
               <td>Share present</td>
               {Object.values(delay.share_by_lag_days).map((v, i) => <td key={i}>{pct(v, 1)}</td>)}
+            </tr>
+            <tr>
+              <td>Rows measured</td>
+              {Object.values(delay.rows_by_lag_days).map((v, i) => <td key={i}>{num(v)}</td>)}
             </tr>
           </tbody>
         </table>

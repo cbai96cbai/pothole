@@ -193,16 +193,21 @@ class Backtest(Model):
 class Delay(Model):
     label: str
     reload_at: str
-    rows_measured: int
+    rows_measured_at_lag_0: int
+    rows_measured_note: str
+    rows_by_lag_days: dict[str, int]
     share_by_lag_days: dict[str, float]
 
 
 class NullSimulation(Model):
     label: str
-    test_days: int
-    analysed_days: int | None
+    seed: int
+    series: int
+    days_tested: int
+    days_simulated_after_lead_in: int
+    rule: str
     dispersion: str
-    rates: dict[str, float]
+    share_of_days_with_a_candidate: dict[str, float]
 
 
 class Runs(Model):

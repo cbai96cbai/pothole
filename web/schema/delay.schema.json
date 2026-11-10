@@ -9,9 +9,20 @@
       "title": "Reload At",
       "type": "string"
     },
-    "rows_measured": {
-      "title": "Rows Measured",
+    "rows_measured_at_lag_0": {
+      "title": "Rows Measured At Lag 0",
       "type": "integer"
+    },
+    "rows_measured_note": {
+      "title": "Rows Measured Note",
+      "type": "string"
+    },
+    "rows_by_lag_days": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Rows By Lag Days",
+      "type": "object"
     },
     "share_by_lag_days": {
       "additionalProperties": {
@@ -24,7 +35,9 @@
   "required": [
     "label",
     "reload_at",
-    "rows_measured",
+    "rows_measured_at_lag_0",
+    "rows_measured_note",
+    "rows_by_lag_days",
     "share_by_lag_days"
   ],
   "title": "Delay",

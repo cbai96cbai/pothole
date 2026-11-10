@@ -168,16 +168,6 @@ def test_agent_results_appear_when_they_exist(tmp_path: Path) -> None:
     assert repairs["summaries"][-1]["repairer"] == "agent"
 
 
-def test_quiet_day_rates_load_under_either_key(tmp_path: Path) -> None:
-    repo = site_repo.make(tmp_path / "repo")
-    path = repo / "data" / "null_simulation.json"
-    raw = json.loads(path.read_text())
-    raw["share_of_days_with_any_flag"] = raw.pop("share_of_days_candidate_rule_fires")
-    path.write_text(json.dumps(raw))
-    sitedata.build(repo, tmp_path / "out")
-    assert load(tmp_path / "out", "null_simulation.json")["rates"]["2x"] == 0.17
-
-
 def test_raw_complaint_fields_are_refused(tmp_path: Path) -> None:
     repo = site_repo.make(tmp_path / "repo")
     f = repo / "data" / "analyst" / "2026-11-06.json"

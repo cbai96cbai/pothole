@@ -153,15 +153,20 @@ export interface Backtest {
 export interface Delay {
   label: string;
   reload_at: string;
-  rows_measured: number;
+  rows_measured_at_lag_0: number;
+  rows_measured_note: string;
+  rows_by_lag_days: Record<string, number>;
   share_by_lag_days: Record<string, number>;
 }
 export interface NullSimulation {
   label: string;
-  test_days: number;
-  analysed_days: number | null;
+  seed: number;
+  series: number;
+  days_tested: number;
+  days_simulated_after_lead_in: number;
+  rule: string;
   dispersion: string;
-  rates: Record<string, number>;
+  share_of_days_with_a_candidate: Record<string, number>;
 }
 export interface Runs {
   runs: RunSummary[];

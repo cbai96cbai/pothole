@@ -71,11 +71,11 @@ export function Board({
           <span className="muted">{backtest.label}.</span>
         </li>
         <li>
-          Simulated quiet days ({nullSimulation.test_days} simulated
-          {nullSimulation.analysed_days !== null ? `, ${nullSimulation.analysed_days} analysed` : ""}
-          ): the share of days with at least one flag, by how much busier than Poisson noise the
-          counts are:{" "}
-          {Object.entries(nullSimulation.rates)
+          Simulated quiet days ({nullSimulation.days_tested} analysed of{" "}
+          {nullSimulation.days_simulated_after_lead_in} simulated): the share of days on which the
+          full rule ({nullSimulation.rule}) still flags at least one series, by how much more
+          spread than Poisson noise the counts are:{" "}
+          {Object.entries(nullSimulation.share_of_days_with_a_candidate)
             .map(([k, v]) => `${k} ${pct(v, 1)}`)
             .join(", ")}
           . <span className="muted">{nullSimulation.label}.</span>

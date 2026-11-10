@@ -122,33 +122,6 @@ def _items(runs: list[RunRecord], drill: bool) -> list[m.IncidentItem]:
     ]
 
 
-def _measured(data: Path, name: str, *older: str) -> dict[str, Any]:
-    """A measurement file by its current name, or an earlier name it was written under."""
-    for n in (name, *older):
-        if (data / f"{n}.json").exists():
-            loaded: dict[str, Any] = json.loads((data / f"{n}.json").read_text())
-            return loaded
-    raise FileNotFoundError(f"{data / (name + '.json')}")
-
-
-# the keys the quiet-day rates have been written under, newest first
-_RATE_KEYS = ("share_of_days_candidate_rule_fires", "share_of_days_with_any_flag")
-
-
-def _null_simulation(data: Path) -> dict[str, Any]:
-    raw = _measured(data, "null_simulation")
-    key = next((k for k in _RATE_KEYS if k in raw), None)
-    if key is None:
-        raise ValueError(f"null_simulation.json has none of the rate keys {_RATE_KEYS}")
-    return {
-        "label": raw["label"],
-        "test_days": raw["test_days"],
-        "analysed_days": raw.get("analysed_days"),
-        "dispersion": raw["dispersion"],
-        "rates": raw[key],
-    }
-
-
 def _load_days(root: Path) -> list[AnalystDay]:
     adapter = TypeAdapter(AnalystDay)
     files = sorted((root / "data" / "analyst").glob("*.json"))
@@ -219,9 +192,11 @@ def build(repo_root: Path, out_dir: Path, now: datetime | None = None) -> None:
         "drills": m.Drills(drills=_items(runs, drill=True)),
         "findings_index": index,
         "repairs": _repairs(repo_root),
-        "backtest": m.Backtest.model_validate(_measured(data, "backtest", "calibration")),
+        "backtest": m.Backtest.model_validate_json((data / "backtest.json").read_text()),
         "delay": m.Delay.model_validate_json((data / "delay.json").read_text()),
-        "null_simulation": m.NullSimulation.model_validate(_null_simulation(data)),
+        "null_simulation": m.NullSimulation.model_validate_json(
+            (data / "null_simulation.json").read_text()
+        ),
         "runs": m.Runs(runs=[_summary(r) for r in reversed(runs)]),
         "meta": m.Meta(
             generated=(now or datetime.now(UTC)).isoformat(timespec="seconds"),
