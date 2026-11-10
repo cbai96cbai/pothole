@@ -94,12 +94,20 @@ def test_records_strings_and_timestamps(tmp_path: Path) -> None:
 
 
 def test_default_path_is_the_pothole_tally(tmp_path: Path) -> None:
-    from pothole.budget import tally as module
+    import ast
 
-    assert module.DEFAULT_PATH == tmp_path / "spend.jsonl"  # conftest redirects it
-    assert str(Path("~/.pothole/spend.jsonl")) == "~/.pothole/spend.jsonl"
-    t = Tally(clock=lambda: BEFORE)
-    t.admit("a", Decimal("1"))
+    import pothole.budget.tally as module
+
+    # conftest redirects the live constant, so read the real default from the source
+    tree = ast.parse(Path(module.__file__).read_text())
+    default = next(
+        n.value
+        for n in tree.body
+        if isinstance(n, ast.Assign) and getattr(n.targets[0], "id", "") == "DEFAULT_PATH"
+    )
+    assert ast.unparse(default) == "Path('~/.pothole/spend.jsonl')"
+    assert module.DEFAULT_PATH == tmp_path / "spend.jsonl"
+    Tally(clock=lambda: BEFORE).admit("a", Decimal("1"))  # no path given: the default is used
     assert (tmp_path / "spend.jsonl").exists()
 
 
