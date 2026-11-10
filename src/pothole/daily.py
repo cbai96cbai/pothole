@@ -8,6 +8,8 @@ analyst works on the day two days back, only after a complete load. `last_succes
 the load itself, after the whole window loaded and the checks ran.
 """
 
+import gzip
+import io
 import json
 import uuid
 from collections.abc import Callable
@@ -18,7 +20,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 import pyarrow as pa
-import pyarrow.parquet as pq
+import pyarrow.csv as pacsv
 
 from pothole import dailyai, runrecord, sitedata
 from pothole.analyst import detect, universe
@@ -30,6 +32,7 @@ from pothole.cli import fetch_batch
 from pothole.dailyai import Sink, Spend
 from pothole.llm.client import LLMClient
 from pothole.logs import get_logger
+from pothole.repair import render
 from pothole.repair.routing import route
 from pothole.repair.validate import failed
 from pothole.runrecord import CheckResult, RepairRecord, RunRecord, Status
@@ -69,7 +72,7 @@ class Env:
 
 
 def _records(results: list[spec_checks.CheckResult]) -> list[CheckResult]:
-    return [CheckResult(r.name, "ok" if r.level == "pass" else r.level, r.detail) for r in results]
+    return [CheckResult(r.name, r.level, r.detail) for r in results]
 
 
 def _write_json(path: Path, payload: Any) -> None:
@@ -77,21 +80,49 @@ def _write_json(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, indent=1, sort_keys=True) + "\n")
 
 
+COUNT_TYPES = {
+    "date": pa.date32(),
+    "borough": pa.string(),
+    "board": pa.int64(),
+    "complaint_type": pa.string(),
+    "n": pa.int64(),
+}
+
+
+def counts_path(data: Path, day: date) -> Path:
+    return data / "counts" / f"{day.isoformat()}.csv.gz"
+
+
+def write_counts(path: Path, table: pa.Table) -> None:
+    """The same table always gives the same bytes (no timestamp in the gzip header)."""
+    sink = io.BytesIO()
+    pacsv.write_csv(table, sink)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(gzip.compress(sink.getvalue(), mtime=0))
+
+
+def read_counts(path: Path) -> pa.Table:
+    options = pacsv.ConvertOptions(column_types=COUNT_TYPES)
+    return pacsv.read_csv(io.BytesIO(gzip.decompress(path.read_bytes())), convert_options=options)
+
+
 def refresh_counts(
-    con: db.Connection, data: Path, generation: str, uni: universe.Universe
+    con: db.Connection, data: Path, generation: str, uni: universe.Universe, day: date
 ) -> pa.Table:
-    """The counts table of this store generation. `data/state.json` names the generation the
-    counts file was derived from; any other generation, or no file, derives it again."""
-    state_path, counts_path = data / "state.json", data / "counts.parquet"
+    """The counts the analyst sees for `day`. The file for a day is written once and never
+    rewritten: it is history. `data/state.json` names the store generation the last run saw; the
+    same generation with the day's file present reads that file, any other generation derives the
+    table from the store again (and writes the file only if the day has none)."""
+    state_path, path = data / "state.json", counts_path(data, day)
     try:
         held = json.loads(state_path.read_text()).get("generation")
     except (FileNotFoundError, ValueError):
         held = None
-    if held == generation and counts_path.exists():
-        return pq.read_table(counts_path)
+    if held == generation and path.exists():
+        return read_counts(path)
     table = counts.regenerate(con, uni)
-    counts_path.parent.mkdir(parents=True, exist_ok=True)
-    pq.write_table(table, counts_path)
+    if not path.exists():
+        write_counts(path, table)
     _write_json(state_path, {"generation": generation})
     return table
 
@@ -192,7 +223,7 @@ def _run(env: Env, ai: LLMClient | None, spend: Spend) -> RunRecord:
     started = env.clock()
     now = started.replace(tzinfo=None)
     day = now.date()
-    spec = PipelineSpec.load(env.repo / "pipelines" / "311.yaml")
+    spec = PipelineSpec.load(env.repo / render.SPEC_PATH)
 
     def record(status: Status, **fields: Any) -> RunRecord:
         return RunRecord(
@@ -224,9 +255,9 @@ def _run(env: Env, ai: LLMClient | None, spend: Spend) -> RunRecord:
         elif day.weekday() == SUNDAY and ai is not None and not _real_repair_today(env, day):
             repair = dailyai.drill(env.sink, ai, day, spend, DEFAULT_STEPS[0], env.repair_timeout_s)
         uni = universe.load(env.data / "universe.json")
-        table = refresh_counts(con, env.data, result.generation, uni)
-        _write_vintage(env, con, day)
         analysed = day - timedelta(days=load.ANALYSIS_LAG_DAYS)
+        table = refresh_counts(con, env.data, result.generation, uni, analysed)
+        _write_vintage(env, con, day)
         screened = screen(table, uni, analysed)
         if isinstance(screened, AnalystDay):
             analyst = screened

@@ -1,7 +1,6 @@
 """The daily run, with fakes for the source, the sink and the model. Nothing touches a network."""
 
 import json
-import shutil
 import threading
 from collections.abc import Callable
 from datetime import date, datetime, timedelta
@@ -10,9 +9,9 @@ from pathlib import Path
 from typing import Any
 
 import duckdb
-import pyarrow.parquet as pq
 import pytest
 from store.store_fake import FakeSocrata, make_row, outage_on
+from webdata.site_repo import scratch_repo
 
 from pothole import daily, dailyai, runrecord
 from pothole.analyst.finding import AnalystDay
@@ -47,19 +46,6 @@ class NoModel:
         raise KEEP_OUT
 
 
-def make_repo(root: Path) -> Path:
-    (root / "pipelines").mkdir(parents=True)
-    shutil.copy(REAL / "fixtures" / "batches" / "spec.yaml", root / "pipelines" / "311.yaml")
-    (root / "data").mkdir()
-    for name in ("universe", "backtest", "delay", "null_simulation"):
-        shutil.copy(REAL / "data" / f"{name}.json", root / "data")
-    for split in ("dev", "test"):
-        dest = root / "results" / f"baseline-{split}"
-        dest.mkdir(parents=True)
-        shutil.copy(REAL / "results" / f"baseline-{split}" / "summary.json", dest)
-    return root
-
-
 def window_rows(now: datetime, spike: bool = False, status: str = "Open") -> list[dict[str, str]]:
     """The analysis day and its 8 same weekdays before, plus yesterday: 20 rows a day, 3 of them
     in series A on baseline days. With `spike`, the analysis day has 12 in A and 8 in B."""
@@ -89,7 +75,7 @@ def fields_of(*a: Any, **k: Any) -> list[Any]:
 @pytest.fixture
 def repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setattr(daily.meta, "fields", fields_of)
-    return make_repo(tmp_path / "repo")
+    return scratch_repo(tmp_path / "repo")
 
 
 def env_for(
@@ -152,9 +138,7 @@ def test_incomplete_load_makes_no_analysis(
     record = daily.run(env)
     assert record.status == "incomplete_load" and record.analyst_day is None
     assert calls == [] and len(sink.issues) == 1
-    assert (
-        not (repo / "data" / "analyst").exists() and not (repo / "data" / "counts.parquet").exists()
-    )
+    assert not (repo / "data" / "analyst").exists() and not (repo / "data" / "counts").exists()
     assert record.ai_cost == "0"
 
 
@@ -169,34 +153,56 @@ def test_daily_refuses_over_envelope(repo: Path, isolated_state: Path) -> None:
 
 
 def test_generation_mismatch_regenerates_counts(repo: Path, isolated_state: Path) -> None:
+    from pothole.analyst import universe
+
     env, _, _ = env_for(repo, isolated_state, window_rows(TUESDAY))
     first = daily.run(env)
     data = repo / "data"
+    day_file = daily.counts_path(data, date(2026, 11, 8))
     assert json.loads((data / "state.json").read_text())["generation"] == first.generation
-    pq.write_table(pq.read_table(data / "counts.parquet").slice(0, 1), data / "counts.parquet")
+    day_file.unlink()
     (data / "state.json").write_text(json.dumps({"generation": "an-older-store"}))
     second = daily.run(env)
     assert json.loads((data / "state.json").read_text())["generation"] == second.generation
     assert second.generation != first.generation
     con = db.open(isolated_state / "raw.duckdb", read_only=True)
-    from pothole.analyst import universe
-
     want = counts.regenerate(con, universe.load(data / "universe.json"))
     con.close()
-    assert pq.read_table(data / "counts.parquet").equals(want)
+    assert daily.read_counts(day_file).equals(want)
 
 
-def test_a_matching_generation_keeps_the_counts_file(repo: Path, isolated_state: Path) -> None:
+def test_a_days_counts_file_is_never_rewritten(repo: Path, isolated_state: Path) -> None:
+    import gzip
+
+    env, _, _ = env_for(repo, isolated_state, window_rows(TUESDAY))
+    daily.run(env)
+    path = daily.counts_path(repo / "data", date(2026, 11, 8))
+    before = path.read_bytes()
+    assert before[4:8] == b"\0\0\0\0"  # gzip mtime 0: the same table always gives the same bytes
+    lines = gzip.decompress(before).decode().splitlines()
+    assert lines[0] == '"date","borough","board","complaint_type","n"'
+    keys = [ln.split(",")[:3] for ln in lines[1:]]
+    assert keys == sorted(keys)
+    path.write_bytes(before + b"")  # unchanged
+    marker = path.stat().st_mtime_ns
+    (repo / "data" / "state.json").write_text(json.dumps({"generation": "other"}))
+    daily.run(env)  # a later load of the same day: the committed file stays
+    assert path.read_bytes() == before and path.stat().st_mtime_ns == marker
+    assert sorted(p.name for p in (repo / "data" / "counts").iterdir()) == ["2026-11-08.csv.gz"]
+
+
+def test_a_matching_generation_reads_the_days_file(repo: Path, isolated_state: Path) -> None:
     from pothole.analyst import universe
 
     uni = universe.load(repo / "data" / "universe.json")
     env, _, _ = env_for(repo, isolated_state, window_rows(TUESDAY))
     record = daily.run(env)
-    marker = pq.read_table(repo / "data" / "counts.parquet").slice(0, 3)
-    pq.write_table(marker, repo / "data" / "counts.parquet")
+    path = daily.counts_path(repo / "data", date(2026, 11, 8))
+    marker = daily.read_counts(path).slice(0, 3)
+    daily.write_counts(path, marker)
     con = db.open(isolated_state / "raw.duckdb")
     assert record.generation is not None
-    kept = daily.refresh_counts(con, repo / "data", record.generation, uni)
+    kept = daily.refresh_counts(con, repo / "data", record.generation, uni, date(2026, 11, 8))
     con.close()
     assert kept.equals(marker)
 
