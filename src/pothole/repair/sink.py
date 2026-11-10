@@ -136,9 +136,14 @@ class GitHubSink:
         self.env = {**os.environ, "GH_TOKEN": token, "GITHUB_TOKEN": token}
 
     def _run(
-        self, args: Sequence[str], cwd: Path | None = None
+        self,
+        args: Sequence[str],
+        cwd: Path | None = None,
+        extra_env: Mapping[str, str] | None = None,
     ) -> "subprocess.CompletedProcess[str]":
-        return self.runner(list(args), cwd=cwd or self.repo_dir, env=self.env)
+        return self.runner(
+            list(args), cwd=cwd or self.repo_dir, env={**self.env, **(extra_env or {})}
+        )
 
     def _must(self, args: Sequence[str], cwd: Path | None = None) -> str:
         done = self._run(args, cwd)
@@ -223,7 +228,8 @@ class GitHubSink:
         output = ""
         gates = [PYTEST, check_spec_command(str(rows_dir.relative_to(work)))]
         for gate in gates:
-            done = self._run(gate, work)
+            # the branch's own source, whatever else is installed in the environment
+            done = self._run(gate, work, {"PYTHONPATH": str(work / "src")})
             output += f"$ {' '.join(gate)}\n{done.stdout}{done.stderr}\n"
             if done.returncode != 0:
                 reason = (

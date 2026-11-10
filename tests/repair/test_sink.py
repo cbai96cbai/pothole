@@ -73,6 +73,23 @@ def test_model_text_cannot_close_its_block_or_mention_anyone(outcome, results):
     assert f"{fence}\n{hostile}\n{fence}" in body
 
 
+GATE_SOURCE = """\
+from pathlib import Path
+
+import pothole
+
+
+def test_gates_import_the_branch_own_source():
+    assert Path(pothole.__file__).resolve().is_relative_to(Path(__file__).parents[1].resolve())
+"""
+CHECK_SPEC_CMD = (
+    "from pathlib import Path; import pothole; "
+    "here = Path.cwd().resolve(); "
+    "assert Path(pothole.__file__).resolve().is_relative_to(here), pothole.__file__; "
+    "from pothole.cli import app; app()"
+)
+
+
 class Remote:
     """Real git against a local origin; `gh` is recorded. Gates are stubbed or really run."""
 
@@ -89,6 +106,10 @@ class Remote:
         shutil.copy(ROOT / "fixtures/batches/spec.yaml", self.repo / render.SPEC_PATH)
         (self.repo / "tests" / "regression").mkdir(parents=True)
         shutil.copy(ROOT / "tests/regression/test_cases.py", self.repo / "tests/regression/")
+        shutil.copytree(
+            ROOT / "src", self.repo / "src", ignore=shutil.ignore_patterns("__pycache__")
+        )
+        (self.repo / "tests" / "test_gate_source.py").write_text(GATE_SOURCE)
         subprocess.run([*git, "-C", str(self.repo), "add", "."], check=True)
         subprocess.run([*git, "-C", str(self.repo), "commit", "-q", "-m", "start"], check=True)
         subprocess.run(
@@ -113,6 +134,9 @@ class Remote:
         if args[0] == "uv":  # the two gates
             if self.gates == "real":
                 args = self.real(args[2:])
+                return subprocess.run(
+                    args, cwd=cwd, env=env, capture_output=True, text=True, check=False
+                )
             else:
                 failed = self.gates == "fail" and args[2] == "pytest"
                 return subprocess.CompletedProcess(
@@ -128,7 +152,7 @@ class Remote:
     def real(rest: list[str]) -> list[str]:
         if rest[0] == "pytest":
             return [sys.executable, "-m", "pytest", "-p", "no:cacheprovider", *rest[1:]]
-        return [sys.executable, "-c", "from pothole.cli import app; app()", *rest[1:]]
+        return [sys.executable, "-c", CHECK_SPEC_CMD, *rest[1:]]
 
 
 def sink_for(remote: Remote) -> GitHubSink:
