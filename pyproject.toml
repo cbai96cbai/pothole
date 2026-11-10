@@ -11,9 +11,12 @@ requires-python = ">=3.12,<3.14"
 dependencies = [
     "httpx>=0.28.1",
     "openai>=3.45.0",
+    "pyarrow>=26.0.1",
     "pydantic>=2.14.2",
+    "pyyaml>=6.0.3",
     "tiktoken>=0.14.0",
     "typer>=0.29.0",
+    "types-pyyaml>=6.0.12.20261103",
 ]
 
 [project.scripts]
@@ -50,3 +53,7 @@ markers = [
     "live: calls the Azure OpenAI API (excluded by default and in CI)",
     "live_api: calls the public NYC Open Data or Open-Meteo APIs (excluded by default and in CI)",
 ]
+
+[[tool.mypy.overrides]]
+module = ["pyarrow", "pyarrow.*"]
+ignore_missing_imports = true
