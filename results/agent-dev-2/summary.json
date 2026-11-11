@@ -1,0 +1,161 @@
+{
+  "repairer": "agent",
+  "split": "dev",
+  "cases": 42,
+  "repair_success": {
+    "correct": 13,
+    "of": 18,
+    "rate": 0.7222
+  },
+  "issue_accuracy": {
+    "correct": 11,
+    "of": 12,
+    "rate": 0.9167
+  },
+  "no_change_accuracy": {
+    "correct": 5,
+    "of": 6,
+    "rate": 0.8333
+  },
+  "repairable_answered_with_issue": {
+    "count": 1,
+    "of": 18,
+    "rate": 0.0556
+  },
+  "crashed": 0,
+  "detection_coverage_fault_cases": {
+    "detected": 36,
+    "of": 36,
+    "rate": 1.0
+  },
+  "detection_coverage_benign_control": {
+    "detected": 6,
+    "of": 6,
+    "rate": 1.0
+  },
+  "per_family": {
+    "renamed_field": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 5,
+      "detected": 6
+    },
+    "date_format": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 5,
+      "detected": 6
+    },
+    "borough_recoding": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 3,
+      "detected": 6
+    },
+    "field_dropped": {
+      "expected": "issue",
+      "cases": 6,
+      "correct": 5,
+      "detected": 6
+    },
+    "partial_load": {
+      "expected": "issue",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6
+    },
+    "spike": {
+      "expected": "no_change",
+      "cases": 6,
+      "correct": 5,
+      "detected": 6
+    },
+    "benign_field": {
+      "expected": "nothing",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6
+    }
+  },
+  "failures": [
+    {
+      "id": "renamed_field-0",
+      "family": "renamed_field",
+      "expected": "patch",
+      "detected": true,
+      "action": "patch",
+      "correct": false,
+      "reason": "2026-11-05: row 71001228: agency is 'Department of Transportation', expected 'DOT'"
+    },
+    {
+      "id": "date_format-1",
+      "family": "date_format",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "borough_recoding-3",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "patch",
+      "correct": false,
+      "reason": "2026-11-02: row 70968587: borough is 'QUEENS', expected 'Queens'"
+    },
+    {
+      "id": "borough_recoding-4",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "patch",
+      "correct": false,
+      "reason": "2026-11-03: row 70978177: borough is 'QUEENS', expected 'Queens'"
+    },
+    {
+      "id": "borough_recoding-5",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "patch",
+      "correct": false,
+      "reason": "2026-11-04: row 70990843: borough is 'QUEENS', expected 'Queens'"
+    },
+    {
+      "id": "field_dropped-0",
+      "family": "field_dropped",
+      "expected": "issue",
+      "detected": true,
+      "action": "patch",
+      "correct": false,
+      "reason": "expected issue, got patch"
+    },
+    {
+      "id": "spike-4",
+      "family": "spike",
+      "expected": "no_change",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected no_change, got issue"
+    }
+  ],
+  "run_id": "agent-dev-2",
+  "system": "agent",
+  "rerun_test": false,
+  "total_cost": "0.09872750",
+  "cases_that_called_the_repairer": 36,
+  "cost_per_case": "0.00274",
+  "mean_seconds_per_case": 10.22,
+  "median_seconds_per_case": 10.82,
+  "averages_over": "cases that called the repairer (benign controls excluded)",
+  "model_deployment": "pothole-agent",
+  "run_date": "2026-11-11",
+  "code_commit": "af508653d4f1a07648253d82ba4aecea9b1bff91",
+  "code_commits": [
+    "af508653d4f1a07648253d82ba4aecea9b1bff91"
+  ],
+  "code_dirty_at_start": false
+}

@@ -1,0 +1,262 @@
+{
+  "repairer": "agent",
+  "split": "dev",
+  "cases": 42,
+  "repair_success": {
+    "correct": 0,
+    "of": 18,
+    "rate": 0.0
+  },
+  "issue_accuracy": {
+    "correct": 12,
+    "of": 12,
+    "rate": 1.0
+  },
+  "no_change_accuracy": {
+    "correct": 5,
+    "of": 6,
+    "rate": 0.8333
+  },
+  "repairable_answered_with_issue": {
+    "count": 18,
+    "of": 18,
+    "rate": 1.0
+  },
+  "crashed": 0,
+  "detection_coverage_fault_cases": {
+    "detected": 36,
+    "of": 36,
+    "rate": 1.0
+  },
+  "detection_coverage_benign_control": {
+    "detected": 6,
+    "of": 6,
+    "rate": 1.0
+  },
+  "per_family": {
+    "renamed_field": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 0,
+      "detected": 6
+    },
+    "date_format": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 0,
+      "detected": 6
+    },
+    "borough_recoding": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 0,
+      "detected": 6
+    },
+    "field_dropped": {
+      "expected": "issue",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6
+    },
+    "partial_load": {
+      "expected": "issue",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6
+    },
+    "spike": {
+      "expected": "no_change",
+      "cases": 6,
+      "correct": 5,
+      "detected": 6
+    },
+    "benign_field": {
+      "expected": "nothing",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6
+    }
+  },
+  "failures": [
+    {
+      "id": "renamed_field-0",
+      "family": "renamed_field",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "renamed_field-1",
+      "family": "renamed_field",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "renamed_field-2",
+      "family": "renamed_field",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "renamed_field-3",
+      "family": "renamed_field",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "renamed_field-4",
+      "family": "renamed_field",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "renamed_field-5",
+      "family": "renamed_field",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "date_format-0",
+      "family": "date_format",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "date_format-1",
+      "family": "date_format",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "date_format-2",
+      "family": "date_format",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "date_format-3",
+      "family": "date_format",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "date_format-4",
+      "family": "date_format",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "date_format-5",
+      "family": "date_format",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "borough_recoding-0",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "borough_recoding-1",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "borough_recoding-2",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "borough_recoding-3",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "borough_recoding-4",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "borough_recoding-5",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "spike-2",
+      "family": "spike",
+      "expected": "no_change",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected no_change, got issue"
+    }
+  ],
+  "run_id": "agent-dev-1",
+  "system": "agent",
+  "rerun_test": false,
+  "total_cost": "0.10987450",
+  "cost_per_case": "0.00262",
+  "mean_seconds_per_case": 8.97,
+  "median_seconds_per_case": 9.6,
+  "model_deployment": "pothole-agent",
+  "run_date": "2026-11-11"
+}
