@@ -28,10 +28,9 @@ then try your edits with try_patch and look at the checks it returns. A patch is
 only when no check fails on the failing batch afterwards. You may edit only a column that a \
 failed check names, and map_field may only read a field the failing batch actually sends. \
 Submit a patch with \
-regression_keys: 3 to 10 keys (the key column's values) of rows from the failing batch that your \
-patch changes; they become a permanent test. Give a reason in one or two plain sentences that says \
-what changed in the data and what the edit does. Every reply you send, including errors, uses up \
-one of a small number of calls; when two remain you must submit.\
+your edits and a reason; the regression test rows are chosen for you. The reason is one or two \
+plain sentences that say what changed in the data and what the edit does. Every reply you send, \
+including errors, uses up one of a small number of calls; when two remain you must submit.\
 """
 
 REPLIES_LEFT = "You have {n} calls left."
@@ -96,11 +95,6 @@ TOOLS: list[dict[str, Any]] = [
         {
             "action": {"type": "string", "enum": ["patch", "issue", "no_change"]},
             "ops": {"type": "array", "items": _OP, "description": "edits; empty unless patch"},
-            "regression_keys": {
-                "type": "array",
-                "items": {"type": "string"},
-                "description": "patch only: 3 to 10 key values of failing-batch rows it changes",
-            },
             "reason": {"type": "string"},
         },
         ["action", "reason"],

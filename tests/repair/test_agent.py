@@ -4,14 +4,11 @@ from conftest import FAILING_DAY, Scripted, call, reply
 
 from pothole.repair.agent import FORCE, repair
 from pothole.repair.validate import Batch
+from pothole.spec import ops
 from pothole.spec.checks import CheckResult
 from pothole.spec.model import PipelineSpec
 
 RENAME = {"op": "map_field", "column": "agency", "source": "agency_name"}
-
-
-def keys(failing: Batch, n: int = 4) -> list[str]:
-    return [r["unique_key"] for r in failing.rows if r.get("latitude") and r.get("longitude")][:n]
 
 
 def run(model: Scripted, spec: PipelineSpec, failing: Batch, checks: list[CheckResult],
@@ -30,7 +27,6 @@ def test_renamed_field_gets_a_patch_that_passes(spec, failing, failed_checks, fi
                     {
                         "action": "patch",
                         "ops": [RENAME],
-                        "regression_keys": keys(failing),
                         "reason": "The source renamed agency to agency_name.",
                     },
                 )  # fmt: skip
@@ -40,7 +36,7 @@ def test_renamed_field_gets_a_patch_that_passes(spec, failing, failed_checks, fi
     out = run(model, spec, failing, failed_checks, fields)
     assert out.action == "patch"
     assert [o.model_dump() for o in out.ops] == [RENAME]
-    assert out.regression is not None and len(out.regression.rows) == 4
+    assert out.regression is not None and len(out.regression.rows) == 5
     assert {r["agency"] for r in out.regression.expected} != {None}
     assert str(out.cost) == "0.003" and len(out.trace) == 3
     assert FAILING_DAY not in str(model.sent[0]["messages"][0])
@@ -84,8 +80,8 @@ def test_forced_submit_is_accepted(spec, failing, failed_checks, fields):
 def test_invalid_submission_is_returned_as_an_error_then_can_be_fixed(
     spec, failing, failed_checks, fields
 ):
-    nothing = {"action": "patch", "ops": [], "regression_keys": [], "reason": "x"}
-    good = {"action": "patch", "ops": [RENAME], "regression_keys": keys(failing), "reason": "r"}
+    nothing = {"action": "patch", "ops": [], "reason": "x"}
+    good = {"action": "patch", "ops": [RENAME], "reason": "r"}
     model = Scripted([reply(call("submit", nothing)), reply(call("submit", good))])
     out = run(model, spec, failing, failed_checks, fields)
     assert model.sent[1]["messages"][-1]["content"].startswith("error:")
@@ -95,7 +91,7 @@ def test_invalid_submission_is_returned_as_an_error_then_can_be_fixed(
 def test_edits_are_limited_to_columns_with_a_failed_check_and_fields_the_batch_sends(
     spec, failing, failed_checks, fields
 ):
-    args = {"action": "patch", "regression_keys": keys(failing), "reason": "r"}
+    args = {"action": "patch", "reason": "r"}
     other_column = {"op": "map_field", "column": "descriptor", "source": "location_type"}
     absent_field = {"op": "map_field", "column": "agency", "source": "nope"}
     model = Scripted(
@@ -116,7 +112,7 @@ def test_a_patch_that_leaves_a_failure_is_refused(spec, failing, failed_checks, 
     from pothole.spec import engine
 
     checks = engine.run(spec, rows, [], failing.now).checks
-    args = {"action": "patch", "ops": [RENAME], "regression_keys": keys(failing), "reason": "r"}
+    args = {"action": "patch", "ops": [RENAME], "reason": "r"}
     model = Scripted(
         [reply(call("submit", args)), reply(call("submit", {"action": "issue", "reason": "x"}))]
     )
@@ -125,10 +121,9 @@ def test_a_patch_that_leaves_a_failure_is_refused(spec, failing, failed_checks, 
 
 
 def test_rows_that_fail_under_the_patch_are_refused(spec, failing, failed_checks, fields):
-    bad = [dict(r, latitude="0") for r in failing.rows[:4]]
-    rows = bad + failing.rows[4:]
-    key_list = [r["unique_key"] for r in bad]
-    args = {"action": "patch", "ops": [RENAME], "regression_keys": key_list, "reason": "r"}
+    first = sorted(r["unique_key"] for r in failing.rows)[:4]
+    rows = [dict(r, latitude="0") if r["unique_key"] in first else r for r in failing.rows]
+    args = {"action": "patch", "ops": [RENAME], "reason": "r"}
     model = Scripted(
         [reply(call("submit", args)), reply(call("submit", {"action": "issue", "reason": "x"}))]
     )
@@ -136,18 +131,44 @@ def test_rows_that_fail_under_the_patch_are_refused(spec, failing, failed_checks
     assert "fail checks under the patched spec" in model.sent[1]["messages"][-1]["content"]
 
 
-def test_regression_keys_must_be_real_and_the_right_count(spec, failing, failed_checks, fields):
+def test_the_model_is_not_asked_for_regression_keys(spec, failing, failed_checks, fields):
+    from pothole.repair import prompt
+
+    submit = next(t for t in prompt.TOOLS if t["function"]["name"] == "submit")
+    assert "regression_keys" not in submit["function"]["parameters"]["properties"]
+    assert "regression_keys" not in prompt.SYSTEM_PROMPT
+
+
+def test_the_code_chooses_the_same_five_rows_sorted_by_key(spec, failing, failed_checks, fields):
     args = {"action": "patch", "ops": [RENAME], "reason": "r"}
-    model = Scripted(
-        [
-            reply(call("submit", {**args, "regression_keys": keys(failing, 2)})),
-            reply(call("submit", {**args, "regression_keys": ["a", "b", "c"]})),
-            reply(call("submit", {"action": "issue", "reason": "x"})),
-        ]
-    )
-    run(model, spec, failing, failed_checks, fields)
-    assert "3 to 10" in model.sent[1]["messages"][-1]["content"]
-    assert "not in the failing batch" in model.sent[2]["messages"][-1]["content"]
+    cases = []
+    for rows in (failing.rows, list(reversed(failing.rows))):
+        model = Scripted([reply(call("submit", args))])
+        out = repair(spec, rows, failed_checks, fields, model, now=failing.now)  # type: ignore[arg-type]
+        assert out.regression is not None
+        cases.append([r["unique_key"] for r in out.regression.rows])
+    assert cases[0] == cases[1] and len(cases[0]) == 5 and cases[0] == sorted(cases[0])
+
+
+def test_rows_that_send_the_edited_field_come_first(spec, failing):
+    from pothole.repair.validate import choose_rows
+
+    patched = ops.apply(spec, [ops.parse(RENAME)])
+    ordered = sorted(r["unique_key"] for r in failing.rows)
+    lacking = set(ordered[:3])
+    rows = [r if r["unique_key"] not in lacking else {**r, "agency_name": ""} for r in failing.rows]
+    chosen = choose_rows(patched, rows, ["agency"])
+    assert not lacking & {r["unique_key"] for r in chosen}
+
+
+def test_a_batch_too_small_for_a_case_is_refused(spec, failing):
+    import pytest
+
+    from pothole.repair.validate import ToolError, choose_rows
+
+    patched = ops.apply(spec, [ops.parse(RENAME)])
+    with pytest.raises(ToolError, match="at least 3"):
+        choose_rows(patched, failing.rows[:2], ["agency"])
 
 
 def test_tools_show_rows_and_fields_but_nothing_else(spec, failing, failed_checks, fields):
@@ -246,7 +267,7 @@ def test_a_created_date_reformat_can_be_submitted(spec, failing, fields):
     rows = [dict(r, created_date=us(r["created_date"])) for r in failing.rows]
     checks = engine.run(spec, rows, [], failing.now).checks
     fmt = {"op": "set_format", "column": "created_date", "format": "%m/%d/%Y %H:%M:%S"}
-    sub = {"action": "patch", "ops": [RENAME, fmt], "regression_keys": keys(failing), "reason": "r"}
+    sub = {"action": "patch", "ops": [RENAME, fmt], "reason": "r"}
     model = Scripted([reply(call("submit", sub))])
     out = repair(spec, rows, checks, fields, model, now=failing.now)  # type: ignore[arg-type]
     assert out.action == "patch" and out.regression is not None

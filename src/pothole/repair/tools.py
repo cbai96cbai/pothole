@@ -118,8 +118,5 @@ class Toolbox:
             raise ToolError(
                 "the patched spec still fails on the failing batch:\n" + render_results(still)
             )
-        keys = args.get("regression_keys")
-        if not isinstance(keys, list) or not all(isinstance(k, str) for k in keys):
-            raise ToolError("regression_keys must be a list of key strings")
-        case = build_case(self.spec, patched, self.rows, keys)
+        case = build_case(self.spec, patched, self.rows, [o.column for o in parsed])
         return Submission("patch", parsed, case, reason.strip())

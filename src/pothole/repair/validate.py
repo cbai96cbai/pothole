@@ -12,7 +12,7 @@ from pothole.spec import engine
 from pothole.spec.checks import CheckResult
 from pothole.spec.model import PipelineSpec
 
-MIN_CASE, MAX_CASE = 3, 10
+MIN_CASE, CASE_SIZE = 3, 5
 
 
 class ToolError(Exception):
@@ -56,20 +56,36 @@ def case_now(day: date) -> datetime:
     return datetime(day.year, day.month, day.day) + timedelta(days=1, hours=30)
 
 
+def choose_rows(
+    patched: PipelineSpec, rows: list[dict[str, str]], edited: list[str]
+) -> list[dict[str, str]]:
+    """The regression rows, chosen by the code and never by the model: rows that send every edited
+    column's source field first, then rows with the fewest empty fields (a handful of rows must
+    pass the checks' rates), then the key; CASE_SIZE of them, listed by key."""
+    key_field = patched.column(patched.source.key).source
+    edited_sources = [patched.column(c).source for c in edited]
+    read = [c.source for c in patched.columns]
+
+    def rank(row: dict[str, str]) -> tuple[bool, int, str]:
+        lacks_edited = not all(row.get(f) for f in edited_sources)
+        return lacks_edited, sum(1 for f in read if not row.get(f)), row.get(key_field, "")
+
+    chosen = sorted(rows, key=rank)[:CASE_SIZE]
+    chosen.sort(key=lambda r: r.get(key_field, ""))
+    if len(chosen) < MIN_CASE:
+        raise ToolError(
+            f"the failing batch has {len(rows)} rows; a regression case needs at least {MIN_CASE}"
+        )
+    return chosen
+
+
 def build_case(
     original: PipelineSpec,
     patched: PipelineSpec,
     rows: list[dict[str, str]],
-    keys: list[str],
+    edited: list[str],
 ) -> RegressionCase:
-    if len(set(keys)) != len(keys) or not MIN_CASE <= len(keys) <= MAX_CASE:
-        raise ToolError(f"regression_keys must be {MIN_CASE} to {MAX_CASE} different keys")
-    key_field = original.column(original.source.key).source
-    by_key = {r.get(key_field, ""): r for r in rows}
-    unknown = [k for k in keys if k not in by_key]
-    if unknown:
-        raise ToolError(f"regression_keys not in the failing batch: {unknown[:5]}")
-    subset = [by_key[k] for k in keys]
+    subset = choose_rows(patched, rows, edited)
     now = case_now(case_day(patched, subset))
     still = failed(engine.run(patched, subset, [], now).checks)
     if still:
