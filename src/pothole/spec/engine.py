@@ -27,7 +27,7 @@ class EngineResult:
     checks: list[CheckResult]
 
 
-def _cast(col: Column, raw: str) -> Any:
+def cast_value(col: Column, raw: str) -> Any:
     if col.type == "text":
         return raw
     if col.type == "timestamp":
@@ -59,7 +59,7 @@ def _column(col: Column, rows: list[dict[str, str]], keys: list[str]) -> ck.Cast
                 continue
             raw = col.values[raw]
         try:
-            values.append(_cast(col, raw))
+            values.append(cast_value(col, raw))
         except ValueError:
             bad.append(key)
             values.append(None)

@@ -10,6 +10,7 @@ from pothole.repair.outcome import Action, Op, RegressionCase
 from pothole.repair.validate import ToolError, build_case, failed
 from pothole.spec import engine, ops, scope
 from pothole.spec.checks import CheckResult
+from pothole.spec.formats import formats_that_parse
 from pothole.spec.model import PipelineSpec
 
 MAX_SAMPLE = 20
@@ -58,12 +59,42 @@ class Toolbox:
         if name == "read_check_results":
             return render_results(self.results)
         if name == "source_fields":
-            return json.dumps(self.fields, sort_keys=True)
+            return json.dumps(self._field_report(), sort_keys=True)
+        if name == "formats_that_parse":
+            return self._formats(args)
         if name == "sample_rows":
             return self._sample(args)
         if name == "try_patch":
             return render_results(self._patched(args.get("ops"))[1])
         raise ToolError(f"unknown tool {name!r}")
+
+    def _field_report(self) -> dict[str, dict[str, str]]:
+        """Each source field with its type and use: `in_use` (a column reads it), `known_unused`
+        (the spec lists it in source.ignore) or `new` (neither)."""
+        used = {c.source for c in self.spec.columns}
+        ignored = set(self.spec.source.ignore)
+        return {
+            name: {
+                "type": kind,
+                "status": "in_use"
+                if name in used
+                else "known_unused"
+                if name in ignored
+                else "new",
+            }
+            for name, kind in self.fields.items()
+        }
+
+    def _formats(self, args: dict[str, Any]) -> str:
+        name = args.get("column")
+        if not isinstance(name, str) or name not in {c.name for c in self.spec.columns}:
+            raise ToolError("formats_that_parse needs column: a column name of the spec")
+        col = self.spec.column(name)
+        if col.type == "text":
+            raise ToolError(f"{name} is a text column; it has no format")
+        present = [v for r in self.rows if (v := r.get(col.source))]
+        found = formats_that_parse(col, present)
+        return json.dumps({"column": name, "present_values": len(present), "formats": found})
 
     def _sample(self, args: dict[str, Any]) -> str:
         column, n = args.get("column"), args.get("n", 5)

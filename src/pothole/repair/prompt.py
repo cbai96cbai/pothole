@@ -17,11 +17,25 @@ field can feed only one column. The key column cannot be remapped.
 %Y-%m-%dT%H:%M:%S.%f, %Y-%m-%dT%H:%M:%S, %Y-%m-%d %H:%M:%S, %Y-%m-%d, %m/%d/%Y %I:%M:%S %p, \
 %m/%d/%Y %H:%M:%S, %m/%d/%Y, %d-%b-%Y. Number formats: plain, comma_thousands.
 - add_value_mapping {column, raw, value}: add one listed value (raw -> value) to a text column \
-that already has a list of values.
+that already has a list of values; value must already be one of that column's values.
 
 You can never change the checks, the source, add columns or write code. Anything else is refused. \
 Never loosen what the data is checked against: if the only way out is to change a check, submit \
 an issue.
+
+Your tools: read_spec, read_check_results, source_fields (each field with its type and whether it \
+is in_use by a column, known_unused because the spec lists it as a field that holds other data, or \
+new), sample_rows, formats_that_parse (the fixed formats under which at least 99% of a column's \
+present values parse on the failing batch), try_patch and submit.
+
+Rules the edits must follow: an add_value_mapping value must be one of that column's existing \
+values (the right-hand side of its list), never a new spelling. map_field may not read a \
+known_unused field: it holds different data, and a renamed field appears as a new one. Reading a \
+field another column uses is allowed.
+
+When the only failing check is the volume check, the count is above the usual band and every \
+other check passes, the right answer is usually no_change (real activity), explained in the \
+reason.
 
 How to work: read the check results, look at the spec, the source fields and a few failing rows, \
 then try your edits with try_patch and look at the checks it returns. A patch is accepted \
@@ -82,7 +96,20 @@ TOOLS: list[dict[str, Any]] = [
         },
         ["column", "only_failing", "n"],
     ),
-    _tool("source_fields", "The source's current field names and types.", {}, []),
+    _tool(
+        "source_fields",
+        "The source's current fields: type, and status in_use (a column reads it), known_unused "
+        "(listed as holding other data) or new.",
+        {},
+        [],
+    ),
+    _tool(
+        "formats_that_parse",
+        "The fixed formats under which at least 99% of a timestamp or number column's present "
+        "values parse on the failing batch.",
+        {"column": {"type": "string", "description": "a column name of the spec"}},
+        ["column"],
+    ),
     _tool(
         "try_patch",
         "Apply edits to a copy of the spec, run the checks on the failing batch, return them.",
