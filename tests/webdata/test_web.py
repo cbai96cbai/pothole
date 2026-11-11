@@ -63,8 +63,10 @@ def test_the_repairs_page_separates_who_decided_each_score(tmp_path: Path) -> No
         "Decided by the fixed volume rule, no AI",
         "none (all decided by the fixed rule)",
         "a fixed rule decides, not either repairer, so those cases are scored separately",
-        "The checks noticed the planted fault in 27 of 27 fault cases and flagged 3 of 3 harmless changes.",
-        "Repairs that worked, agent minus rule-based fixer: +42 points (95% interval \u221217 to +100). "
+        "The checks noticed the planted fault in 27 of 27 fault cases "
+        "and flagged 3 of 3 harmless changes.",
+        "Repairs that worked, agent minus rule-based fixer: +42 points "
+        "(95% interval \u221217 to +100). "
         "The interval resamples whole fault families; this split has only 2 repairable families, "
         "so it is wide.",
         "5 of 6",
