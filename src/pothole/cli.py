@@ -3,6 +3,7 @@
 import json
 import os
 import uuid
+from collections.abc import Callable
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Annotated
@@ -185,3 +186,67 @@ def tally_github_command(
         f"admitted {len(done.admitted)} ({len(done.without_record)} with no committed record), "
         f"already {len(done.already)}, AI off {len(done.ai_off)}"
     )
+
+
+@app.command("eval-repair")
+def eval_repair_command(
+    split: Annotated[str, typer.Option(help="dev or test.")],
+    system: Annotated[str, typer.Option(help="agent or baseline.")],
+    run_id: Annotated[str, typer.Option(help="Names the folder under results/.")],
+    after_credit: Annotated[bool, typer.Option(help="Spend after the build credit ended.")] = False,
+    rerun_test: Annotated[bool, typer.Option(help="Allow a second agent run on test.")] = False,
+    results: Annotated[Path, typer.Option(help="Where run folders go.")] = Path("results"),
+    case_timeout: Annotated[float, typer.Option(help="Seconds before a case is wrong.")] = 120.0,
+) -> None:
+    """Score the repair agent or the non-AI baseline on a drill split; resumes a run id."""
+    from datetime import date
+
+    from pothole.budget.tally import Tally
+    from pothole.drills import baseline, evaluate
+    from pothole.drills.catalog import Case
+    from pothole.drills.scoring import Repairer
+    from pothole.llm.client import LLMClient
+
+    if split not in ("dev", "test") or system not in ("agent", "baseline"):
+        typer.echo("--split is dev or test and --system is agent or baseline", err=True)
+        raise typer.Exit(2)
+    settings = Settings.from_env()
+    tally: Tally | None = None
+    make: Callable[[Case], Repairer] = lambda case: baseline.repair  # noqa: E731
+    if system == "agent":
+        if not (settings.azure_endpoint and settings.azure_api_key):
+            typer.echo("the Azure endpoint or key is not set", err=True)
+            raise typer.Exit(1)
+        client = LLMClient(settings)
+        tally = Tally()
+        make = lambda case: evaluate.agent_repairer(case, client)  # noqa: E731
+    try:
+        body = evaluate.run_split(
+            split, system, run_id, results, make, tally=tally, deployment=settings.deployment,
+            today=date.today(), timeout_s=case_timeout, after_credit=after_credit,
+            rerun_test=rerun_test,
+        )  # fmt: skip
+    except evaluate.RefusedToStart as exc:
+        typer.echo(f"refusing to run: {exc}", err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(
+        f"{body['cases']} cases, cost {body['total_cost']}, repair success {body['repair_success']}"
+    )
+
+
+@app.command("compare")
+def compare_command(
+    a: Annotated[str, typer.Option("--a", help="Run id, usually the agent.")],
+    b: Annotated[str, typer.Option("--b", help="Run id, usually the baseline.")],
+    results: Annotated[Path, typer.Option(help="Where run folders are.")] = Path("results"),
+) -> None:
+    """Run a minus run b, paired by case, with an interval clustered by family."""
+    from pothole.drills import compare
+
+    try:
+        body = compare.compare(results / a, results / b)
+    except (FileNotFoundError, ValueError) as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    (results / f"compare-{a}-{b}.json").write_text(json.dumps(body, indent=2) + "\n")
+    typer.echo(compare.render(body))
