@@ -70,3 +70,21 @@ def test_summary_counts(cases: dict[str, Case], spec: PipelineSpec):
         "detected": 1,
     }
     assert [f["id"] for f in s["failures"]] == ["renamed_field-0"]
+
+
+def test_a_repairer_gets_the_batch_its_checks_were_computed_on(spec: PipelineSpec):
+    """Its own re-check, with the same history, must not trip the volume check."""
+    seen: list[Any] = []
+
+    def spy(_spec: Any, failed: Any, rows: Any, fields: Any) -> RepairOutcome:
+        seen.append(rows)
+        return RepairOutcome("issue")
+
+    for case in (c for c in catalog.load() if c.split == "dev" and c.expected_action == "patch"):
+        seen.clear()
+        scoring.run_case(case, spec, spy)
+        full, _ = catalog.seen_batch(case)
+        assert seen and len(seen[0]) == len(full), case.id
+        again = catalog.run_engine(spec, seen[0], case.batch_seen).checks
+        volume = next(c for c in again if c.name == "volume")
+        assert volume.level != "fail", (case.id, volume.detail)

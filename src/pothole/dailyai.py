@@ -179,9 +179,7 @@ def drill(
         now = datetime.strptime(case.batch_seen, "%Y-%m-%d") + timedelta(days=1, hours=30)
         checks = catalog.run_engine(spec, rows, case.batch_seen).checks
         failing = [c for c in checks if c.level == "fail"]
-        strings: list[dict[str, str]] = [
-            {k: str(v) for k, v in r.items()} for r in catalog.sample(rows, case)
-        ]
+        strings: list[dict[str, str]] = [{k: str(v) for k, v in r.items()} for r in rows]
         outcome = with_timeout(
             lambda: agent.repair(
                 spec, strings, failing, fields, client, now=now, history=catalog.history()

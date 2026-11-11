@@ -10,7 +10,7 @@ def _baseline_outcome(case: Case, spec: PipelineSpec) -> RepairOutcome:
     failed = [
         c for c in catalog.run_engine(spec, rows, case.batch_seen).checks if c.level == "fail"
     ]
-    return baseline.repair(spec, failed, catalog.sample(rows, case), fields)
+    return baseline.repair(spec, failed, rows, fields)
 
 
 def _with_regression(case: Case, spec: PipelineSpec, edits: list[ops.EditOp]) -> RepairOutcome:

@@ -5,7 +5,6 @@ is reachable from the repair agent's tools: it sees only the faulted rows of `ba
 """
 
 import json
-import random
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from functools import cache
@@ -22,7 +21,6 @@ CATALOG = ROOT / "data" / "drills" / "catalog.json"
 FREEZE = ROOT / "data" / "drills" / "freeze.json"
 BATCH_DIR = ROOT / "fixtures" / "batches"
 SPEC_PATH = BATCH_DIR / "spec.yaml"  # the spec the batches were recorded under
-SAMPLE_ROWS = 200
 JUDGED_DAYS = 3
 Expected = Literal["patch", "issue", "no_change", "nothing"]
 
@@ -77,12 +75,6 @@ def fault_of(case: Case) -> Fault:
 def seen_batch(case: Case) -> tuple[list[Row], dict[str, str]]:
     """What the pipeline received on the case's day: the faulted rows and the source fields."""
     return inject(clean_batch(case.batch_seen), fault_of(case))
-
-
-def sample(rows: list[Row], case: Case) -> list[Row]:
-    """The rows shown to a repairer: a seeded sample of the faulted batch, in batch order."""
-    keep = sorted(random.Random(case.seed).sample(range(len(rows)), min(SAMPLE_ROWS, len(rows))))
-    return [rows[i] for i in keep]
 
 
 def load(path: Path = CATALOG) -> list[Case]:

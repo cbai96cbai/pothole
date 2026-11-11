@@ -100,7 +100,7 @@ class Tally:
             return any(f'"run_id": {json.dumps(run_id)}' in line for line in fh)
 
     def _limit(self, github: bool) -> Decimal:
-        """What the total may reach: the cap for GitHub runs, the cap less the reserve for local work."""
+        """What the total may reach: the cap for GitHub runs, less the reserve for local work."""
         return self.cap if github else self.cap - GITHUB_RESERVE
 
     def headroom(self) -> Decimal:

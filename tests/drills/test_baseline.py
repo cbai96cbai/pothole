@@ -12,7 +12,7 @@ def _run(case: Case, spec: PipelineSpec):
     failed = [
         c for c in catalog.run_engine(spec, rows, case.batch_seen).checks if c.level == "fail"
     ]
-    return baseline.repair(spec, failed, catalog.sample(rows, case), fields)
+    return baseline.repair(spec, failed, rows, fields)
 
 
 def test_baseline_does_not_import_fault_or_catalog_code():
@@ -63,7 +63,7 @@ def test_edits_touch_only_failed_columns_and_fields_the_batch_sends(
         failed = [
             c for c in catalog.run_engine(spec, rows, case.batch_seen).checks if c.level == "fail"
         ]
-        outcome = baseline.repair(spec, failed, catalog.sample(rows, case), fields)
+        outcome = baseline.repair(spec, failed, rows, fields)
         assert outcome.action == "patch", cid
         assert {o.column for o in outcome.ops} <= scope.failing_columns(spec, failed)
         assert all(o.source in fields for o in outcome.ops if isinstance(o, ops.MapField))
@@ -78,4 +78,4 @@ def test_a_rename_to_a_field_the_batch_does_not_send_is_an_issue(
         c for c in catalog.run_engine(spec, rows, case.batch_seen).checks if c.level == "fail"
     ]
     fields = {k: v for k, v in fields.items() if k != "complaint_type_name"}
-    assert baseline.repair(spec, failed, catalog.sample(rows, case), fields).action == "issue"
+    assert baseline.repair(spec, failed, rows, fields).action == "issue"

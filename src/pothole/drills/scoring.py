@@ -39,7 +39,7 @@ def run_case(case: Case, spec: PipelineSpec, repairer: Repairer) -> CaseResult:
     try:
         if case.expected_action != "nothing":  # a warning alone never calls the repairer
             failed = [c for c in checks if c.level == "fail"]
-            outcome = repairer(spec, failed, catalog.sample(rows, case), fields)
+            outcome = repairer(spec, failed, rows, fields)
             if not isinstance(outcome, RepairOutcome):
                 raise TypeError(f"the repairer returned {type(outcome).__name__}")
         verdict = judge.judge(case, outcome, spec)
