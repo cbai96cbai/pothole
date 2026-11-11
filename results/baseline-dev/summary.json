@@ -27,6 +27,20 @@
     "baseline": 24,
     "rule": 12
   },
+  "repairer_decided": {
+    "repair_success": {
+      "correct": 11,
+      "of": 18,
+      "rate": 0.6111
+    },
+    "issue_accuracy": {
+      "correct": 6,
+      "of": 6,
+      "rate": 1.0
+    },
+    "no_change_accuracy": null,
+    "note": "the same rates over the cases a repairer decided, without rule-decided ones"
+  },
   "detection_coverage_fault_cases": {
     "detected": 36,
     "of": 36,
@@ -176,16 +190,17 @@
   "system": "baseline",
   "rerun_test": false,
   "total_cost": "0",
-  "cases_that_called_the_repairer": 36,
+  "cases_that_called_the_repairer": 24,
   "cost_per_case": "0.00000",
-  "mean_seconds_per_case": 0.31,
-  "median_seconds_per_case": 0.11,
-  "averages_over": "cases that called the repairer (benign controls excluded)",
+  "mean_seconds_per_case": 0.39,
+  "median_seconds_per_case": 0.18,
+  "cases_decided_by_rule": 12,
+  "averages_over": "cases a repairer decided (rule-decided cases and benign controls excluded)",
   "model_deployment": "pothole-agent",
   "run_date": "2026-11-11",
-  "code_commit": "5d6375f17569c449e35be2065fb16ec268d0c552",
+  "code_commit": "1a68b3487e1f5e7f99d9ed1632dc41c68a71e712",
   "code_commits": [
-    "5d6375f17569c449e35be2065fb16ec268d0c552"
+    "1a68b3487e1f5e7f99d9ed1632dc41c68a71e712"
   ],
   "code_dirty_at_start": false,
   "complete": true,
