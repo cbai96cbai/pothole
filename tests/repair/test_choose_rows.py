@@ -95,5 +95,9 @@ def test_every_changed_row_failing_is_refused_with_the_failure(original, patched
     for r in rows[:20]:
         r[Y] = f"{int(r[Y]):,}" if r.get(Y) else r.get(Y, "")
         r["latitude"] = "99.0"
-    with pytest.raises(ToolError, match="fail checks under the patched spec"):
+    with pytest.raises(
+        ToolError,
+        match=r"fail checks under the patched spec: range:latitude: latitude: 1 of 5 values",
+    ) as err:
         build_case(original, patched, rows, [Y])
+    assert "not complete" not in str(err.value)

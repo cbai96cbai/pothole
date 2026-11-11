@@ -122,8 +122,8 @@ def choose_rows(
                 break
             left_out |= named
     raise ToolError(
-        "the rows the patch changes still fail checks under the patched spec, so it is not "
-        "complete: " + "; ".join(f"{r.name}: {r.detail}" for r in last[:3])
+        "the rows the patch changes fail checks under the patched spec: "
+        + "; ".join(f"{r.name}: {r.detail}" for r in last[:3])
     )
 
 
