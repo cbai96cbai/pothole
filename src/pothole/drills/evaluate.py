@@ -104,16 +104,30 @@ def _append(path: Path, record: dict[str, Any]) -> None:
         fh.write(json.dumps(record, sort_keys=True) + "\n")
 
 
+def _earlier_test_runs(results: Path, system: str, run_id: str) -> list[str]:
+    """Every other run folder that scored the test split for this system. A folder with a meta
+    says so there; one without (the legacy baseline) says so in its summary."""
+    found = []
+    for folder in sorted(p for p in results.iterdir() if p.is_dir()) if results.exists() else []:
+        meta, summary = folder / "meta.json", folder / "summary.json"
+        if meta.exists():
+            record = json.loads(meta.read_text())
+            split, who = record["split"], record["system"]
+        elif summary.exists():
+            record = json.loads(summary.read_text())
+            split, who = record.get("split"), record.get("system") or record.get("repairer")
+        else:
+            continue
+        if split == "test" and who == system and folder.name != run_id:
+            found.append(folder.name)
+    return found
+
+
 def _refuse_second_test_run(results: Path, meta: dict[str, Any]) -> None:
+    """Guards the start of a new run; continuing a recorded run is never refused here."""
     if meta["split"] != "test":
         return
-    others = [
-        m["run_id"]
-        for p in results.glob("*/meta.json")
-        if (m := json.loads(p.read_text()))["split"] == "test"
-        and m["system"] == meta["system"]
-        and m["run_id"] != meta["run_id"]
-    ]
+    others = _earlier_test_runs(results, meta["system"], meta["run_id"])
     if others and not meta["rerun_test"]:
         raise RefusedToStart(
             f"the test split was already run by the {meta['system']} system ({', '.join(others)}); "
@@ -301,7 +315,8 @@ def run_split(
         meta = json.loads((out_dir / "meta.json").read_text())
         same = {"split": split, "system": system, "deployment": deployment, "commit": commit}
         _check_same_run(meta, same, dirty)
-    _refuse_second_test_run(results, meta)
+    else:
+        _refuse_second_test_run(results, meta)
     done = {r["id"] for r in _lines(out_dir / "verdicts.jsonl")}
     remaining = [c for c in todo if c.id not in done]
     _preflight(tally, sum(needs_repairer(c) for c in remaining), after_credit)

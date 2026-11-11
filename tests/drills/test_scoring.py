@@ -1,4 +1,5 @@
 from functools import partial
+from pathlib import Path
 from typing import Any
 
 from pothole.drills import baseline, catalog, scoring
@@ -119,3 +120,8 @@ def test_a_case_the_code_decided_counts_against_the_repairer(spec: PipelineSpec,
     result = scoring.run_case(cases["renamed_field-0"], spec, fallback)
     s = scoring.summarise([result], "dev", "agent")
     assert s["repairer_decided"]["repair_success"] == {"correct": 0, "of": 1, "rate": 0.0}
+
+
+def test_scoring_has_no_entry_point_that_writes_a_summary():
+    """The guarded way to score a split is the eval-repair command."""
+    assert "__main__" not in Path(scoring.__file__).read_text()

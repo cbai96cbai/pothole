@@ -337,3 +337,47 @@ def test_an_untracked_file_makes_the_tree_dirty_but_results_do_not(tmp_path):
     assert evaluate.git_state(tmp_path)[1] is False
     (tmp_path / "new_source.py").write_text("x = 1\n")
     assert evaluate.git_state(tmp_path)[1] is True
+
+
+def legacy(tmp_path: Path, name: str, **summary: Any) -> None:
+    """An earlier run folder that has only a summary.json, as results/baseline-test has."""
+    folder = tmp_path / "results" / name
+    folder.mkdir(parents=True)
+    (folder / "summary.json").write_text(json.dumps(summary))
+
+
+def test_a_test_run_with_only_a_summary_blocks_a_second_one(tmp_path, cases):
+    legacy(tmp_path, "baseline-test", split="test", repairer="baseline", system="baseline")
+    one = [cases["comma_thousands-0"]]
+    with pytest.raises(RefusedToStart, match="baseline-test"):
+        go(tmp_path, issuer(), one, None, split="test", system="baseline", run_id="b2")
+
+
+def test_a_summary_with_only_the_repairer_name_also_blocks(tmp_path, cases):
+    legacy(tmp_path, "old-agent", split="test", repairer="agent")
+    one = [cases["comma_thousands-0"]]
+    with pytest.raises(RefusedToStart, match="old-agent"):
+        go(tmp_path, issuer(), one, None, split="test", run_id="a2")
+
+
+def test_summary_only_folders_of_another_system_or_split_do_not_block(tmp_path, cases):
+    legacy(tmp_path, "baseline-test", split="test", repairer="baseline", system="baseline")
+    legacy(tmp_path, "agent-dev", split="dev", repairer="agent", system="agent")
+    one = [cases["comma_thousands-0"]]
+    go(tmp_path, issuer(), one, None, split="test", run_id="a1")
+
+
+def test_a_run_folder_in_no_publication_list_still_blocks(tmp_path, cases):
+    one = [cases["comma_thousands-0"]]
+    go(tmp_path, issuer(), one, None, split="test", run_id="scratch-private")
+    with pytest.raises(RefusedToStart, match="scratch-private"):
+        go(tmp_path, issuer(), one, None, split="test", run_id="t2")
+
+
+def test_continuing_the_same_run_is_never_refused_by_the_guard(tmp_path, cases):
+    one = [cases["comma_thousands-0"]]
+    go(tmp_path, issuer(), one, None, split="test", run_id="t1")
+    go(tmp_path, issuer(), one, None, split="test", run_id="t2", rerun_test=True)
+    meta = (tmp_path / "results" / "t1" / "meta.json").read_text()
+    go(tmp_path, issuer(), one, None, split="test", run_id="t1")  # t2 exists; t1 still resumes
+    assert (tmp_path / "results" / "t1" / "meta.json").read_text() == meta

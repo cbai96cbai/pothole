@@ -1,14 +1,11 @@
 """Run a repairer over the catalog, have the judge score each case, and summarise a split."""
 
-import json
-import sys
 from collections import defaultdict
 from dataclasses import asdict, dataclass
 from functools import partial
-from pathlib import Path
 from typing import Any
 
-from pothole.drills import baseline, catalog, faults, judge
+from pothole.drills import catalog, faults, judge
 from pothole.drills.catalog import Case
 from pothole.repair.decide import Repairer, decide
 from pothole.repair.outcome import RepairOutcome
@@ -126,10 +123,3 @@ def score(split: str, repairer: Repairer, who: str) -> dict[str, Any]:
     cases = [c for c in catalog.load() if c.split == split]
     through_door = partial(decide, repairer)
     return summarise([run_case(c, spec, through_door) for c in cases], split, who)
-
-
-if __name__ == "__main__":
-    split = sys.argv[1]
-    out = Path(sys.argv[2]) / f"baseline-{split}" / "summary.json"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(score(split, baseline.repair, "baseline"), indent=2) + "\n")
