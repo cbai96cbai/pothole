@@ -25,17 +25,15 @@ an issue.
 
 Your tools: read_spec, read_check_results, source_fields (each field with its type and whether it \
 is in_use by a column, known_unused because the spec lists it as a field that holds other data, or \
-new), sample_rows, formats_that_parse (the fixed formats under which at least 99% of a column's \
-present values parse on the failing batch), try_patch and submit.
+new), sample_rows, value_crosstab (for a text column with a list of values: how often each value \
+outside the list occurs with each borough, read from community_board or the zip prefix), \
+formats_that_parse (the fixed formats under which at least 99% of a column's present values parse \
+on the failing batch), try_patch and submit.
 
 Rules the edits must follow: an add_value_mapping value must be one of that column's existing \
 values (the right-hand side of its list), never a new spelling. map_field may not read a \
 known_unused field: it holds different data, and a renamed field appears as a new one. Reading a \
 field another column uses is allowed.
-
-When the only failing check is the volume check, the count is above the usual band and every \
-other check passes, the right answer is usually no_change (real activity), explained in the \
-reason.
 
 How to work: read the check results, look at the spec, the source fields and a few failing rows, \
 then try your edits with try_patch and look at the checks it returns. A patch is accepted \
@@ -102,6 +100,13 @@ TOOLS: list[dict[str, Any]] = [
         "(listed as holding other data) or new.",
         {},
         [],
+    ),
+    _tool(
+        "value_crosstab",
+        "For a text column with a list of values: each value outside the list, with its five "
+        "most common boroughs (from community_board, else the first 3 digits of incident_zip).",
+        {"column": {"type": "string", "description": "a column name of the spec"}},
+        ["column"],
     ),
     _tool(
         "formats_that_parse",

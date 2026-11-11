@@ -2,6 +2,7 @@
 field list: nothing else."""
 
 import json
+from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, get_args
@@ -12,6 +13,7 @@ from pothole.spec import engine, ops, scope
 from pothole.spec.checks import CheckResult
 from pothole.spec.formats import formats_that_parse
 from pothole.spec.model import PipelineSpec
+from pothole.spec.normalise import board
 
 MAX_SAMPLE = 20
 MAX_TRACE_CHARS = 2000
@@ -60,6 +62,8 @@ class Toolbox:
             return render_results(self.results)
         if name == "source_fields":
             return json.dumps(self._field_report(), sort_keys=True)
+        if name == "value_crosstab":
+            return self._crosstab(args)
         if name == "formats_that_parse":
             return self._formats(args)
         if name == "sample_rows":
@@ -84,6 +88,33 @@ class Toolbox:
             }
             for name, kind in self.fields.items()
         }
+
+    def _crosstab(self, args: dict[str, Any]) -> str:
+        """Each value outside the column's list against the borough it appears with."""
+        name = args.get("column")
+        if not isinstance(name, str) or name not in {c.name for c in self.spec.columns}:
+            raise ToolError("value_crosstab needs column: a column name of the spec")
+        col = self.spec.column(name)
+        if col.values is None:
+            raise ToolError(f"{name} has no listed values")
+        by_name = {c.name: c.source for c in self.spec.columns}
+        board_src, zip_src = by_name.get("community_board"), by_name.get("incident_zip")
+        counts: dict[str, Counter[str]] = {}
+        for row in self.rows:
+            raw = row.get(col.source)
+            if not raw or raw in col.values:
+                continue
+            found = board(row.get(board_src or ""))
+            zipcode = (row.get(zip_src or "") or "")[:3]
+            if found:
+                where = found[0]
+            elif zipcode.isdigit() and len(zipcode) == 3:
+                where = f"zip {zipcode}"
+            else:
+                where = "unknown"
+            counts.setdefault(raw, Counter())[where] += 1
+        shown = sorted(counts.items(), key=lambda kv: -sum(kv[1].values()))[:MAX_SAMPLE]
+        return json.dumps({v: c.most_common(5) for v, c in shown})
 
     def _formats(self, args: dict[str, Any]) -> str:
         name = args.get("column")

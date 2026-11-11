@@ -52,3 +52,26 @@ def test_a_rename_to_a_known_unused_field_is_refused(spec, failing, failed_check
     )
     repair(spec, rows, failed_checks, fields, model, now=failing.now)  # type: ignore[arg-type]
     assert "known field that holds other data" in model.sent[1]["messages"][-1]["content"]
+
+
+def test_value_crosstab_counts_outside_values_against_borough(spec, failing, failed_checks, fields):
+    base = failing.rows[0]
+    rows = [
+        {**base, "borough": "X", "community_board": "03 BRONX", "incident_zip": ""},
+        {**base, "borough": "X", "community_board": "04 BRONX", "incident_zip": ""},
+        {**base, "borough": "X", "community_board": "", "incident_zip": "11201"},
+        {**base, "borough": "QUEENS", "community_board": "01 QUEENS", "incident_zip": ""},
+    ]
+    model = Scripted(
+        [
+            reply(
+                call("value_crosstab", {"column": "borough"}),
+                call("value_crosstab", {"column": "agency"}, "c2"),
+            ),
+            reply(call("submit", {"action": "issue", "reason": "x"})),
+        ]
+    )
+    repair(spec, rows, failed_checks, fields, model, now=failing.now)  # type: ignore[arg-type]
+    tool = [m["content"] for m in model.sent[1]["messages"] if m.get("role") == "tool"]
+    assert json.loads(tool[0].splitlines()[0]) == {"X": [["Bronx", 2], ["zip 112", 1]]}
+    assert tool[1].startswith("error:")
