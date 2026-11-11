@@ -102,7 +102,11 @@ export interface Family {
   cases: number;
   correct: number;
   detected: number;
-  decided_by?: Record<string, number> | null;
+  decided_by: Record<string, number>;
+  repairer_cases: number;
+  repairer_correct: number;
+  rule_cases: number;
+  rule_correct: number;
 }
 export interface CaseFailure {
   id: string;
@@ -112,9 +116,15 @@ export interface CaseFailure {
   action: string;
   correct: boolean;
   reason: string;
-  decided_by?: string | null;
+  decided_by: string;
+}
+export interface DecidedRates {
+  repair_success: Rate | null;
+  issue_accuracy: Rate | null;
+  no_change_accuracy: Rate | null;
 }
 export interface RepairSummary {
+  run_id: string;
   repairer: string;
   split: string;
   cases: number;
@@ -127,13 +137,31 @@ export interface RepairSummary {
   detection_coverage_benign_control: Detected;
   per_family: Record<string, Family>;
   failures: CaseFailure[];
-  decided_by?: Record<string, number> | null;
-  repairer_decided?: Record<string, unknown> | null;
-  complete?: boolean | null;
+  decided_by: Record<string, number>;
+  repairer_decided: DecidedRates;
+  rule_decided: DecidedRates;
+  complete: boolean;
+}
+export interface Difference {
+  cases: number;
+  a: number;
+  b: number;
+  difference: number;
+  interval_95: [number, number];
+  families: number;
+}
+export interface Compare {
+  a: string;
+  b: string;
+  repair_success: Difference;
+  resamples: number;
+  seed: number;
+  note: string;
 }
 export interface Repairs {
   summaries: RepairSummary[];
   agent_run: boolean;
+  compare: Compare | null;
 }
 export interface FlagRow {
   borough: string;

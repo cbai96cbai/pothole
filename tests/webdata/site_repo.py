@@ -90,10 +90,9 @@ def make(root: Path, *, with_agent: bool = False) -> Path:
     (analyst / "2026-11-06.json").write_text(json.dumps(to_json(busy)))
     scratch_repo(root)
     if with_agent:
-        src = json.loads((REAL / "results/baseline-test/summary.json").read_text())
-        dest = root / "results" / "agent-test"
-        dest.mkdir(parents=True)
-        (dest / "summary.json").write_text(json.dumps({**src, "repairer": "agent"}))
+        copy_runs(root, AGENT_RUNS)
+        shutil.copy(REAL / "results" / COMPARE, root / "results")
+        publish(root, [*BASELINE_RUNS, *AGENT_RUNS], compare=COMPARE)
     return root
 
 
@@ -106,8 +105,31 @@ def scratch_repo(root: Path) -> Path:
     shutil.copy(REAL / "data" / "universe.json", root / "data")
     for name in ("backtest", "delay", "null_simulation"):
         shutil.copy(REAL / "data" / f"{name}.json", root / "data")
-    for split in ("dev", "test"):
-        dest = root / "results" / f"baseline-{split}"
-        dest.mkdir(parents=True)
-        shutil.copy(REAL / "results" / f"baseline-{split}" / "summary.json", dest)
+    copy_runs(root, BASELINE_RUNS)
+    publish(root, BASELINE_RUNS)
     return root
+
+
+# the frozen runs the real repo publishes: the fixture copies finished, clean, one-commit records
+BASELINE_RUNS = ["baseline-final-dev", "baseline-final-test"]
+AGENT_RUNS = ["agent-final-dev-a", "agent-final-dev-b", "agent-final-test"]
+COMPARE = "compare-agent-final-test-baseline-final-test.json"
+
+
+def copy_runs(root: Path, runs: list[str]) -> None:
+    for run in runs:
+        dest = root / "results" / run
+        dest.mkdir(parents=True)
+        for name in ("summary.json", "meta.json"):
+            shutil.copy(REAL / "results" / run / name, dest)
+
+
+def publish(root: Path, runs: list[str], compare: str | None = None) -> None:
+    """Write the manifest naming the runs the site publishes, in the given order."""
+    manifest: dict[str, object] = {
+        "dev": [r for r in runs if "-dev" in r],
+        "test": [r for r in runs if "-test" in r],
+    }
+    if compare:
+        manifest["compare"] = compare
+    (root / "results" / "published.json").write_text(json.dumps(manifest))

@@ -11,7 +11,7 @@ from typing import Any
 
 from pydantic import BaseModel, TypeAdapter
 
-from pothole import runrecord
+from pothole import runrecord, sitepublished
 from pothole import sitemodels as m
 from pothole.analyst.finding import AnalystDay, Finding, to_json
 from pothole.budget.envelope import (
@@ -174,19 +174,6 @@ def _load_days(root: Path) -> list[AnalystDay]:
     return [adapter.validate_python(json.loads(f.read_text())) for f in files]
 
 
-def _repairs(root: Path) -> m.Repairs:
-    # a run's summary also holds cost, time and provenance; the site shows the scoring part
-    keep = set(m.RepairSummary.model_fields)
-    rows = [
-        m.RepairSummary.model_validate(
-            {k: v for k, v in json.loads(f.read_text()).items() if k in keep}
-        )
-        for f in sorted((root / "results").glob("*/summary.json"))
-    ]
-    rows.sort(key=lambda s: (s.repairer != "baseline", s.repairer, s.split))
-    return m.Repairs(summaries=rows, agent_run=any(s.repairer != "baseline" for s in rows))
-
-
 def _findings(days: list[AnalystDay]) -> tuple[m.FindingsIndex, dict[str, Finding]]:
     by_id: dict[str, Finding] = {}
     cards = []
@@ -245,7 +232,7 @@ def build(
         "incidents": m.Incidents(incidents=_items(runs, drill=False)),
         "drills": m.Drills(drills=_items(runs, drill=True)),
         "findings_index": index,
-        "repairs": _repairs(repo_root),
+        "repairs": sitepublished.repairs(repo_root),
         "backtest": m.Backtest.model_validate_json((data / "backtest.json").read_text()),
         "delay": m.Delay.model_validate_json((data / "delay.json").read_text()),
         "null_simulation": m.NullSimulation.model_validate_json(

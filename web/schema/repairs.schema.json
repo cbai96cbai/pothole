@@ -32,16 +32,8 @@
           "type": "string"
         },
         "decided_by": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Decided By"
+          "title": "Decided By",
+          "type": "string"
         }
       },
       "required": [
@@ -55,6 +47,88 @@
         "reason"
       ],
       "title": "CaseFailure",
+      "type": "object"
+    },
+    "Compare": {
+      "additionalProperties": false,
+      "description": "The test comparison of the agent (a) with the rule-based fixer (b), on repairs that worked\nonly: the other two comparisons in the file include cases the fixed rule decided.",
+      "properties": {
+        "a": {
+          "title": "A",
+          "type": "string"
+        },
+        "b": {
+          "title": "B",
+          "type": "string"
+        },
+        "repair_success": {
+          "$ref": "#/$defs/Difference"
+        },
+        "resamples": {
+          "title": "Resamples",
+          "type": "integer"
+        },
+        "seed": {
+          "title": "Seed",
+          "type": "integer"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "a",
+        "b",
+        "note",
+        "repair_success",
+        "resamples",
+        "seed"
+      ],
+      "title": "Compare",
+      "type": "object"
+    },
+    "DecidedRates": {
+      "additionalProperties": false,
+      "description": "The three rates over one group of cases: those a repairer decided, or those the rule did.",
+      "properties": {
+        "repair_success": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Rate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "issue_accuracy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Rate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "no_change_accuracy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Rate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "issue_accuracy",
+        "no_change_accuracy",
+        "repair_success"
+      ],
+      "title": "DecidedRates",
       "type": "object"
     },
     "Detected": {
@@ -88,6 +162,55 @@
       "title": "Detected",
       "type": "object"
     },
+    "Difference": {
+      "additionalProperties": false,
+      "properties": {
+        "cases": {
+          "title": "Cases",
+          "type": "integer"
+        },
+        "a": {
+          "title": "A",
+          "type": "number"
+        },
+        "b": {
+          "title": "B",
+          "type": "number"
+        },
+        "difference": {
+          "title": "Difference",
+          "type": "number"
+        },
+        "interval_95": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Interval 95",
+          "type": "array"
+        },
+        "families": {
+          "title": "Families",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "a",
+        "b",
+        "cases",
+        "difference",
+        "families",
+        "interval_95"
+      ],
+      "title": "Difference",
+      "type": "object"
+    },
     "Family": {
       "additionalProperties": false,
       "properties": {
@@ -108,19 +231,27 @@
           "type": "integer"
         },
         "decided_by": {
-          "anyOf": [
-            {
-              "additionalProperties": {
-                "type": "integer"
-              },
-              "type": "object"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Decided By"
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Decided By",
+          "type": "object"
+        },
+        "repairer_cases": {
+          "title": "Repairer Cases",
+          "type": "integer"
+        },
+        "repairer_correct": {
+          "title": "Repairer Correct",
+          "type": "integer"
+        },
+        "rule_cases": {
+          "title": "Rule Cases",
+          "type": "integer"
+        },
+        "rule_correct": {
+          "title": "Rule Correct",
+          "type": "integer"
         }
       },
       "required": [
@@ -128,7 +259,11 @@
         "correct",
         "decided_by",
         "detected",
-        "expected"
+        "expected",
+        "repairer_cases",
+        "repairer_correct",
+        "rule_cases",
+        "rule_correct"
       ],
       "title": "Family",
       "type": "object"
@@ -167,6 +302,10 @@
     "RepairSummary": {
       "additionalProperties": false,
       "properties": {
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
         "repairer": {
           "title": "Repairer",
           "type": "string"
@@ -237,44 +376,21 @@
           "type": "array"
         },
         "decided_by": {
-          "anyOf": [
-            {
-              "additionalProperties": {
-                "type": "integer"
-              },
-              "type": "object"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Decided By"
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Decided By",
+          "type": "object"
         },
         "repairer_decided": {
-          "anyOf": [
-            {
-              "additionalProperties": true,
-              "type": "object"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Repairer Decided"
+          "$ref": "#/$defs/DecidedRates"
+        },
+        "rule_decided": {
+          "$ref": "#/$defs/DecidedRates"
         },
         "complete": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Complete"
+          "title": "Complete",
+          "type": "boolean"
         }
       },
       "required": [
@@ -292,6 +408,8 @@
         "repairable_answered_with_issue",
         "repairer",
         "repairer_decided",
+        "rule_decided",
+        "run_id",
         "split"
       ],
       "title": "RepairSummary",
@@ -341,10 +459,21 @@
     "agent_run": {
       "title": "Agent Run",
       "type": "boolean"
+    },
+    "compare": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Compare"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [
     "agent_run",
+    "compare",
     "summaries"
   ],
   "title": "Repairs",

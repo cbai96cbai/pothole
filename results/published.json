@@ -1,0 +1,5 @@
+{
+  "dev": ["baseline-final-dev", "agent-final-dev-a", "agent-final-dev-b"],
+  "test": ["baseline-final-test", "agent-final-test"],
+  "compare": "compare-agent-final-test-baseline-final-test.json"
+}

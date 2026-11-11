@@ -130,7 +130,13 @@ class Family(Model):
     cases: int
     correct: int
     detected: int
-    decided_by: dict[str, int] | None = None
+    decided_by: dict[str, int]
+    # the cases the repairer decided (a crashed case is charged to it) and the cases the fixed
+    # volume rule decided, each with how many were right
+    repairer_cases: int
+    repairer_correct: int
+    rule_cases: int
+    rule_correct: int
 
 
 class CaseFailure(Model):
@@ -141,10 +147,19 @@ class CaseFailure(Model):
     action: str
     correct: bool
     reason: str
-    decided_by: str | None = None
+    decided_by: str
+
+
+class DecidedRates(Model):
+    """The three rates over one group of cases: those a repairer decided, or those the rule did."""
+
+    repair_success: Rate | None
+    issue_accuracy: Rate | None
+    no_change_accuracy: Rate | None
 
 
 class RepairSummary(Model):
+    run_id: str
     repairer: str
     split: str
     cases: int
@@ -157,15 +172,38 @@ class RepairSummary(Model):
     detection_coverage_benign_control: Detected
     per_family: dict[str, Family]
     failures: list[CaseFailure]
-    # who decided the cases, and the rates over the cases a repairer decided (newer runs only)
-    decided_by: dict[str, int] | None = None
-    repairer_decided: dict[str, Any] | None = None
-    complete: bool | None = None
+    # who decided the cases: the repairer's name, "code" (a crashed case) or "rule"
+    decided_by: dict[str, int]
+    repairer_decided: DecidedRates
+    rule_decided: DecidedRates  # overall minus repairer_decided
+    complete: bool
+
+
+class Difference(Model):
+    cases: int
+    a: float
+    b: float
+    difference: float
+    interval_95: tuple[float, float]
+    families: int
+
+
+class Compare(Model):
+    """The test comparison of the agent (a) with the rule-based fixer (b), on repairs that worked
+    only: the other two comparisons in the file include cases the fixed rule decided."""
+
+    a: str
+    b: str
+    repair_success: Difference
+    resamples: int
+    seed: int
+    note: str
 
 
 class Repairs(Model):
     summaries: list[RepairSummary]
     agent_run: bool
+    compare: Compare | None
 
 
 class FlagRow(Model):

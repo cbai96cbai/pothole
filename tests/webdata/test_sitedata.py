@@ -207,10 +207,10 @@ def test_findings_feed_keeps_the_quiet_day(built: Path) -> None:
 
 def test_repairs_have_the_baseline_and_no_agent_yet(built: Path) -> None:
     repairs = load(built, "repairs.json")
-    assert repairs["agent_run"] is False
-    assert [(s["repairer"], s["split"]) for s in repairs["summaries"]] == [
-        ("baseline", "dev"),
-        ("baseline", "test"),
+    assert repairs["agent_run"] is False and repairs["compare"] is None
+    assert [(s["run_id"], s["repairer"], s["split"]) for s in repairs["summaries"]] == [
+        ("baseline-final-dev", "baseline", "dev"),
+        ("baseline-final-test", "baseline", "test"),
     ]
 
 
@@ -220,6 +220,7 @@ def test_agent_results_appear_when_they_exist(tmp_path: Path) -> None:
     repairs = load(tmp_path / "out", "repairs.json")
     assert repairs["agent_run"] is True
     assert repairs["summaries"][-1]["repairer"] == "agent"
+    assert repairs["summaries"][-1]["decided_by"] == {"agent": 20, "rule": 7}
 
 
 def test_raw_complaint_fields_are_refused(tmp_path: Path) -> None:
