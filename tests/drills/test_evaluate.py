@@ -231,7 +231,7 @@ def test_averages_count_only_cases_that_called_the_repairer(tmp_path, three):
     assert summary["total_cost"] == "0.06"
     assert summary["cases_that_called_the_repairer"] == 2 and summary["cases"] == 3
     assert summary["cost_per_case"] == "0.03000"
-    assert "benign controls excluded" in summary["averages_over"]
+    assert "benign controls" in summary["averages_over"]
 
 
 def test_the_summary_is_rebuilt_from_the_files_without_a_model(tmp_path, three):
@@ -302,3 +302,38 @@ def test_a_run_is_continued_only_from_a_clean_tree_at_the_same_commit(tmp_path, 
 def test_a_summary_of_an_unfinished_run_says_so(tmp_path, three):
     body = go(tmp_path, issuer(), three, None)
     assert body["complete"] is False and body["cases_expected"] == 42 and body["cases"] == 3
+
+
+def test_rule_decided_cases_are_split_out_of_rates_cost_and_time(tmp_path, cases):
+    pair = [cases["spike-0"], cases["renamed_field-1"]]
+    body = go(tmp_path, lambda case: baseline.repair, pair, None, system="baseline")
+    assert body["decided_by"] == {"baseline": 1, "rule": 1}
+    assert body["no_change_accuracy"] == {"correct": 1, "of": 1, "rate": 1.0}
+    assert body["repairer_decided"]["no_change_accuracy"] is None
+    assert body["repairer_decided"]["repair_success"]["of"] == 1
+    assert body["cases_that_called_the_repairer"] == 1 and body["cases_decided_by_rule"] == 1
+
+
+def test_complete_compares_case_ids_not_counts(tmp_path, three, cases, monkeypatch):
+    from pothole.drills import catalog
+
+    monkeypatch.setattr(catalog, "load", lambda: three)
+    assert go(tmp_path, issuer(), three, None, run_id="same")["complete"] is True
+    other = [cases["spike-0"], cases["spike-1"], cases["spike-2"]]
+    monkeypatch.setattr(catalog, "load", lambda: other)
+    assert go(tmp_path, issuer(), three, None, run_id="differs")["complete"] is False
+
+
+def test_an_untracked_file_makes_the_tree_dirty_but_results_do_not(tmp_path):
+    import subprocess
+
+    def git(*a: str) -> None:
+        subprocess.run(["git", "-C", str(tmp_path), *a], check=True, capture_output=True)
+
+    git("init", "-q")
+    git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "--allow-empty", "-m", "x")
+    (tmp_path / "results" / "r").mkdir(parents=True)
+    (tmp_path / "results" / "r" / "meta.json").write_text("{}")
+    assert evaluate.git_state(tmp_path)[1] is False
+    (tmp_path / "new_source.py").write_text("x = 1\n")
+    assert evaluate.git_state(tmp_path)[1] is True

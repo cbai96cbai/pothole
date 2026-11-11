@@ -204,8 +204,8 @@ def eval_repair_command(
     from pothole.budget.tally import Tally
     from pothole.drills import baseline, evaluate
     from pothole.drills.catalog import Case
-    from pothole.drills.scoring import Repairer
     from pothole.llm.client import LLMClient
+    from pothole.repair.decide import Repairer
 
     if split not in ("dev", "test") or system not in ("agent", "baseline"):
         typer.echo("--split is dev or test and --system is agent or baseline", err=True)

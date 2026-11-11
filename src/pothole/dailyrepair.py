@@ -10,6 +10,7 @@ from pothole import dailyai, runrecord
 from pothole.budget.envelope import DEFAULT_STEPS
 from pothole.dailyerror import Progress
 from pothole.llm.client import LLMClient
+from pothole.repair.decide import rule_outcome
 from pothole.repair.validate import failed
 from pothole.runrecord import CheckResult, RepairRecord
 from pothole.socrata import meta
@@ -54,7 +55,7 @@ def _issue(
     env: "Env", reason: str, failing: list[spec_checks.CheckResult], day: date
 ) -> RepairRecord:
     filed = env.sink.open_issue(reason, failing, day=day)
-    return RepairRecord("issue", False, filed.ref, None, False)
+    return RepairRecord("issue", False, filed.ref, None, False, "rule")
 
 
 def _file(
@@ -74,9 +75,14 @@ def real_failure(
     env: "Env", spec: PipelineSpec, ai: LLMClient | None, failing: list[spec_checks.CheckResult],
     now: datetime, spend: dailyai.Spend, p: Progress,
 ) -> RepairRecord:  # fmt: skip
-    """Checks failed on the window: look at yesterday's rows. A sample that cannot be fetched
-    files an issue and bars every later model step of the run."""
+    """Checks failed on the window: a volume-only failure is settled by the rule here, on the
+    window's own history and before any sample is fetched or the model is considered. Any other
+    failure looks at yesterday's rows. A sample that cannot be fetched files an issue and bars
+    every later model step of the run."""
     day = now.date()
+    decided = rule_outcome(failing)
+    if decided is not None:
+        return dailyai.file_rule(env.sink, decided, spec, failing, day)
     if ai is None:
         return _issue(env, _reason(env, p), failing, day)
     try:

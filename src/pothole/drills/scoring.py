@@ -3,21 +3,16 @@
 import json
 import sys
 from collections import defaultdict
-from collections.abc import Callable
 from dataclasses import asdict, dataclass
+from functools import partial
 from pathlib import Path
 from typing import Any
 
 from pothole.drills import baseline, catalog, faults, judge
 from pothole.drills.catalog import Case
-from pothole.repair import routing
+from pothole.repair.decide import Repairer, decide
 from pothole.repair.outcome import RepairOutcome
-from pothole.spec.checks import CheckResult
 from pothole.spec.model import PipelineSpec
-
-Repairer = Callable[
-    [PipelineSpec, list[CheckResult], list[dict[str, Any]], dict[str, str]], RepairOutcome
-]
 
 
 @dataclass(frozen=True)
@@ -57,8 +52,12 @@ def run_case(case: Case, spec: PipelineSpec, repairer: Repairer) -> CaseResult:
     )  # fmt: skip
 
 
-def _rate(results: list[CaseResult], expected: str) -> dict[str, Any] | None:
+def _rate(
+    results: list[CaseResult], expected: str, repairer_only: bool = False
+) -> dict[str, Any] | None:
     rows = [r for r in results if r.expected == expected]
+    if repairer_only:
+        rows = [r for r in rows if r.decided_by != "rule"]
     if not rows:
         return None
     ok = sum(r.correct for r in rows)
@@ -100,6 +99,12 @@ def summarise(results: list[CaseResult], split: str, who: str) -> dict[str, Any]
         },
         "crashed": sum(r.action == "crashed" for r in results),
         "decided_by": _deciders(results),
+        "repairer_decided": {
+            "repair_success": _rate(results, "patch", True),
+            "issue_accuracy": _rate(results, "issue", True),
+            "no_change_accuracy": _rate(results, "no_change", True),
+            "note": "the same rates over the cases a repairer decided, without rule-decided ones",
+        },
         "detection_coverage_fault_cases": _detected(faulted),
         "detection_coverage_benign_control": _detected(benign),
         "per_family": {
@@ -119,8 +124,8 @@ def summarise(results: list[CaseResult], split: str, who: str) -> dict[str, Any]
 def score(split: str, repairer: Repairer, who: str) -> dict[str, Any]:
     spec = catalog.load_spec()
     cases = [c for c in catalog.load() if c.split == split]
-    ruled = routing.ruled(repairer)
-    return summarise([run_case(c, spec, ruled) for c in cases], split, who)
+    through_door = partial(decide, repairer)
+    return summarise([run_case(c, spec, through_door) for c in cases], split, who)
 
 
 if __name__ == "__main__":

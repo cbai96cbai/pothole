@@ -70,3 +70,12 @@ def test_pointing_at_a_field_another_column_uses_stays_allowed(spec: PipelineSpe
     ]
     assert scope.check(swap, failing, ["latitude", "longitude"], spec) == []
     assert ops.apply(spec, swap).column("latitude").source == "longitude"
+
+
+def test_a_system_field_is_not_a_rename_target(spec: PipelineSpec):
+    failing = [_fail("schema", "required source fields missing from all 9 rows: borough")]
+    for field in (":id", ":updated_at", ":created_at"):
+        problems = scope.check(
+            [ops.MapField(column="borough", source=field)], failing, [field], spec
+        )
+        assert len(problems) == 1 and "system field" in problems[0]

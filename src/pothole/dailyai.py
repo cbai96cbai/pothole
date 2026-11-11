@@ -20,7 +20,8 @@ from pothole.budget.limits import DEFAULT_LIMITS, call_max_cost
 from pothole.drills import catalog, judge
 from pothole.llm.client import LLMClient
 from pothole.logs import get_logger
-from pothole.repair import agent, routing
+from pothole.repair import agent
+from pothole.repair.decide import decide
 from pothole.repair.outcome import RepairOutcome
 from pothole.repair.sink import Filed
 from pothole.runrecord import RepairRecord
@@ -103,15 +104,16 @@ def _file(
     refused here: the drill's point is the verdict."""
     if drill and not verdict:
         raise ValueError("a drill is filed only with the judge's verdict")
+    by = outcome.decided_by
     if outcome.action == "patch":
         filed = sink.open_pr(outcome, spec, before, after, day=day, drill=drill, verdict=verdict)
         if filed.kind != "pr":  # gates or pull request creation failed: only an issue exists
-            return RepairRecord("issue", drill, filed.ref, verdict, False)
-        return RepairRecord("patch", drill, filed.ref, verdict, not drill)
+            return RepairRecord("issue", drill, filed.ref, verdict, False, by)
+        return RepairRecord("patch", drill, filed.ref, verdict, not drill, by)
     if outcome.action == "issue":
         filed = sink.open_issue(outcome.reason or "no reason given", before, day=day, drill=drill)
-        return RepairRecord("issue", drill, filed.ref, verdict, False)
-    return RepairRecord("no_change", drill, None, verdict, False)
+        return RepairRecord("issue", drill, filed.ref, verdict, False, by)
+    return RepairRecord("no_change", drill, None, verdict, False, by)
 
 
 def _failed_step(
@@ -121,7 +123,14 @@ def _failed_step(
     reason = f"The {what} did not finish ({type(exc).__name__}: {exc}); a person should look."
     filed = sink.open_issue(reason, failing, day=day, drill=drill)
     verdict = f"no verdict: the {what} did not finish" if drill else None
-    return RepairRecord("issue", drill, filed.ref, verdict, False)
+    return RepairRecord("issue", drill, filed.ref, verdict, False, "rule")
+
+
+def file_rule(
+    sink: Sink, outcome: RepairOutcome, spec: PipelineSpec, failing: list[CheckResult], day: date
+) -> RepairRecord:
+    """File a decision the volume rule made on a real failure; no model was involved."""
+    return _file(sink, outcome, spec, failing, [], day, False, None)
 
 
 def real_repair(
@@ -141,9 +150,12 @@ def real_repair(
     paid = False
     try:
         outcome = with_timeout(
-            lambda: (
-                routing.rule_outcome(failing)
-                or agent.repair(spec, rows, failing, fields, client, now=now)
+            lambda: decide(
+                lambda sp, f, r, fl: agent.repair(sp, r, f, fl, client, now=now),
+                spec,
+                failing,
+                rows,
+                fields,
             ),
             timeout_s,
         )
@@ -185,18 +197,24 @@ def drill(
         failing = [c for c in checks if c.level == "fail"]
         strings: list[dict[str, str]] = [{k: str(v) for k, v in r.items()} for r in rows]
         outcome = with_timeout(
-            lambda: (
-                routing.rule_outcome(failing)
-                or agent.repair(
-                    spec, strings, failing, fields, client, now=now, history=catalog.history()
-                )
+            lambda: decide(
+                lambda sp, f, r, fl: agent.repair(
+                    sp, r, f, fl, client, now=now, history=catalog.history()
+                ),
+                spec,
+                failing,
+                strings,
+                fields,
             ),
             timeout_s,
         )
         spend.add(outcome.cost)
         paid = True
         verdict = judge.judge(case, outcome, spec)
-        text = f"{'correct' if verdict.correct else 'not correct'}: {verdict.reason}"
+        text = (
+            f"{'correct' if verdict.correct else 'not correct'} "
+            f"(decided by {outcome.decided_by}): {verdict.reason}"
+        )
         after: list[CheckResult] = []
         if outcome.action == "patch":
             after = engine.run(ops.apply(spec, outcome.ops), strings, [], now).checks

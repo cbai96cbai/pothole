@@ -1,20 +1,18 @@
 """The non-AI baseline: fixed rules over exactly the repair agent's inputs (the spec, the failed
 check results, sample rows and the source's fields). It reads nothing about the injected fault."""
 
-import re
 from datetime import datetime
 from difflib import SequenceMatcher
 from typing import Any, cast
 
 from pothole.repair.outcome import Op, RegressionCase, RepairOutcome, table_rows
 from pothole.spec import engine, ops, scope
-from pothole.spec.checks import CheckResult
+from pothole.spec.checks import CheckResult, read_volume
 from pothole.spec.model import DATE_FORMATS, NUMBER_FORMATS, Column, PipelineSpec
 
 MATCH_RATIO = 0.8
 # Failures that follow from another one (a date that cannot be read is also not fresh).
 _FOLLOW_ON = ("freshness", "created_not_future", "closed_not_before_created", "null_rate:")
-_VOLUME = re.compile(r"^(\d+) rows .*allowed (\S+) to (\S+)$")
 _REGRESSION_ROWS = 5
 
 
@@ -27,8 +25,8 @@ def _issue(reason: str) -> RepairOutcome:
 
 
 def _volume_is_high(check: CheckResult) -> bool:
-    m = _VOLUME.match(check.detail)
-    return m is not None and int(m.group(1)) > float(m.group(3))
+    reading = read_volume(check.detail)
+    return reading.count > reading.high
 
 
 def _parses(col: Column, fmt: str, values: list[str]) -> bool:

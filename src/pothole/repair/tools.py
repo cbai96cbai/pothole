@@ -74,20 +74,19 @@ class Toolbox:
 
     def _field_report(self) -> dict[str, dict[str, str]]:
         """Each source field with its type and use: `in_use` (a column reads it), `known_unused`
-        (the spec lists it in source.ignore) or `new` (neither)."""
+        (the spec lists it in source.ignore), `system` (the source's own :id style fields) or
+        `new` (none of these)."""
         used = {c.source for c in self.spec.columns}
         ignored = set(self.spec.source.ignore)
-        return {
-            name: {
-                "type": kind,
-                "status": "in_use"
-                if name in used
-                else "known_unused"
-                if name in ignored
-                else "new",
-            }
-            for name, kind in self.fields.items()
-        }
+
+        def status(name: str) -> str:
+            if name in used:
+                return "in_use"
+            if name in ignored:
+                return "known_unused"
+            return "system" if name.startswith(":") else "new"
+
+        return {name: {"type": kind, "status": status(name)} for name, kind in self.fields.items()}
 
     def _crosstab(self, args: dict[str, Any]) -> str:
         """Each value outside the column's list against the borough it appears with."""

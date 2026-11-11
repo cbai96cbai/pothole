@@ -30,11 +30,24 @@
         "reason": {
           "title": "Reason",
           "type": "string"
+        },
+        "decided_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decided By"
         }
       },
       "required": [
         "action",
         "correct",
+        "decided_by",
         "detected",
         "expected",
         "family",
@@ -93,11 +106,27 @@
         "detected": {
           "title": "Detected",
           "type": "integer"
+        },
+        "decided_by": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decided By"
         }
       },
       "required": [
         "cases",
         "correct",
+        "decided_by",
         "detected",
         "expected"
       ],
@@ -206,11 +235,53 @@
           },
           "title": "Failures",
           "type": "array"
+        },
+        "decided_by": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decided By"
+        },
+        "repairer_decided": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repairer Decided"
+        },
+        "complete": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Complete"
         }
       },
       "required": [
         "cases",
+        "complete",
         "crashed",
+        "decided_by",
         "detection_coverage_benign_control",
         "detection_coverage_fault_cases",
         "failures",
@@ -220,6 +291,7 @@
         "repair_success",
         "repairable_answered_with_issue",
         "repairer",
+        "repairer_decided",
         "split"
       ],
       "title": "RepairSummary",

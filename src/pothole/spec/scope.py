@@ -39,6 +39,8 @@ def check(
             problems.append(f"{op.op}: column {op.column!r} has no failed check")
         if isinstance(op, MapField) and op.source not in seen_fields:
             problems.append(f"map_field: the batch does not send {op.source!r}")
+        if isinstance(op, MapField) and op.source.startswith(":"):
+            problems.append(f"map_field: {op.source!r} is the source's own system field")
         if isinstance(op, MapField) and op.source in spec.source.ignore:
             problems.append(
                 f"map_field: {op.source!r} is a known field that holds other data, not a rename"

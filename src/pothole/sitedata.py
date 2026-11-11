@@ -175,8 +175,12 @@ def _load_days(root: Path) -> list[AnalystDay]:
 
 
 def _repairs(root: Path) -> m.Repairs:
+    # a run's summary also holds cost, time and provenance; the site shows the scoring part
+    keep = set(m.RepairSummary.model_fields)
     rows = [
-        m.RepairSummary.model_validate_json(f.read_text())
+        m.RepairSummary.model_validate(
+            {k: v for k, v in json.loads(f.read_text()).items() if k in keep}
+        )
         for f in sorted((root / "results").glob("*/summary.json"))
     ]
     rows.sort(key=lambda s: (s.repairer != "baseline", s.repairer, s.split))

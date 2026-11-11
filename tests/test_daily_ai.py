@@ -2,7 +2,7 @@
 
 import json
 import threading
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
 from typing import Any
@@ -12,6 +12,7 @@ import pytest
 from daily_kit import (  # noqa: F401
     SUNDAY,
     TUESDAY,
+    NoModel,
     Sink,
     baseline_repairer,
     env_for,
@@ -22,6 +23,7 @@ from daily_kit import (  # noqa: F401
 
 from pothole import daily, dailyai, runrecord
 from pothole.analyst.finding import AnalystDay
+from pothole.budget.envelope import DEFAULT_STEPS
 from pothole.drills import baseline, catalog, scoring
 from pothole.repair.outcome import RepairOutcome
 
@@ -174,3 +176,57 @@ def test_the_investigator_gets_the_store_path_with_no_other_connection_open(
     env, _, _ = env_for(repo, isolated_state, window_rows(TUESDAY, spike=True), ai=True)
     daily.run(env)
     assert seen == [(isolated_state / "raw.duckdb", ["Illegal Parking"])]
+
+
+def _volume(count: int) -> Any:
+    from pothole.spec.checks import CheckResult
+
+    detail = (
+        f"{count} rows against a typical 2000 over 4 earlier same-weekday counts; "
+        "allowed 1000 to 4000"
+    )
+    return CheckResult("volume", "fail", detail, [])
+
+
+def test_a_volume_only_window_failure_is_decided_before_any_sample_or_model(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from types import SimpleNamespace
+
+    from pothole import dailyrepair
+    from pothole.spec.model import PipelineSpec
+
+    def no_sample(*a: Any, **k: Any) -> Any:
+        raise AssertionError("a sample was fetched")
+
+    monkeypatch.setattr(dailyrepair, "_failing_sample", no_sample)
+    calls = forbid_model(monkeypatch)
+    spec = catalog.load_spec()
+    assert isinstance(spec, PipelineSpec)
+    for count, action, ai in ((300, "issue", NoModel()), (6000, "no_change", None)):
+        sink = Sink()
+        env = SimpleNamespace(sink=sink, ai_enabled=ai is not None)
+        rec = dailyrepair.real_failure(
+            env,
+            spec,
+            ai,
+            [_volume(count)],
+            datetime(2026, 11, 10, 12),
+            None,
+            None,  # type: ignore[arg-type]
+        )
+        assert rec.action == action and rec.decided_by == "rule" and not rec.drill
+    assert calls == []
+
+
+def test_the_drill_decides_a_volume_case_by_rule_and_says_so(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls = forbid_model(monkeypatch)
+    spike = next(c for c in catalog.load() if c.split == "dev" and c.family == "spike")
+    monkeypatch.setattr(dailyai, "pick_case", lambda day: spike)
+    sink = Sink()
+    spend = dailyai.Spend()
+    rec = dailyai.drill(sink, NoModel(), date(2026, 11, 15), spend, DEFAULT_STEPS[0])  # type: ignore[arg-type]
+    assert rec.decided_by == "rule" and rec.drill and calls == []
+    assert rec.verdict is not None and "decided by rule" in rec.verdict

@@ -75,3 +75,17 @@ def test_value_crosstab_counts_outside_values_against_borough(spec, failing, fai
     tool = [m["content"] for m in model.sent[1]["messages"] if m.get("role") == "tool"]
     assert json.loads(tool[0].splitlines()[0]) == {"X": [["Bronx", 2], ["zip 112", 1]]}
     assert tool[1].startswith("error:")
+
+
+def test_system_fields_are_labelled_system(spec, failing, failed_checks, fields):
+    model = Scripted(
+        [
+            reply(call("source_fields", {})),
+            reply(call("submit", {"action": "issue", "reason": "x"})),
+        ]
+    )
+    extra = {**fields, ":id": "text", ":updated_at": "text"}
+    repair(spec, failing.rows, failed_checks, extra, model, now=failing.now)  # type: ignore[arg-type]
+    last = [m for m in model.sent[1]["messages"] if m.get("role") == "tool"][-1]
+    seen = json.loads(last["content"].splitlines()[0])
+    assert seen[":id"]["status"] == seen[":updated_at"]["status"] == "system"

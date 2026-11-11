@@ -62,6 +62,7 @@ class Repair(Model):
     url: str | None
     verdict: str | None
     not_judged: bool
+    decided_by: str
 
 
 class IncidentItem(Model):
@@ -129,6 +130,7 @@ class Family(Model):
     cases: int
     correct: int
     detected: int
+    decided_by: dict[str, int] | None = None
 
 
 class CaseFailure(Model):
@@ -139,6 +141,7 @@ class CaseFailure(Model):
     action: str
     correct: bool
     reason: str
+    decided_by: str | None = None
 
 
 class RepairSummary(Model):
@@ -154,6 +157,10 @@ class RepairSummary(Model):
     detection_coverage_benign_control: Detected
     per_family: dict[str, Family]
     failures: list[CaseFailure]
+    # who decided the cases, and the rates over the cases a repairer decided (newer runs only)
+    decided_by: dict[str, int] | None = None
+    repairer_decided: dict[str, Any] | None = None
+    complete: bool | None = None
 
 
 class Repairs(Model):

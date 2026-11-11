@@ -23,9 +23,10 @@ from pothole.budget.tally import BudgetExceeded, CutoffPassed, Tally
 from pothole.dailyai import StepTimeout, with_timeout
 from pothole.drills import catalog, scoring
 from pothole.drills.catalog import Case
-from pothole.drills.scoring import CaseResult, Repairer
+from pothole.drills.scoring import CaseResult
 from pothole.llm.client import LLMClient
-from pothole.repair import agent, routing
+from pothole.repair import agent
+from pothole.repair.decide import Repairer, decide
 from pothole.repair.outcome import RepairOutcome
 from pothole.spec.model import PipelineSpec
 
@@ -79,7 +80,7 @@ def agent_repairer(case: Case, client: LLMClient) -> Repairer:
 
 
 def git_state(repo: Path = catalog.ROOT) -> tuple[str, bool]:
-    """The commit the code is at and whether tracked files have uncommitted changes."""
+    """The commit the code is at and whether any file outside results/ is changed or untracked."""
 
     def git(*args: str) -> str:
         done = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True)
@@ -87,7 +88,9 @@ def git_state(repo: Path = catalog.ROOT) -> tuple[str, bool]:
             raise RefusedToStart(f"cannot read the code version: {done.stderr.strip()}")
         return done.stdout.strip()
 
-    return git("rev-parse", "HEAD"), bool(git("status", "--porcelain", "--untracked-files=no"))
+    # results/ holds the runs themselves (other runs' folders are untracked), so it is left out
+    changes = git("status", "--porcelain", "--untracked-files=all", "--", ".", ":(exclude)results")
+    return git("rev-parse", "HEAD"), bool(changes)
 
 
 def _lines(path: Path) -> list[dict[str, Any]]:
@@ -168,13 +171,12 @@ def _one(
             raise RefusedToStart(str(err)) from err
     box: dict[str, RepairOutcome] = {}
     inner = make(case)
-    decide = routing.ruled(inner)  # a volume-only failure is the rule's; no repairer is called
 
     timed_out: list[bool] = []
 
     def timed(*args: Any) -> RepairOutcome:
         try:
-            box["outcome"] = with_timeout(lambda: decide(*args), timeout_s)
+            box["outcome"] = with_timeout(lambda: decide(inner, *args), timeout_s)
         except StepTimeout:
             timed_out.append(True)
             raise
@@ -202,9 +204,10 @@ def summary_of(
     results: list[CaseResult], rows: list[dict[str, Any]], meta: dict[str, Any], deployment: str
 ) -> dict[str, Any]:
     """The scoring summary plus cost, time and provenance. Cost per case and the seconds describe
-    the cases that called the repairer: a benign control costs nothing and returns at once."""
+    the cases a repairer decided: a benign control or a rule decision costs nothing and returns at
+    once."""
     body = scoring.summarise(results, meta["split"], meta["system"])
-    called_ids = {r.id for r in results if r.expected != "nothing"}
+    called_ids = {r.id for r in results if r.expected != "nothing" and r.decided_by != "rule"}
     called = [r for r in rows if r["id"] in called_ids]
     total = sum((Decimal(r["cost"]) for r in rows), Decimal(0))
     secs = [float(r["seconds"]) for r in called]
@@ -218,7 +221,8 @@ def summary_of(
         cost_per_case=str((total / len(called)).quantize(Decimal("0.00001"))) if called else None,
         mean_seconds_per_case=round(statistics.mean(secs), 2) if secs else None,
         median_seconds_per_case=round(statistics.median(secs), 2) if secs else None,
-        averages_over="cases that called the repairer (benign controls excluded)",
+        cases_decided_by_rule=sum(r.decided_by == "rule" for r in results),
+        averages_over="cases a repairer decided (rule-decided cases and benign controls excluded)",
         model_deployment=deployment,
         run_date=meta["run_date"],
         code_commit=commits[0] if len(commits) == 1 else "mixed",
@@ -230,7 +234,7 @@ def summary_of(
 
 def write_summary(out_dir: Path, deployment: str | None = None) -> dict[str, Any]:
     """Rebuild summary.json from the run's own files; no model is called. `complete` says whether
-    every case of the split in the catalog has a verdict."""
+    every case id of the split in the catalog has a verdict."""
     meta = json.loads((out_dir / "meta.json").read_text())
     verdicts = _lines(out_dir / "verdicts.jsonl")
     done = {r["id"] for r in verdicts}
@@ -240,8 +244,8 @@ def write_summary(out_dir: Path, deployment: str | None = None) -> dict[str, Any
     if deployment is None and (out_dir / "summary.json").exists():
         deployment = json.loads((out_dir / "summary.json").read_text()).get("model_deployment")
     body = summary_of([CaseResult(**r) for r in verdicts], rows, meta, deployment or "unknown")
-    expected = sum(c.split == meta["split"] for c in catalog.load())
-    body.update(complete=len(verdicts) == expected, cases_expected=expected)
+    wanted = {c.id for c in catalog.load() if c.split == meta["split"]}
+    body.update(complete=done == wanted, cases_expected=len(wanted))
     (out_dir / "summary.json").write_text(json.dumps(body, indent=2) + "\n")
     return body
 

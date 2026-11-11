@@ -66,7 +66,9 @@ def test_value_outside_values_fails(spec, rows):
     _, checks = run(spec, rows)
     assert checks["values:borough"].level == "fail"
     assert checks["values:borough"].detail == (
-        "borough: 1 of 10 rows have values outside the listed ones (NEW JERSEY)"
+        "borough: 1 of 10 rows have values outside the accepted spellings (NEW JERSEY); "
+        "accepted spellings, each mapped to a standard value: "
+        "BRONX, BROOKLYN, MANHATTAN, QUEENS, STATEN ISLAND, Unspecified"
     )
     assert checks["values:borough"].sample_keys == ["1003"]
 

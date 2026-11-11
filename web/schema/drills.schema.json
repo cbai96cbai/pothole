@@ -106,10 +106,15 @@
         "not_judged": {
           "title": "Not Judged",
           "type": "boolean"
+        },
+        "decided_by": {
+          "title": "Decided By",
+          "type": "string"
         }
       },
       "required": [
         "action",
+        "decided_by",
         "drill",
         "not_judged",
         "url",

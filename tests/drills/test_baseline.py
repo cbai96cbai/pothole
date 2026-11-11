@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pothole.drills import baseline, catalog, judge
 from pothole.drills.catalog import Case
-from pothole.repair import routing
+from pothole.repair.decide import decide
 from pothole.spec import ops, scope
 from pothole.spec.model import PipelineSpec
 
@@ -13,7 +13,7 @@ def _run(case: Case, spec: PipelineSpec):
     failed = [
         c for c in catalog.run_engine(spec, rows, case.batch_seen).checks if c.level == "fail"
     ]
-    return routing.ruled(baseline.repair)(spec, failed, rows, fields)
+    return decide(baseline.repair, spec, failed, rows, fields)
 
 
 def test_baseline_does_not_import_fault_or_catalog_code():

@@ -10,6 +10,7 @@ optional field is therefore warned on full pages and on the window as a whole, n
 of rows. A vanished required field fails at any size.
 """
 
+import re
 import statistics
 from dataclasses import dataclass
 from datetime import datetime
@@ -102,12 +103,18 @@ def cast_and_values(col: Column, cast: Cast, total: int) -> list[CheckResult]:
     if col.values is not None:
         n = len(cast.outside_values)
         raws = ", ".join(sorted(cast.outside_raw)[:SAMPLE])
-        detail = f"{col.name}: {n} of {total} rows have values outside the listed ones"
+        accepted = ", ".join(sorted(col.values))
+        detail = f"{col.name}: {n} of {total} rows have values outside the accepted spellings"
         out.append(
             _result(
                 f"values:{col.name}",
                 "fail" if n else "pass",
-                detail + (f" ({raws})" if n else ""),
+                detail
+                + (
+                    f" ({raws}); accepted spellings, each mapped to a standard value: {accepted}"
+                    if n
+                    else ""
+                ),
                 cast.outside_values,
             )
         )
@@ -166,6 +173,29 @@ def unique_key(name: str, keys: list[str]) -> CheckResult:
         seen.add(k)
     detail = f"{name}: {len(dup)} keys repeat within the batch of {len(keys)} rows"
     return _result("unique_key", "fail" if dup else "pass", detail, dup)
+
+
+_VOLUME = re.compile(
+    r"^(\d+) rows against a typical (\S+) over \d+ earlier same-weekday counts; "
+    r"allowed (\S+) to (\S+)$"
+)
+
+
+@dataclass(frozen=True)
+class VolumeReading:
+    count: int
+    typical: float
+    low: float
+    high: float
+
+
+def read_volume(detail: str) -> VolumeReading:
+    """The numbers in a failed volume check's detail (the one parser of the text `volume` writes).
+    Raises ValueError for any other text."""
+    m = _VOLUME.match(detail)
+    if m is None:
+        raise ValueError(f"cannot read the volume check's detail: {detail!r}")
+    return VolumeReading(int(m.group(1)), float(m.group(2)), float(m.group(3)), float(m.group(4)))
 
 
 def volume(spec: Volume, count: int, history: list[int]) -> CheckResult:

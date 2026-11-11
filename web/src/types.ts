@@ -44,6 +44,7 @@ export interface Repair {
   url: string | null;
   verdict: string | null;
   not_judged: boolean;
+  decided_by: string;
 }
 export interface IncidentItem {
   run_id: string;
@@ -101,6 +102,7 @@ export interface Family {
   cases: number;
   correct: number;
   detected: number;
+  decided_by?: Record<string, number> | null;
 }
 export interface CaseFailure {
   id: string;
@@ -110,6 +112,7 @@ export interface CaseFailure {
   action: string;
   correct: boolean;
   reason: string;
+  decided_by?: string | null;
 }
 export interface RepairSummary {
   repairer: string;
@@ -124,6 +127,9 @@ export interface RepairSummary {
   detection_coverage_benign_control: Detected;
   per_family: Record<string, Family>;
   failures: CaseFailure[];
+  decided_by?: Record<string, number> | null;
+  repairer_decided?: Record<string, unknown> | null;
+  complete?: boolean | null;
 }
 export interface Repairs {
   summaries: RepairSummary[];
