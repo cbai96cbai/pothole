@@ -5,15 +5,15 @@ from datetime import datetime
 from difflib import SequenceMatcher
 from typing import Any, cast
 
-from pothole.repair.outcome import Op, RegressionCase, RepairOutcome, table_rows
-from pothole.spec import engine, ops, scope
+from pothole.repair.outcome import Op, RepairOutcome
+from pothole.repair.validate import ToolError, build_case
+from pothole.spec import ops, scope
 from pothole.spec.checks import CheckResult, read_volume
 from pothole.spec.model import DATE_FORMATS, NUMBER_FORMATS, Column, PipelineSpec
 
 MATCH_RATIO = 0.8
 # Failures that follow from another one (a date that cannot be read is also not fresh).
 _FOLLOW_ON = ("freshness", "created_not_future", "closed_not_before_created", "null_rate:")
-_REGRESSION_ROWS = 5
 
 
 class _Unfixable(Exception):
@@ -121,15 +121,13 @@ def repair(
         if problems:
             raise _Unfixable("; ".join(problems))
         patched = ops.apply(spec, edits)
+        edited = [e.column for e in edits]
     except (_Unfixable, ops.ForbiddenEdit) as err:
         return _issue(str(err))
-    rows = sample_rows[:_REGRESSION_ROWS]
-    now = datetime(2026, 11, 10)
-    expected = table_rows(engine.run(patched, rows, [], now).table)
+    try:
+        case = build_case(spec, patched, cast(list[dict[str, str]], sample_rows), edited)
+    except ToolError as err:  # the same refusal a patch from the agent gets
+        return _issue(str(err))
     return RepairOutcome(
-        "patch",
-        ops=edits,
-        regression=RegressionCase(cast(list[dict[str, str]], rows), expected),
-        reason="fixed rules",
-        decided_by="baseline",
+        "patch", ops=edits, regression=case, reason="fixed rules", decided_by="baseline"
     )

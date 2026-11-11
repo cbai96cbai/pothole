@@ -80,3 +80,35 @@ def test_a_rename_to_a_field_the_batch_does_not_send_is_an_issue(
     ]
     fields = {k: v for k, v in fields.items() if k != "complaint_type_name"}
     assert baseline.repair(spec, failed, rows, fields).action == "issue"
+
+
+def test_the_baseline_case_is_built_like_the_agents_with_rows_the_patch_changes(
+    cases: dict[str, Case], spec: PipelineSpec
+):
+    case = cases["comma_thousands-3"]  # the recorded batch whose first rows carry no comma
+    rows, fields = catalog.seen_batch(case)
+    failed = [
+        c for c in catalog.run_engine(spec, rows, case.batch_seen).checks if c.level == "fail"
+    ]
+    outcome = baseline.repair(spec, failed, rows, fields)
+    assert outcome.action == "patch" and outcome.regression is not None
+    assert any("," in r.get("y_coordinate_state_plane", "") for r in outcome.regression.rows)
+
+
+def test_a_refused_case_makes_the_baseline_file_an_issue_with_the_refusal(
+    cases: dict[str, Case], spec: PipelineSpec, monkeypatch
+):
+    from pothole.repair.validate import ToolError
+
+    def refuse(*a, **k):
+        raise ToolError("the patch changes none of today's rows")
+
+    monkeypatch.setattr(baseline, "build_case", refuse)
+    case = cases["comma_thousands-5"]
+    rows, fields = catalog.seen_batch(case)
+    failed = [
+        c for c in catalog.run_engine(spec, rows, case.batch_seen).checks if c.level == "fail"
+    ]
+    outcome = baseline.repair(spec, failed, rows, fields)
+    assert outcome.action == "issue" and outcome.decided_by == "baseline"
+    assert "changes none of today's rows" in outcome.reason

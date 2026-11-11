@@ -120,15 +120,16 @@ def test_a_patch_that_leaves_a_failure_is_refused(spec, failing, failed_checks, 
     assert "still fails on the failing batch" in model.sent[1]["messages"][-1]["content"]
 
 
-def test_rows_that_fail_under_the_patch_are_refused(spec, failing, failed_checks, fields):
+def test_rows_that_fail_under_the_patch_are_left_out_of_the_case(
+    spec, failing, failed_checks, fields
+):
     first = sorted(r["unique_key"] for r in failing.rows)[:4]
     rows = [dict(r, latitude="0") if r["unique_key"] in first else r for r in failing.rows]
     args = {"action": "patch", "ops": [RENAME], "reason": "r"}
-    model = Scripted(
-        [reply(call("submit", args)), reply(call("submit", {"action": "issue", "reason": "x"}))]
-    )
-    repair(spec, rows, failed_checks, fields, model, now=failing.now)  # type: ignore[arg-type]
-    assert "fail checks under the patched spec" in model.sent[1]["messages"][-1]["content"]
+    model = Scripted([reply(call("submit", args))])
+    out = repair(spec, rows, failed_checks, fields, model, now=failing.now)  # type: ignore[arg-type]
+    assert out.action == "patch" and out.regression is not None
+    assert not set(first) & {r["unique_key"] for r in out.regression.rows}
 
 
 def test_the_model_is_not_asked_for_regression_keys(spec, failing, failed_checks, fields):
@@ -159,7 +160,7 @@ def test_rows_that_send_the_edited_field_come_first(spec, failing):
     rows = [
         r if r["unique_key"] not in lacking else {**r, "agency_acronym": ""} for r in failing.rows
     ]
-    chosen = choose_rows(patched, rows, ["agency"])
+    chosen = choose_rows(spec, patched, rows, ["agency"])
     assert not lacking & {r["unique_key"] for r in chosen}
 
 
@@ -170,7 +171,7 @@ def test_a_batch_too_small_for_a_case_is_refused(spec, failing):
 
     patched = ops.apply(spec, [ops.parse(RENAME)])
     with pytest.raises(ToolError, match="at least 3"):
-        choose_rows(patched, failing.rows[:2], ["agency"])
+        choose_rows(spec, patched, failing.rows[:2], ["agency"])
 
 
 def test_tools_show_rows_and_fields_but_nothing_else(spec, failing, failed_checks, fields):

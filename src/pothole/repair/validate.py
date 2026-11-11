@@ -13,6 +13,7 @@ from pothole.spec.checks import CheckResult
 from pothole.spec.model import PipelineSpec
 
 MIN_CASE, CASE_SIZE = 3, 5
+MAX_REPLACEMENTS = 10  # rows named by a failed check are left out and the case is tried again
 
 
 class ToolError(Exception):
@@ -56,13 +57,37 @@ def case_now(day: date) -> datetime:
     return datetime(day.year, day.month, day.day) + timedelta(days=1, hours=30)
 
 
+def _outputs(spec: PipelineSpec, rows: list[dict[str, str]], key: str) -> dict[str, Any]:
+    """Each row's engine output by key: one run over the whole batch."""
+    table = engine.run(spec, rows, [], datetime(2100, 1, 1)).table
+    return {r[key]: r for r in table_rows(table)}
+
+
+def _changed_by(
+    original: PipelineSpec, patched: PipelineSpec, rows: list[dict[str, str]]
+) -> set[str]:
+    """Keys of the rows whose output differs between the original and the patched spec."""
+    key = patched.source.key
+    before, after = _outputs(original, rows, key), _outputs(patched, rows, key)
+    return {k for k, row in after.items() if before.get(k) != row}
+
+
 def choose_rows(
-    patched: PipelineSpec, rows: list[dict[str, str]], edited: list[str]
+    original: PipelineSpec,
+    patched: PipelineSpec,
+    rows: list[dict[str, str]],
+    edited: list[str],
 ) -> list[dict[str, str]]:
-    """The regression rows, chosen by the code and never by the model: rows that send every edited
-    column's source field first, then rows with the fewest empty fields (a handful of rows must
-    pass the checks' rates), then the key; CASE_SIZE of them, listed by key."""
+    """The regression rows, chosen by the code and never by the model: the most rows the patch
+    changes (up to CASE_SIZE) that pass the checks under the patched spec, filled up to CASE_SIZE
+    with the best-ranked rows it leaves alone. Rank: rows that send every edited column's source
+    field first, then the fewest empty fields (a handful of rows must pass the checks' rates),
+    then the key. The case is listed by key."""
     key_field = patched.column(patched.source.key).source
+    if len(rows) < MIN_CASE:
+        raise ToolError(
+            f"the failing batch has {len(rows)} rows; a regression case needs at least {MIN_CASE}"
+        )
     edited_sources = [patched.column(c).source for c in edited]
     read = [c.source for c in patched.columns]
 
@@ -70,13 +95,36 @@ def choose_rows(
         lacks_edited = not all(row.get(f) for f in edited_sources)
         return lacks_edited, sum(1 for f in read if not row.get(f)), row.get(key_field, "")
 
-    chosen = sorted(rows, key=rank)[:CASE_SIZE]
-    chosen.sort(key=lambda r: r.get(key_field, ""))
-    if len(chosen) < MIN_CASE:
+    changed_keys = _changed_by(original, patched, rows)
+    if not changed_keys:
         raise ToolError(
-            f"the failing batch has {len(rows)} rows; a regression case needs at least {MIN_CASE}"
+            "the patch changes none of today's rows, so it does not explain the failing check"
         )
-    return chosen
+    ranked = sorted(rows, key=rank)
+    changed = [r for r in ranked if r.get(key_field) in changed_keys]
+    same = [r for r in ranked if r.get(key_field) not in changed_keys]
+    last: list[CheckResult] = []
+    for wanted in range(min(CASE_SIZE, len(changed)), 0, -1):
+        left_out: set[str] = set()
+        for _ in range(MAX_REPLACEMENTS):
+            take = [r for r in changed if r.get(key_field) not in left_out][:wanted]
+            fill = [r for r in same if r.get(key_field) not in left_out][: CASE_SIZE - wanted]
+            subset = sorted(take + fill, key=lambda r: r.get(key_field, ""))
+            if len(take) < wanted or len(subset) < MIN_CASE:
+                break
+            last = failed(
+                engine.run(patched, subset, [], case_now(case_day(patched, subset))).checks
+            )
+            if not last:
+                return subset
+            named = {k for r in last for k in r.sample_keys} - left_out
+            if not named:
+                break
+            left_out |= named
+    raise ToolError(
+        "the rows the patch changes still fail checks under the patched spec, so it is not "
+        "complete: " + "; ".join(f"{r.name}: {r.detail}" for r in last[:3])
+    )
 
 
 def build_case(
@@ -85,20 +133,9 @@ def build_case(
     rows: list[dict[str, str]],
     edited: list[str],
 ) -> RegressionCase:
-    subset = choose_rows(patched, rows, edited)
+    subset = choose_rows(original, patched, rows, edited)
     now = case_now(case_day(patched, subset))
-    still = failed(engine.run(patched, subset, [], now).checks)
-    if still:
-        raise ToolError(
-            "these rows fail checks under the patched spec; pick others: "
-            + "; ".join(f"{r.name}: {r.detail}" for r in still[:3])
-        )
     expected = table_rows(engine.run(patched, subset, [], now).table)
-    before = table_rows(engine.run(original, subset, [], now).table)
-    if expected == before:
-        raise ToolError(
-            "these rows come out the same with and without the patch; pick rows it fixes"
-        )
     case = RegressionCase(subset, expected)
     if not reproduces(patched, case):
         raise ToolError("the regression case does not reproduce with the patched spec")
