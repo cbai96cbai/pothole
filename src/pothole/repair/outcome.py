@@ -11,6 +11,7 @@ import pyarrow as pa
 from pothole.spec.ops import AddValueMapping, MapField, SetFormat
 
 Action = Literal["patch", "issue", "no_change"]
+DecidedBy = Literal["agent", "baseline", "rule"]
 Op = MapField | SetFormat | AddValueMapping
 
 
@@ -30,6 +31,7 @@ class RepairOutcome:
     reason: str = ""
     trace: list[dict[str, Any]] = field(default_factory=list)
     cost: Decimal = Decimal("0")
+    decided_by: DecidedBy = "agent"
 
 
 def table_rows(table: pa.Table) -> list[dict[str, Any]]:

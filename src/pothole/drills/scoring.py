@@ -10,6 +10,7 @@ from typing import Any
 
 from pothole.drills import baseline, catalog, faults, judge
 from pothole.drills.catalog import Case
+from pothole.repair import routing
 from pothole.repair.outcome import RepairOutcome
 from pothole.spec.checks import CheckResult
 from pothole.spec.model import PipelineSpec
@@ -28,6 +29,7 @@ class CaseResult:
     action: str | None
     correct: bool
     reason: str
+    decided_by: str | None = None  # rule, agent or baseline; None when no repairer was due
 
 
 def run_case(case: Case, spec: PipelineSpec, repairer: Repairer) -> CaseResult:
@@ -50,8 +52,9 @@ def run_case(case: Case, spec: PipelineSpec, repairer: Repairer) -> CaseResult:
         )
     action = outcome.action if outcome else None
     return CaseResult(
-        case.id, case.family, case.expected_action, found, action, verdict.correct, verdict.reason
-    )
+        case.id, case.family, case.expected_action, found, action, verdict.correct, verdict.reason,
+        outcome.decided_by if outcome else None,
+    )  # fmt: skip
 
 
 def _rate(results: list[CaseResult], expected: str) -> dict[str, Any] | None:
@@ -65,6 +68,14 @@ def _rate(results: list[CaseResult], expected: str) -> dict[str, Any] | None:
 def _detected(rs: list[CaseResult]) -> dict[str, Any]:
     found = sum(r.detected for r in rs)
     return {"detected": found, "of": len(rs), "rate": round(found / len(rs), 4) if rs else None}
+
+
+def _deciders(results: list[CaseResult]) -> dict[str, int]:
+    out: dict[str, int] = defaultdict(int)
+    for r in results:
+        if r.decided_by:
+            out[r.decided_by] += 1
+    return dict(sorted(out.items()))
 
 
 def summarise(results: list[CaseResult], split: str, who: str) -> dict[str, Any]:
@@ -88,6 +99,7 @@ def summarise(results: list[CaseResult], split: str, who: str) -> dict[str, Any]
             "rate": round(gave_issue / len(repairable), 4) if repairable else None,
         },
         "crashed": sum(r.action == "crashed" for r in results),
+        "decided_by": _deciders(results),
         "detection_coverage_fault_cases": _detected(faulted),
         "detection_coverage_benign_control": _detected(benign),
         "per_family": {
@@ -96,6 +108,7 @@ def summarise(results: list[CaseResult], split: str, who: str) -> dict[str, Any]
                 "cases": len(rs),
                 "correct": sum(r.correct for r in rs),
                 "detected": sum(r.detected for r in rs),
+                "decided_by": _deciders(rs),
             }
             for f, rs in families.items()
         },
@@ -106,7 +119,8 @@ def summarise(results: list[CaseResult], split: str, who: str) -> dict[str, Any]
 def score(split: str, repairer: Repairer, who: str) -> dict[str, Any]:
     spec = catalog.load_spec()
     cases = [c for c in catalog.load() if c.split == split]
-    return summarise([run_case(c, spec, repairer) for c in cases], split, who)
+    ruled = routing.ruled(repairer)
+    return summarise([run_case(c, spec, ruled) for c in cases], split, who)
 
 
 if __name__ == "__main__":

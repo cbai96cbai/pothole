@@ -2,6 +2,7 @@ from typing import Any
 
 from pothole.drills import baseline, catalog, scoring
 from pothole.drills.catalog import Case
+from pothole.repair import routing
 from pothole.repair.outcome import RegressionCase, RepairOutcome
 from pothole.spec import ops
 from pothole.spec.model import PipelineSpec
@@ -56,7 +57,7 @@ def test_a_benign_control_does_not_call_the_repairer(cases: dict[str, Case], spe
 
 def test_summary_counts(cases: dict[str, Case], spec: PipelineSpec):
     ids = ["date_format-0", "renamed_field-0", "field_dropped-0", "spike-0", "benign_field-0"]
-    results = [scoring.run_case(cases[i], spec, baseline.repair) for i in ids]
+    results = [scoring.run_case(cases[i], spec, routing.ruled(baseline.repair)) for i in ids]
     s = scoring.summarise(results, "dev", "baseline")
     assert s["repair_success"] == {"correct": 1, "of": 2, "rate": 0.5}
     assert s["repairable_answered_with_issue"] == {"count": 1, "of": 2, "rate": 0.5}
@@ -68,6 +69,7 @@ def test_summary_counts(cases: dict[str, Case], spec: PipelineSpec):
         "cases": 1,
         "correct": 0,
         "detected": 1,
+        "decided_by": {"baseline": 1},
     }
     assert [f["id"] for f in s["failures"]] == ["renamed_field-0"]
 
@@ -88,3 +90,13 @@ def test_a_repairer_gets_the_batch_its_checks_were_computed_on(spec: PipelineSpe
         again = catalog.run_engine(spec, seen[0], case.batch_seen).checks
         volume = next(c for c in again if c.name == "volume")
         assert volume.level != "fail", (case.id, volume.detail)
+
+
+def test_the_summary_says_who_decided_each_case(cases: dict[str, Case], spec: PipelineSpec):
+    decide = routing.ruled(baseline.repair)
+    results = [scoring.run_case(cases[i], spec, decide) for i in ("spike-0", "renamed_field-1")]
+    results.append(scoring.run_case(cases["benign_field-0"], spec, decide))
+    s = scoring.summarise(results, "dev", "baseline")
+    assert [r.decided_by for r in results] == ["rule", "baseline", None]
+    assert s["decided_by"] == {"baseline": 1, "rule": 1}
+    assert s["per_family"]["spike"]["decided_by"] == {"rule": 1}

@@ -20,7 +20,7 @@ from pothole.budget.limits import DEFAULT_LIMITS, call_max_cost
 from pothole.drills import catalog, judge
 from pothole.llm.client import LLMClient
 from pothole.logs import get_logger
-from pothole.repair import agent
+from pothole.repair import agent, routing
 from pothole.repair.outcome import RepairOutcome
 from pothole.repair.sink import Filed
 from pothole.runrecord import RepairRecord
@@ -141,7 +141,11 @@ def real_repair(
     paid = False
     try:
         outcome = with_timeout(
-            lambda: agent.repair(spec, rows, failing, fields, client, now=now), timeout_s
+            lambda: (
+                routing.rule_outcome(failing)
+                or agent.repair(spec, rows, failing, fields, client, now=now)
+            ),
+            timeout_s,
         )
         spend.add(outcome.cost)
         paid = True
@@ -181,8 +185,11 @@ def drill(
         failing = [c for c in checks if c.level == "fail"]
         strings: list[dict[str, str]] = [{k: str(v) for k, v in r.items()} for r in rows]
         outcome = with_timeout(
-            lambda: agent.repair(
-                spec, strings, failing, fields, client, now=now, history=catalog.history()
+            lambda: (
+                routing.rule_outcome(failing)
+                or agent.repair(
+                    spec, strings, failing, fields, client, now=now, history=catalog.history()
+                )
             ),
             timeout_s,
         )

@@ -71,7 +71,17 @@ def test_the_run_writes_every_file(tmp_path, three):
     out = tmp_path / "results" / "r1"
     rows = [json.loads(x) for x in (out / "outcomes.jsonl").read_text().splitlines()]
     assert [r["id"] for r in rows] == IDS
-    assert set(rows[0]) == {"id", "family", "action", "ops", "reason", "cost", "seconds", "commit"}
+    assert set(rows[0]) == {
+        "id",
+        "family",
+        "action",
+        "ops",
+        "reason",
+        "cost",
+        "seconds",
+        "commit",
+        "decided_by",
+    }
     assert len((out / "verdicts.jsonl").read_text().splitlines()) == 3
     assert {p.name for p in (out / "traces").iterdir()} == {f"{i}.json" for i in IDS}
     assert json.loads((out / "summary.json").read_text())["mean_seconds_per_case"] is not None
@@ -155,6 +165,7 @@ def test_the_baseline_runs_free_and_scores_like_the_stored_summary(tmp_path, thr
     summary = go(tmp_path, lambda case: baseline.repair, three, None, system="baseline")
     assert summary["total_cost"] == "0" and summary["system"] == "baseline"
     assert summary["per_family"]["benign_field"]["correct"] == 1
+    assert summary["complete"] is False and summary["cases_expected"] == 42
 
 
 class Model:
@@ -276,3 +287,18 @@ def test_a_timed_out_case_keeps_the_calls_that_returned(tmp_path, three):
         (tmp_path / "results" / "r1" / "traces" / "field_dropped-0.json").read_text()
     )
     assert "timed out" in trace["note"] and len(trace["trace"]) >= 1
+
+
+def test_a_run_is_continued_only_from_a_clean_tree_at_the_same_commit(tmp_path, three):
+    go(tmp_path, issuer(), three[:1], None, run_id="dirty-start", code=("abc123", True))
+    with pytest.raises(RefusedToStart, match="clean tree"):
+        go(tmp_path, issuer(), three, None, run_id="dirty-start")
+    go(tmp_path, issuer(), three[:1], None, run_id="dirty-now")
+    with pytest.raises(RefusedToStart, match="clean tree"):
+        go(tmp_path, issuer(), three, None, run_id="dirty-now", code=("abc123", True))
+    go(tmp_path, issuer(), three, None, run_id="dirty-now")  # clean and equal continues
+
+
+def test_a_summary_of_an_unfinished_run_says_so(tmp_path, three):
+    body = go(tmp_path, issuer(), three, None)
+    assert body["complete"] is False and body["cases_expected"] == 42 and body["cases"] == 3

@@ -25,7 +25,7 @@ from pothole.drills import catalog, scoring
 from pothole.drills.catalog import Case
 from pothole.drills.scoring import CaseResult, Repairer
 from pothole.llm.client import LLMClient
-from pothole.repair import agent
+from pothole.repair import agent, routing
 from pothole.repair.outcome import RepairOutcome
 from pothole.spec.model import PipelineSpec
 
@@ -141,6 +141,7 @@ def _outcome_line(
         "id": case.id,
         "family": case.family,
         "action": res.action,
+        "decided_by": out.decided_by if out else None,
         "ops": [o.model_dump() for o in out.ops] if out else [],
         "reason": out.reason if out and res.action != "crashed" else res.reason,
         "cost": str(cost),
@@ -167,12 +168,13 @@ def _one(
             raise RefusedToStart(str(err)) from err
     box: dict[str, RepairOutcome] = {}
     inner = make(case)
+    decide = routing.ruled(inner)  # a volume-only failure is the rule's; no repairer is called
 
     timed_out: list[bool] = []
 
     def timed(*args: Any) -> RepairOutcome:
         try:
-            box["outcome"] = with_timeout(lambda: inner(*args), timeout_s)
+            box["outcome"] = with_timeout(lambda: decide(*args), timeout_s)
         except StepTimeout:
             timed_out.append(True)
             raise
@@ -227,7 +229,8 @@ def summary_of(
 
 
 def write_summary(out_dir: Path, deployment: str | None = None) -> dict[str, Any]:
-    """Rebuild summary.json from the run's own files; no model is called."""
+    """Rebuild summary.json from the run's own files; no model is called. `complete` says whether
+    every case of the split in the catalog has a verdict."""
     meta = json.loads((out_dir / "meta.json").read_text())
     verdicts = _lines(out_dir / "verdicts.jsonl")
     done = {r["id"] for r in verdicts}
@@ -237,11 +240,15 @@ def write_summary(out_dir: Path, deployment: str | None = None) -> dict[str, Any
     if deployment is None and (out_dir / "summary.json").exists():
         deployment = json.loads((out_dir / "summary.json").read_text()).get("model_deployment")
     body = summary_of([CaseResult(**r) for r in verdicts], rows, meta, deployment or "unknown")
+    expected = sum(c.split == meta["split"] for c in catalog.load())
+    body.update(complete=len(verdicts) == expected, cases_expected=expected)
     (out_dir / "summary.json").write_text(json.dumps(body, indent=2) + "\n")
     return body
 
 
-def _check_same_run(old: dict[str, Any], new: dict[str, Any]) -> None:
+def _check_same_run(old: dict[str, Any], new: dict[str, Any], dirty: bool) -> None:
+    """A run continues only on the same clean commit: the tree was clean when it started and is
+    clean now, so the cases already scored were made by the code that finishes the run."""
     differs = [
         f"{k}: run has {old.get(k, 'not recorded')!r}, now {new[k]!r}"
         for k in ("split", "system", "deployment", "commit")
@@ -249,6 +256,11 @@ def _check_same_run(old: dict[str, Any], new: dict[str, Any]) -> None:
     ]
     if differs:
         raise RefusedToStart("run id already holds a different run; " + "; ".join(differs))
+    if old.get("dirty") is not False or dirty:
+        raise RefusedToStart(
+            "a run is continued only from a clean tree at the same commit; it had uncommitted "
+            f"changes at start: {old.get('dirty', 'not recorded')!r}, now: {dirty}"
+        )
 
 
 def run_split(
@@ -283,8 +295,8 @@ def run_split(
     }
     if (out_dir / "meta.json").exists():  # a resume: the run's record stays as it was first written
         meta = json.loads((out_dir / "meta.json").read_text())
-        _check_same_run(meta, {"split": split, "system": system, "deployment": deployment,
-                               "commit": commit})  # fmt: skip
+        same = {"split": split, "system": system, "deployment": deployment, "commit": commit}
+        _check_same_run(meta, same, dirty)
     _refuse_second_test_run(results, meta)
     done = {r["id"] for r in _lines(out_dir / "verdicts.jsonl")}
     remaining = [c for c in todo if c.id not in done]

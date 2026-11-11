@@ -23,7 +23,7 @@ class _Unfixable(Exception):
 
 
 def _issue(reason: str) -> RepairOutcome:
-    return RepairOutcome("issue", reason=reason)
+    return RepairOutcome("issue", reason=reason, decided_by="baseline")
 
 
 def _volume_is_high(check: CheckResult) -> bool:
@@ -115,8 +115,6 @@ def repair(
     if volume is not None:
         if not _volume_is_high(volume):
             return _issue("the source sent fewer rows than usual")
-        if len(failed) == 1:
-            return RepairOutcome("no_change", reason="more rows than usual, schema clean")
     try:
         edits = _derive(spec, [c for c in failed if c.name != "volume"], sample_rows, source_fields)
         if not edits:
@@ -135,4 +133,5 @@ def repair(
         ops=edits,
         regression=RegressionCase(cast(list[dict[str, str]], rows), expected),
         reason="fixed rules",
+        decided_by="baseline",
     )
