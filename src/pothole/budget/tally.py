@@ -99,6 +99,15 @@ class Tally:
         with self._locked() as fh:
             return any(f'"run_id": {json.dumps(run_id)}' in line for line in fh)
 
+    def headroom(self) -> Decimal:
+        """What local work may still reserve: the cap less the GitHub reserve and the total."""
+        return self.cap - GITHUB_RESERVE - self.total()
+
+    def check_open(self, *, after_credit: bool = False) -> None:
+        """Raise CutoffPassed when local AI work is no longer allowed without after_credit."""
+        if not after_credit and self._clock() >= CUTOFF:
+            raise CutoffPassed(f"after {CUTOFF.isoformat()} needs after_credit=True")
+
     def admit(
         self,
         run_id: str,

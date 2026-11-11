@@ -135,3 +135,17 @@ def test_a_test_not_marked_live_gets_the_temporary_tally(tmp_path):
     from pothole.budget import tally
 
     assert tally.DEFAULT_PATH == tmp_path / "spend.jsonl"
+
+
+def test_headroom_is_the_cap_less_the_reserve_and_what_is_spent(tmp_path: Path) -> None:
+    t = tally(tmp_path)
+    t.admit("a", Decimal("2"))
+    assert t.headroom() == Decimal("20")  # 25 - 3 kept for GitHub - 2
+
+
+def test_check_open_follows_the_cutoff(tmp_path: Path) -> None:
+    tally(tmp_path).check_open()
+    late = tally(tmp_path, CUTOFF)
+    with pytest.raises(CutoffPassed):
+        late.check_open()
+    late.check_open(after_credit=True)
