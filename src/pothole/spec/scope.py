@@ -30,7 +30,8 @@ def check(
     spec: PipelineSpec,
 ) -> list[str]:
     """Problems with the edits (empty means in scope): a column with no failed check on the seen
-    batch, or a `map_field` source the seen batch does not send."""
+    batch, a `map_field` source the seen batch does not send, or one the spec lists in
+    `source.ignore` (a known field that holds different data; a renamed field is a new one)."""
     allowed = failing_columns(spec, failing_checks)
     problems: list[str] = []
     for op in ops:
@@ -38,4 +39,8 @@ def check(
             problems.append(f"{op.op}: column {op.column!r} has no failed check")
         if isinstance(op, MapField) and op.source not in seen_fields:
             problems.append(f"map_field: the batch does not send {op.source!r}")
+        if isinstance(op, MapField) and op.source in spec.source.ignore:
+            problems.append(
+                f"map_field: {op.source!r} is a known field that holds other data, not a rename"
+            )
     return problems

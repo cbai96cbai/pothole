@@ -29,9 +29,9 @@ def all_batches() -> list[Batch]:
 
 @pytest.fixture(scope="session")
 def failing(all_batches: list[Batch]) -> Batch:
-    """A real recorded day in which the source renamed `agency` to `agency_name`."""
+    """A real recorded day in which the source renamed `agency` to `agency_acronym`."""
     day = next(b for b in all_batches if b.name == FAILING_DAY)
-    rows = [{("agency_name" if k == "agency" else k): v for k, v in r.items()} for r in day.rows]
+    rows = [{("agency_acronym" if k == "agency" else k): v for k, v in r.items()} for r in day.rows]
     return Batch(day.name, rows, day.now)
 
 

@@ -84,6 +84,11 @@ def apply(spec: PipelineSpec, ops: list[MapField | SetFormat | AddValueMapping])
                 raise ForbiddenEdit(
                     f"add_value_mapping: column {col.name} has no listed values to extend"
                 )
+            if op.value not in set(col.values.values()):
+                raise ForbiddenEdit(
+                    f"add_value_mapping: {op.value!r} is not an existing value of {col.name}; "
+                    f"choose one of {sorted(set(col.values.values()))}"
+                )
             col.values = {**col.values, op.raw: op.value}
     sources = [c.source for c in columns.values()]
     for source in sorted({s for s in sources if sources.count(s) > 1}):

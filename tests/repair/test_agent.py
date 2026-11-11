@@ -8,7 +8,7 @@ from pothole.spec import ops
 from pothole.spec.checks import CheckResult
 from pothole.spec.model import PipelineSpec
 
-RENAME = {"op": "map_field", "column": "agency", "source": "agency_name"}
+RENAME = {"op": "map_field", "column": "agency", "source": "agency_acronym"}
 
 
 def run(model: Scripted, spec: PipelineSpec, failing: Batch, checks: list[CheckResult],
@@ -27,7 +27,7 @@ def test_renamed_field_gets_a_patch_that_passes(spec, failing, failed_checks, fi
                     {
                         "action": "patch",
                         "ops": [RENAME],
-                        "reason": "The source renamed agency to agency_name.",
+                        "reason": "The source renamed agency to agency_acronym.",
                     },
                 )  # fmt: skip
             ),
@@ -156,7 +156,9 @@ def test_rows_that_send_the_edited_field_come_first(spec, failing):
     patched = ops.apply(spec, [ops.parse(RENAME)])
     ordered = sorted(r["unique_key"] for r in failing.rows)
     lacking = set(ordered[:3])
-    rows = [r if r["unique_key"] not in lacking else {**r, "agency_name": ""} for r in failing.rows]
+    rows = [
+        r if r["unique_key"] not in lacking else {**r, "agency_acronym": ""} for r in failing.rows
+    ]
     chosen = choose_rows(patched, rows, ["agency"])
     assert not lacking & {r["unique_key"] for r in chosen}
 
@@ -175,7 +177,7 @@ def test_tools_show_rows_and_fields_but_nothing_else(spec, failing, failed_check
     model = Scripted(
         [
             reply(
-                call("sample_rows", {"column": "agency_name", "only_failing": False, "n": 99}),
+                call("sample_rows", {"column": "agency_acronym", "only_failing": False, "n": 99}),
                 call("source_fields", {}, "c2"),
                 call("sample_rows", {"column": "nope", "only_failing": True, "n": 3}, "c3"),
             ),
@@ -185,7 +187,7 @@ def test_tools_show_rows_and_fields_but_nothing_else(spec, failing, failed_check
     run(model, spec, failing, failed_checks, fields)
     tool_msgs = [m["content"] for m in model.sent[1]["messages"] if m.get("role") == "tool"]
     assert tool_msgs[0].count('"key"') == 20
-    assert "agency_name" in tool_msgs[1]
+    assert "agency_acronym" in tool_msgs[1]
     assert tool_msgs[2].startswith("error:")
 
 

@@ -50,3 +50,23 @@ def test_scope_uses_the_seen_batch_of_a_case(cases: dict[str, Case], spec: Pipel
     checks = catalog.run_engine(spec, rows, case.batch_seen).checks
     fix = [ops.MapField(column="complaint_type", source="complaint_type_name")]
     assert scope.check(fix, checks, fields, spec) == []
+
+
+def test_a_known_unused_field_is_not_a_rename_target(spec: PipelineSpec):
+    failing = [_fail("schema", "required source fields missing from all 9 rows: agency")]
+    assert "agency_name" in spec.source.ignore
+    ignored = [ops.MapField(column="agency", source="agency_name")]
+    problems = scope.check(ignored, failing, ["agency_name"], spec)
+    assert len(problems) == 1 and "known field" in problems[0]
+    new = [ops.MapField(column="agency", source="agency_short")]
+    assert scope.check(new, failing, ["agency_short"], spec) == []
+
+
+def test_pointing_at_a_field_another_column_uses_stays_allowed(spec: PipelineSpec):
+    failing = [_fail("range:latitude"), _fail("range:longitude")]
+    swap = [
+        ops.MapField(column="latitude", source="longitude"),
+        ops.MapField(column="longitude", source="latitude"),
+    ]
+    assert scope.check(swap, failing, ["latitude", "longitude"], spec) == []
+    assert ops.apply(spec, swap).column("latitude").source == "longitude"

@@ -114,3 +114,10 @@ def test_two_ops_on_one_column_apply_in_order_and_the_last_wins(spec):
         ],
     )
     assert out.column("borough").values["X"] == "Bronx"
+
+
+def test_a_value_mapping_may_only_point_at_an_existing_value(spec):
+    with pytest.raises(ops.ForbiddenEdit, match="'QUEENS' is not an existing value of borough"):
+        ops.apply(spec, [ops.AddValueMapping(column="borough", raw="Queens ", value="QUEENS")])
+    out = ops.apply(spec, [ops.AddValueMapping(column="borough", raw="Queens ", value="Queens")])
+    assert out.column("borough").values["Queens "] == "Queens"

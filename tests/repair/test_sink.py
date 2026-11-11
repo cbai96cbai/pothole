@@ -23,7 +23,7 @@ ROOT = Path(__file__).parents[2]
 def make_outcome(spec: PipelineSpec, failing: Any, field: str, reason: str = "Renamed.") -> Any:
     """A patch for `agency` read from `field`, with a case of four rows that carry coordinates."""
     renamed = [
-        {("agency" if k == "agency_name" else k): v for k, v in r.items()} for r in failing.rows
+        {("agency" if k == "agency_acronym" else k): v for k, v in r.items()} for r in failing.rows
     ]
     rows = [
         {(field if k == "agency" else k): v for k, v in r.items()}
@@ -39,7 +39,7 @@ def make_outcome(spec: PipelineSpec, failing: Any, field: str, reason: str = "Re
 
 @pytest.fixture
 def outcome(spec: PipelineSpec, failing: Any) -> RepairOutcome:
-    return make_outcome(spec, failing, "agency_name")
+    return make_outcome(spec, failing, "agency_acronym")
 
 
 @pytest.fixture
@@ -53,16 +53,16 @@ def test_local_sink_writes_a_pull_request_and_an_issue(tmp_path, spec, outcome, 
     root = Path(pr.ref)
     assert re.fullmatch(r"drill/2026-11-08-[0-9a-f]{6}", pr.branch or "")
     folder = root / "drills" / "runs" / (pr.branch or "").replace("/", "-")
-    assert "agency_name" in (folder / "spec.yaml").read_text()
+    assert "agency_acronym" in (folder / "spec.yaml").read_text()
     assert (folder / "verdict.txt").read_text().strip() == "matches"
     assert not (root / render.SPEC_PATH).exists() and not (root / "tests").exists()
     body = (root / "PR.md").read_text()
     assert "Drill" in body and "matches" in body and "required" in body
     case = json.loads((folder / "case.json").read_text())
-    assert "agency_name" in case["spec"] and len(case["rows"]) == 4  # the spec it was written for
+    assert "agency_acronym" in case["spec"] and len(case["rows"]) == 4
     second = sink.open_pr(outcome, spec, results, [], day=DAY)
     assert "Proposed, not judged" in (Path(second.ref) / "PR.md").read_text()
-    assert "agency_name" in (Path(second.ref) / render.SPEC_PATH).read_text()
+    assert "agency_acronym" in (Path(second.ref) / render.SPEC_PATH).read_text()
     assert not (Path(second.ref) / "drills").exists()
     issue = sink.open_issue("Source down", results, day=DAY)
     assert "Source down" in Path(issue.ref).read_text()

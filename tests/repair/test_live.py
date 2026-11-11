@@ -25,5 +25,5 @@ def test_renamed_field_on_a_recorded_day(spec, failing, failed_checks, fields) -
     assert outcome.cost <= MAX_RUN
     assert outcome.action == "patch", outcome.reason
     assert [o.model_dump() for o in outcome.ops] == [
-        {"op": "map_field", "column": "agency", "source": "agency_name"}
+        {"op": "map_field", "column": "agency", "source": "agency_acronym"}
     ]
