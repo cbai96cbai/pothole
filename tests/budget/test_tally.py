@@ -129,3 +129,9 @@ def test_locked_across_instances(tmp_path: Path) -> None:
         th.join()
     assert results.count(True) == 7  # 22 // 3
     assert Tally(path).total() == Decimal("21")
+
+
+def test_a_test_not_marked_live_gets_the_temporary_tally(tmp_path):
+    from pothole.budget import tally
+
+    assert tally.DEFAULT_PATH == tmp_path / "spend.jsonl"

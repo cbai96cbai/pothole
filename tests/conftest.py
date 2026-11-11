@@ -38,11 +38,15 @@ def offline(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch) -> 
 
 
 @pytest.fixture(autouse=True)
-def isolated_state(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    """No test touches the real state directory or the real spend tally."""
+def isolated_state(
+    request: pytest.FixtureRequest, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> Path:
+    """No test touches the real state directory; only tests marked live reach the real spend
+    tally, because they spend real money and it must be counted."""
     state = tmp_path / "state"
     monkeypatch.setenv("POTHOLE_STATE", str(state))
-    monkeypatch.setattr("pothole.budget.tally.DEFAULT_PATH", tmp_path / "spend.jsonl")
+    if not request.node.get_closest_marker("live"):
+        monkeypatch.setattr("pothole.budget.tally.DEFAULT_PATH", tmp_path / "spend.jsonl")
     return state
 
 
