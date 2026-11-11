@@ -23,6 +23,10 @@
     "rate": 0.5
   },
   "crashed": 0,
+  "decided_by": {
+    "baseline": 20,
+    "rule": 7
+  },
   "detection_coverage_fault_cases": {
     "detected": 27,
     "of": 27,
@@ -38,37 +42,54 @@
       "expected": "patch",
       "cases": 6,
       "correct": 6,
-      "detected": 6
+      "detected": 6,
+      "decided_by": {
+        "baseline": 6
+      }
     },
     "latlon_swapped": {
       "expected": "patch",
       "cases": 6,
       "correct": 0,
-      "detected": 6
+      "detected": 6,
+      "decided_by": {
+        "baseline": 6
+      }
     },
     "null_flood": {
       "expected": "issue",
       "cases": 6,
       "correct": 6,
-      "detected": 6
+      "detected": 6,
+      "decided_by": {
+        "baseline": 6
+      }
     },
     "source_empty": {
       "expected": "issue",
       "cases": 6,
       "correct": 6,
-      "detected": 6
+      "detected": 6,
+      "decided_by": {
+        "baseline": 2,
+        "rule": 4
+      }
     },
     "spike": {
       "expected": "no_change",
       "cases": 3,
       "correct": 3,
-      "detected": 3
+      "detected": 3,
+      "decided_by": {
+        "rule": 3
+      }
     },
     "benign_field": {
       "expected": "nothing",
       "cases": 3,
       "correct": 3,
-      "detected": 3
+      "detected": 3,
+      "decided_by": {}
     }
   },
   "failures": [
@@ -79,7 +100,8 @@
       "detected": true,
       "action": "issue",
       "correct": false,
-      "reason": "expected a patch, got issue"
+      "reason": "expected a patch, got issue",
+      "decided_by": "baseline"
     },
     {
       "id": "latlon_swapped-1",
@@ -88,7 +110,8 @@
       "detected": true,
       "action": "issue",
       "correct": false,
-      "reason": "expected a patch, got issue"
+      "reason": "expected a patch, got issue",
+      "decided_by": "baseline"
     },
     {
       "id": "latlon_swapped-2",
@@ -97,7 +120,8 @@
       "detected": true,
       "action": "issue",
       "correct": false,
-      "reason": "expected a patch, got issue"
+      "reason": "expected a patch, got issue",
+      "decided_by": "baseline"
     },
     {
       "id": "latlon_swapped-3",
@@ -106,7 +130,8 @@
       "detected": true,
       "action": "issue",
       "correct": false,
-      "reason": "expected a patch, got issue"
+      "reason": "expected a patch, got issue",
+      "decided_by": "baseline"
     },
     {
       "id": "latlon_swapped-4",
@@ -115,7 +140,8 @@
       "detected": true,
       "action": "issue",
       "correct": false,
-      "reason": "expected a patch, got issue"
+      "reason": "expected a patch, got issue",
+      "decided_by": "baseline"
     },
     {
       "id": "latlon_swapped-5",
@@ -124,7 +150,26 @@
       "detected": true,
       "action": "issue",
       "correct": false,
-      "reason": "expected a patch, got issue"
+      "reason": "expected a patch, got issue",
+      "decided_by": "baseline"
     }
-  ]
+  ],
+  "run_id": "baseline-test",
+  "system": "baseline",
+  "rerun_test": false,
+  "total_cost": "0",
+  "cases_that_called_the_repairer": 27,
+  "cost_per_case": "0.00000",
+  "mean_seconds_per_case": 0.25,
+  "median_seconds_per_case": 0.07,
+  "averages_over": "cases that called the repairer (benign controls excluded)",
+  "model_deployment": "pothole-agent",
+  "run_date": "2026-11-11",
+  "code_commit": "5d6375f17569c449e35be2065fb16ec268d0c552",
+  "code_commits": [
+    "5d6375f17569c449e35be2065fb16ec268d0c552"
+  ],
+  "code_dirty_at_start": false,
+  "complete": true,
+  "cases_expected": 30
 }
