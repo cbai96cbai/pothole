@@ -56,10 +56,14 @@ def history() -> list[int]:
     return [len(clean_batch(d)) for d in days()]
 
 
+def engine_time(day: str) -> datetime:
+    """When the engine reads a recorded day: 30 hours after the day ends, so the day is stale."""
+    return datetime.strptime(day, "%Y-%m-%d") + timedelta(days=1, hours=30)
+
+
 def run_engine(spec: PipelineSpec, rows: list[Row], day: str) -> engine.EngineResult:
-    """The engine on one recorded day, at the day's end plus 30 hours."""
-    now = datetime.strptime(day, "%Y-%m-%d") + timedelta(days=1, hours=30)
-    return engine.run(spec, cast(list[dict[str, str]], rows), history(), now)
+    """The engine on one recorded day, at `engine_time`."""
+    return engine.run(spec, cast(list[dict[str, str]], rows), history(), engine_time(day))
 
 
 def load_spec() -> PipelineSpec:

@@ -250,3 +250,22 @@ def compare_command(
         raise typer.Exit(1) from exc
     (results / f"compare-{a}-{b}.json").write_text(json.dumps(body, indent=2) + "\n")
     typer.echo(compare.render(body))
+
+
+@app.command("eval-summary")
+def eval_summary_command(
+    run_id: Annotated[str, typer.Option(help="The run folder under results/.")],
+    results: Annotated[Path, typer.Option(help="Where run folders are.")] = Path("results"),
+) -> None:
+    """Rebuild a run's summary.json from its own files; calls no model."""
+    from pothole.drills import evaluate
+
+    try:
+        body = evaluate.write_summary(results / run_id, None)
+    except FileNotFoundError as exc:
+        typer.echo(f"no such run: {exc.filename}", err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(
+        f"{body['cases']} cases, cost {body['total_cost']}, per case {body['cost_per_case']} "
+        f"over {body['cases_that_called_the_repairer']} that called the repairer"
+    )

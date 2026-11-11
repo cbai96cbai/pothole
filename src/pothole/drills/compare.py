@@ -2,6 +2,7 @@
 
 import json
 import random
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -48,7 +49,28 @@ def bootstrap(per_family: dict[str, list[int]]) -> tuple[float, float]:
     return means[int(0.025 * RESAMPLES)], means[int(0.975 * RESAMPLES) - 1]
 
 
-def compare(a_dir: Path, b_dir: Path) -> dict[str, Any]:
+def _catalog_size(split: str) -> int:
+    from pothole.drills import catalog
+
+    return sum(c.split == split for c in catalog.load())
+
+
+def _complete(run_dir: Path, size: Callable[[str], int]) -> str:
+    """The run's split, or an error when it has no summary or did not finish every case."""
+    path = run_dir / "summary.json"
+    if not path.exists():
+        raise ValueError(f"{run_dir.name} is not finished: no summary.json")
+    summary = json.loads(path.read_text())
+    have, want = len(load_verdicts(run_dir)), size(summary["split"])
+    if have != want or summary["cases"] != want:
+        raise ValueError(f"{run_dir.name} is incomplete: {have} of {want} cases")
+    return str(summary["split"])
+
+
+def compare(a_dir: Path, b_dir: Path, size: Callable[[str], int] = _catalog_size) -> dict[str, Any]:
+    splits = {_complete(a_dir, size), _complete(b_dir, size)}
+    if len(splits) > 1:
+        raise ValueError(f"the runs are on different splits: {', '.join(sorted(splits))}")
     a, b = load_verdicts(a_dir), load_verdicts(b_dir)
     paired = sorted(set(a) & set(b))
     if not paired:

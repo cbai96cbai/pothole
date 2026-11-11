@@ -99,9 +99,13 @@ class Tally:
         with self._locked() as fh:
             return any(f'"run_id": {json.dumps(run_id)}' in line for line in fh)
 
+    def _limit(self, github: bool) -> Decimal:
+        """What the total may reach: the cap for GitHub runs, the cap less the reserve for local work."""
+        return self.cap if github else self.cap - GITHUB_RESERVE
+
     def headroom(self) -> Decimal:
-        """What local work may still reserve: the cap less the GitHub reserve and the total."""
-        return self.cap - GITHUB_RESERVE - self.total()
+        """What local work may still reserve before the total reaches its limit."""
+        return self._limit(False) - self.total()
 
     def check_open(self, *, after_credit: bool = False) -> None:
         """Raise CutoffPassed when local AI work is no longer allowed without after_credit."""
@@ -123,7 +127,7 @@ class Tally:
         """
         if not github and not after_credit and self._clock() >= CUTOFF:
             raise CutoffPassed(f"run {run_id}: after {CUTOFF.isoformat()} needs after_credit=True")
-        limit = self.cap if github else self.cap - GITHUB_RESERVE
+        limit = self._limit(github)
         with self._locked() as fh:
             total = self._total(fh)
             if total + maximum > limit:

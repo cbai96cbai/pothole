@@ -43,6 +43,7 @@ def issuer(cost: str = "0.01", seen: list[str] | None = None) -> Any:
 def go(tmp_path: Path, make: Any, cases: list[Case], t: Tally | None, **kw: Any) -> dict[str, Any]:
     kw.setdefault("run_id", "r1")
     kw.setdefault("split", "dev")
+    kw.setdefault("code", ("abc123", False))
     return run_split(
         kw.pop("split"), kw.pop("system", "agent"), kw.pop("run_id"), tmp_path / "results", make,
         tally=t, deployment="dep", today=TODAY, cases=cases, **kw,
@@ -70,7 +71,7 @@ def test_the_run_writes_every_file(tmp_path, three):
     out = tmp_path / "results" / "r1"
     rows = [json.loads(x) for x in (out / "outcomes.jsonl").read_text().splitlines()]
     assert [r["id"] for r in rows] == IDS
-    assert set(rows[0]) == {"id", "family", "action", "ops", "reason", "cost", "seconds"}
+    assert set(rows[0]) == {"id", "family", "action", "ops", "reason", "cost", "seconds", "commit"}
     assert len((out / "verdicts.jsonl").read_text().splitlines()) == 3
     assert {p.name for p in (out / "traces").iterdir()} == {f"{i}.json" for i in IDS}
     assert json.loads((out / "summary.json").read_text())["mean_seconds_per_case"] is not None
@@ -185,3 +186,93 @@ def test_the_agent_adapter_gives_the_agent_the_case_sample_and_reports_its_cost(
         (tmp_path / "results" / "r1" / "traces" / "field_dropped-0.json").read_text()
     )
     assert len(trace["trace"]) == 1
+
+
+def test_meta_and_every_outcome_line_name_the_code(tmp_path, three):
+    summary = go(tmp_path, issuer(), three, None, code=("c1", True))
+    out = tmp_path / "results" / "r1"
+    meta = json.loads((out / "meta.json").read_text())
+    assert (meta["commit"], meta["dirty"], meta["deployment"]) == ("c1", True, "dep")
+    lines = [json.loads(x) for x in (out / "outcomes.jsonl").read_text().splitlines()]
+    assert {r["commit"] for r in lines} == {"c1"}
+    assert summary["code_commit"] == "c1" and summary["code_dirty_at_start"] is True
+
+
+def test_a_resume_must_match_the_run_and_leaves_meta_alone(tmp_path, three):
+    go(tmp_path, issuer(), three[:1], None, rerun_test=True)
+    meta_path = tmp_path / "results" / "r1" / "meta.json"
+    before = meta_path.read_text()
+    for change in ({"split": "test"}, {"system": "baseline"}, {"code": ("other", False)}):
+        with pytest.raises(RefusedToStart, match="different run"):
+            go(tmp_path, issuer(), three, None, **change)
+    with pytest.raises(RefusedToStart, match="deployment"):
+        run_split("dev", "agent", "r1", tmp_path / "results", issuer(), tally=None,
+                  deployment="other", today=TODAY, cases=three, code=("abc123", False))  # fmt: skip
+    assert meta_path.read_text() == before
+    go(tmp_path, issuer(), three, None, today=None) if False else go(
+        tmp_path, issuer(), three, None
+    )
+    assert meta_path.read_text() == before  # rerun_test and run_date kept from the first start
+
+
+def test_averages_count_only_cases_that_called_the_repairer(tmp_path, three):
+    summary = go(tmp_path, issuer("0.03"), three, tally(tmp_path))
+    assert summary["total_cost"] == "0.06"
+    assert summary["cases_that_called_the_repairer"] == 2 and summary["cases"] == 3
+    assert summary["cost_per_case"] == "0.03000"
+    assert "benign controls excluded" in summary["averages_over"]
+
+
+def test_the_summary_is_rebuilt_from_the_files_without_a_model(tmp_path, three):
+    go(tmp_path, issuer(), three, None)
+    out = tmp_path / "results" / "r1"
+    first = json.loads((out / "summary.json").read_text())
+    (out / "summary.json").unlink()
+    again = evaluate.write_summary(out)
+    assert again == first
+
+
+def test_a_mixed_set_of_commits_is_called_mixed(tmp_path, three):
+    go(tmp_path, issuer(), three, None)
+    out = tmp_path / "results" / "r1"
+    lines = [json.loads(x) for x in (out / "outcomes.jsonl").read_text().splitlines()]
+    lines[0]["commit"] = "zzz"
+    (out / "outcomes.jsonl").write_text("".join(json.dumps(r) + "\n" for r in lines))
+    body = evaluate.write_summary(out)
+    assert body["code_commit"] == "mixed" and body["code_commits"] == ["abc123", "zzz"]
+
+
+def test_the_baseline_test_run_is_also_once(tmp_path, cases):
+    one = [cases["comma_thousands-0"]]
+    go(tmp_path, issuer(), one, None, split="test", system="baseline", run_id="b1")
+    with pytest.raises(RefusedToStart, match="--rerun-test"):
+        go(tmp_path, issuer(), one, None, split="test", system="baseline", run_id="b2")
+
+
+def test_a_timed_out_case_keeps_the_calls_that_returned(tmp_path, three):
+    release = threading.Event()
+
+    class Slow(Model):
+        def call(self, *a: Any, **k: Any) -> Any:
+            if self.sent:
+                release.wait(5)
+            return super().call(*a, **k)
+
+    model = Slow()
+    # a model whose first reply is not a decision keeps the loop going into a hanging second call
+    first = model.call
+
+    def not_a_decision(*a: Any, **k: Any) -> Any:
+        res = first(*a, **k)
+        return CallResult({"role": "assistant", "content": "thinking"}, res.usage, "stop", 0.0)
+
+    model.call = not_a_decision  # type: ignore[method-assign]
+    try:
+        go(tmp_path, lambda c: evaluate.agent_repairer(c, model), three[1:2], tally(tmp_path),  # type: ignore[arg-type]
+           timeout_s=0.3)  # fmt: skip
+    finally:
+        release.set()
+    trace = json.loads(
+        (tmp_path / "results" / "r1" / "traces" / "field_dropped-0.json").read_text()
+    )
+    assert "timed out" in trace["note"] and len(trace["trace"]) >= 1
