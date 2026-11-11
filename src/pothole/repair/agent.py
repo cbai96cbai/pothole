@@ -46,7 +46,8 @@ class _Run:
         ]
 
     def _issue(self, reason: str) -> RepairOutcome:
-        return RepairOutcome("issue", [], None, reason, self.trace, self.cost)
+        """An issue the code files because the model gave no valid decision."""
+        return RepairOutcome("issue", [], None, reason, self.trace, self.cost, decided_by="code")
 
     def _decided(self, sub: Submission) -> RepairOutcome:
         return RepairOutcome(sub.action, sub.ops, sub.regression, sub.reason, self.trace, self.cost)

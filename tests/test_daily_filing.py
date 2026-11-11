@@ -35,3 +35,18 @@ def test_a_patch_that_ended_as_an_issue_is_recorded_as_an_issue(drill: bool) -> 
     )
     assert record.action == "issue" and record.url == "https://github.com/o/r/issues/1"
     assert record.not_judged is False
+
+
+@pytest.mark.parametrize("drill", [False, True])
+def test_a_patch_the_sink_filed_as_an_issue_is_decided_by_the_code(drill: bool) -> None:
+    record = dailyai._file(
+        FailedPatchSink(),  # type: ignore[arg-type]
+        RepairOutcome("patch", decided_by="agent"),
+        None,  # type: ignore[arg-type]
+        [],
+        [],
+        DAY,
+        drill,
+        "correct: x" if drill else None,
+    )
+    assert record.decided_by == "code"

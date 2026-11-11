@@ -110,3 +110,12 @@ def test_a_crashed_case_is_decided_by_code(cases: dict[str, Case], spec: Pipelin
     res = scoring.run_case(cases["renamed_field-1"], spec, boom)
     assert (res.action, res.decided_by) == ("crashed", "code")
     assert scoring.summarise([res], "dev", "agent")["decided_by"] == {"code": 1}
+
+
+def test_a_case_the_code_decided_counts_against_the_repairer(spec: PipelineSpec, cases):
+    def fallback(*_: Any) -> RepairOutcome:
+        return RepairOutcome("issue", decided_by="code")
+
+    result = scoring.run_case(cases["renamed_field-0"], spec, fallback)
+    s = scoring.summarise([result], "dev", "agent")
+    assert s["repairer_decided"]["repair_success"] == {"correct": 0, "of": 1, "rate": 0.0}

@@ -108,7 +108,7 @@ def _file(
     if outcome.action == "patch":
         filed = sink.open_pr(outcome, spec, before, after, day=day, drill=drill, verdict=verdict)
         if filed.kind != "pr":  # gates or pull request creation failed: only an issue exists
-            return RepairRecord("issue", drill, filed.ref, verdict, False, by)
+            return RepairRecord("issue", drill, filed.ref, verdict, False, "code")
         return RepairRecord("patch", drill, filed.ref, verdict, not drill, by)
     if outcome.action == "issue":
         filed = sink.open_issue(outcome.reason or "no reason given", before, day=day, drill=drill)
