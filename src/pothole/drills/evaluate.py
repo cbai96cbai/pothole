@@ -23,6 +23,7 @@ from pothole.budget.tally import BudgetExceeded, CutoffPassed, Tally
 from pothole.dailyai import StepTimeout, with_timeout
 from pothole.drills import catalog, scoring
 from pothole.drills.catalog import Case
+from pothole.drills.runguard import RefusedToStart, check_same_run, refuse_second_test_run
 from pothole.drills.scoring import CaseResult
 from pothole.llm.client import LLMClient
 from pothole.repair import agent
@@ -33,10 +34,6 @@ from pothole.spec.model import PipelineSpec
 CASE_TIMEOUT_S = 120.0
 CASE_CALLS = 6
 CASE_MAX = CASE_CALLS * call_max_cost(DEFAULT_LIMITS)
-
-
-class RefusedToStart(Exception):
-    """The run may not begin: the numbers or the rules say so."""
 
 
 def needs_repairer(case: Case) -> bool:
@@ -102,37 +99,6 @@ def _lines(path: Path) -> list[dict[str, Any]]:
 def _append(path: Path, record: dict[str, Any]) -> None:
     with path.open("a") as fh:
         fh.write(json.dumps(record, sort_keys=True) + "\n")
-
-
-def _earlier_test_runs(results: Path, system: str, run_id: str) -> list[str]:
-    """Every other run folder that scored the test split for this system. A folder with a meta
-    says so there; one without (the legacy baseline) says so in its summary."""
-    found = []
-    for folder in sorted(p for p in results.iterdir() if p.is_dir()) if results.exists() else []:
-        meta, summary = folder / "meta.json", folder / "summary.json"
-        if meta.exists():
-            record = json.loads(meta.read_text())
-            split, who = record["split"], record["system"]
-        elif summary.exists():
-            record = json.loads(summary.read_text())
-            split, who = record.get("split"), record.get("system") or record.get("repairer")
-        else:
-            continue
-        if split == "test" and who == system and folder.name != run_id:
-            found.append(folder.name)
-    return found
-
-
-def _refuse_second_test_run(results: Path, meta: dict[str, Any]) -> None:
-    """Guards the start of a new run; continuing a recorded run is never refused here."""
-    if meta["split"] != "test":
-        return
-    others = _earlier_test_runs(results, meta["system"], meta["run_id"])
-    if others and not meta["rerun_test"]:
-        raise RefusedToStart(
-            f"the test split was already run by the {meta['system']} system ({', '.join(others)}); "
-            "a second run needs a different --run-id and --rerun-test"
-        )
 
 
 def _preflight(tally: Tally | None, remaining: int, after_credit: bool) -> None:
@@ -264,23 +230,6 @@ def write_summary(out_dir: Path, deployment: str | None = None) -> dict[str, Any
     return body
 
 
-def _check_same_run(old: dict[str, Any], new: dict[str, Any], dirty: bool) -> None:
-    """A run continues only on the same clean commit: the tree was clean when it started and is
-    clean now, so the cases already scored were made by the code that finishes the run."""
-    differs = [
-        f"{k}: run has {old.get(k, 'not recorded')!r}, now {new[k]!r}"
-        for k in ("split", "system", "deployment", "commit")
-        if old.get(k) != new[k]
-    ]
-    if differs:
-        raise RefusedToStart("run id already holds a different run; " + "; ".join(differs))
-    if old.get("dirty") is not False or dirty:
-        raise RefusedToStart(
-            "a run is continued only from a clean tree at the same commit; it had uncommitted "
-            f"changes at start: {old.get('dirty', 'not recorded')!r}, now: {dirty}"
-        )
-
-
 def run_split(
     split: str,
     system: str,
@@ -314,9 +263,9 @@ def run_split(
     if (out_dir / "meta.json").exists():  # a resume: the run's record stays as it was first written
         meta = json.loads((out_dir / "meta.json").read_text())
         same = {"split": split, "system": system, "deployment": deployment, "commit": commit}
-        _check_same_run(meta, same, dirty)
+        check_same_run(meta, same, dirty)
     else:
-        _refuse_second_test_run(results, meta)
+        refuse_second_test_run(results, meta)
     done = {r["id"] for r in _lines(out_dir / "verdicts.jsonl")}
     remaining = [c for c in todo if c.id not in done]
     _preflight(tally, sum(needs_repairer(c) for c in remaining), after_credit)

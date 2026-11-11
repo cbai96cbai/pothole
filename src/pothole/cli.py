@@ -202,7 +202,7 @@ def eval_repair_command(
     from datetime import date
 
     from pothole.budget.tally import Tally
-    from pothole.drills import baseline, evaluate
+    from pothole.drills import baseline, evaluate, runguard
     from pothole.drills.catalog import Case
     from pothole.llm.client import LLMClient
     from pothole.repair.decide import Repairer
@@ -226,7 +226,7 @@ def eval_repair_command(
             today=date.today(), timeout_s=case_timeout, after_credit=after_credit,
             rerun_test=rerun_test,
         )  # fmt: skip
-    except evaluate.RefusedToStart as exc:
+    except runguard.RefusedToStart as exc:
         typer.echo(f"refusing to run: {exc}", err=True)
         raise typer.Exit(1) from exc
     typer.echo(

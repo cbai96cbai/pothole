@@ -10,7 +10,8 @@ import pytest
 from pothole.budget.tally import CUTOFF, Tally
 from pothole.drills import baseline, evaluate
 from pothole.drills.catalog import Case
-from pothole.drills.evaluate import CASE_MAX, RefusedToStart, run_split
+from pothole.drills.evaluate import CASE_MAX, run_split
+from pothole.drills.runguard import RefusedToStart
 from pothole.llm.client import CallResult, Usage
 from pothole.repair.outcome import RepairOutcome
 

@@ -2,12 +2,11 @@
 
 from collections import defaultdict
 from dataclasses import asdict, dataclass
-from functools import partial
 from typing import Any
 
 from pothole.drills import catalog, faults, judge
 from pothole.drills.catalog import Case
-from pothole.repair.decide import Repairer, decide
+from pothole.repair.decide import Repairer
 from pothole.repair.outcome import RepairOutcome
 from pothole.spec.model import PipelineSpec
 
@@ -116,10 +115,3 @@ def summarise(results: list[CaseResult], split: str, who: str) -> dict[str, Any]
         },
         "failures": [asdict(r) for r in results if not r.correct],
     }
-
-
-def score(split: str, repairer: Repairer, who: str) -> dict[str, Any]:
-    spec = catalog.load_spec()
-    cases = [c for c in catalog.load() if c.split == split]
-    through_door = partial(decide, repairer)
-    return summarise([run_case(c, spec, through_door) for c in cases], split, who)
