@@ -20,7 +20,13 @@ def load_verdicts(run_dir: Path) -> dict[str, dict[str, Any]]:
     path = run_dir / "verdicts.jsonl"
     if not path.exists():
         raise FileNotFoundError(f"no verdicts in {run_dir}")
-    return {r["id"]: r for r in map(json.loads, path.read_text().splitlines()) if r}
+    records = [r for r in map(json.loads, path.read_text().splitlines()) if r]
+    seen: set[str] = set()
+    for r in records:
+        if r["id"] in seen:
+            raise ValueError(f"{run_dir.name} lists a case twice: {r['id']}")
+        seen.add(r["id"])
+    return {r["id"]: r for r in records}
 
 
 def _difference(a: dict[str, Any], b: dict[str, Any], ids: list[str]) -> dict[str, Any] | None:
@@ -49,32 +55,42 @@ def bootstrap(per_family: dict[str, list[int]]) -> tuple[float, float]:
     return means[int(0.025 * RESAMPLES)], means[int(0.975 * RESAMPLES) - 1]
 
 
-def _catalog_size(split: str) -> int:
+def _catalog_ids(split: str) -> set[str]:
     from pothole.drills import catalog
 
-    return sum(c.split == split for c in catalog.load())
+    return {c.id for c in catalog.load() if c.split == split}
 
 
-def _complete(run_dir: Path, size: Callable[[str], int]) -> str:
-    """The run's split, or an error when it has no summary or did not finish every case."""
+def _complete(run_dir: Path, case_ids: Callable[[str], set[str]]) -> str:
+    """The run's split, or an error when it has no summary or its verdicts are not exactly the
+    split's cases."""
     path = run_dir / "summary.json"
     if not path.exists():
         raise ValueError(f"{run_dir.name} is not finished: no summary.json")
     summary = json.loads(path.read_text())
-    have, want = len(load_verdicts(run_dir)), size(summary["split"])
-    if have != want or summary["cases"] != want:
-        raise ValueError(f"{run_dir.name} is incomplete: {have} of {want} cases")
+    have, want = set(load_verdicts(run_dir)), case_ids(summary["split"])
+    if missing := sorted(want - have):
+        raise ValueError(
+            f"{run_dir.name} is incomplete: {len(have)} of {len(want)} cases; missing {missing[0]}"
+        )
+    if extra := sorted(have - want):
+        raise ValueError(f"{run_dir.name} has a case that is not in the split: {extra[0]}")
+    if summary["cases"] != len(want):
+        raise ValueError(
+            f"{run_dir.name} is incomplete: its summary counts {summary['cases']} cases"
+        )
     return str(summary["split"])
 
 
-def compare(a_dir: Path, b_dir: Path, size: Callable[[str], int] = _catalog_size) -> dict[str, Any]:
-    splits = {_complete(a_dir, size), _complete(b_dir, size)}
+def compare(
+    a_dir: Path, b_dir: Path, case_ids: Callable[[str], set[str]] = _catalog_ids
+) -> dict[str, Any]:
+    """Two runs, each holding exactly the split's cases once, so every case pairs."""
+    splits = {_complete(a_dir, case_ids), _complete(b_dir, case_ids)}
     if len(splits) > 1:
         raise ValueError(f"the runs are on different splits: {', '.join(sorted(splits))}")
     a, b = load_verdicts(a_dir), load_verdicts(b_dir)
     paired = sorted(set(a) & set(b))
-    if not paired:
-        raise ValueError("the two runs share no cases")
     body: dict[str, Any] = {
         "a": a_dir.name,
         "b": b_dir.name,

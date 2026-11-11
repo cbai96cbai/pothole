@@ -7,9 +7,11 @@ from pothole.drills import compare
 
 
 def cmp(root: Path) -> dict:
-    """Compare agent with base, taking the agent's case count as the size of the split."""
-    want = len((root / "agent" / "verdicts.jsonl").read_text().splitlines())
-    return compare.compare(root / "agent", root / "base", size=lambda split: want)
+    """Compare agent with base, taking the agent's case ids as the split's catalog ids."""
+    ids = {
+        json.loads(x)["id"] for x in (root / "agent" / "verdicts.jsonl").read_text().splitlines()
+    }
+    return compare.compare(root / "agent", root / "base", case_ids=lambda split: ids)
 
 
 def write(
@@ -73,21 +75,52 @@ def test_few_families_are_said_to_be_wide(tmp_path):
     assert "only 3 families" in compare.render(body)
 
 
-def test_only_cases_both_runs_scored_are_paired(tmp_path):
+def test_equal_counts_with_a_wrong_id_is_refused_naming_the_run_and_the_id(tmp_path):
     runs(tmp_path, families=3, per=2, a_wins=2)
     base = tmp_path / "base" / "verdicts.jsonl"
     lines = base.read_text().splitlines()
     lines[0] = lines[0].replace('"f0-0"', '"other"')  # same size, one case differs
     base.write_text("\n".join(lines) + "\n")
-    body = cmp(tmp_path)
-    assert body["unpaired"] == {"a_only": 1, "b_only": 1} and body["paired_cases"] == 7
-
-
-def test_runs_with_nothing_in_common_are_an_error(tmp_path):
-    write(tmp_path, "agent", [("x", "f", "patch", True)])
-    write(tmp_path, "base", [("y", "f", "patch", True)])
-    with pytest.raises(ValueError, match="no cases"):
+    with pytest.raises(ValueError, match=r"base .*\bf0-0\b|base .*\bother\b"):
         cmp(tmp_path)
+
+
+def test_a_missing_id_is_named(tmp_path):
+    runs(tmp_path, families=2, per=2, a_wins=1)
+    base = tmp_path / "base" / "verdicts.jsonl"
+    base.write_text("\n".join(base.read_text().splitlines()[1:]) + "\n")
+    with pytest.raises(ValueError, match=r"base.*missing f0-0"):
+        cmp(tmp_path)
+
+
+def test_an_extra_id_is_named(tmp_path):
+    runs(tmp_path, families=2, per=2, a_wins=1)
+    with (tmp_path / "base" / "verdicts.jsonl").open("a") as fh:
+        fh.write(json.dumps({"id": "zzz", "family": "f", "expected": "patch", "correct": True}))
+    with pytest.raises(ValueError, match=r"base.*not in the split: zzz"):
+        cmp(tmp_path)
+
+
+def test_a_duplicated_id_is_refused_naming_it(tmp_path):
+    runs(tmp_path, families=2, per=2, a_wins=1)
+    agent = tmp_path / "agent" / "verdicts.jsonl"
+    lines = agent.read_text().splitlines()
+    agent.write_text("\n".join([*lines, lines[0]]) + "\n")
+    with pytest.raises(ValueError, match=r"agent.*twice: f0-0"):
+        cmp(tmp_path)
+
+
+def test_the_catalog_decides_what_the_split_holds(tmp_path):
+    runs(tmp_path, families=2, per=2, a_wins=1)  # ids that are not the dev split's cases
+    with pytest.raises(ValueError, match="agent"):
+        compare.compare(tmp_path / "agent", tmp_path / "base")
+
+
+def test_the_two_real_final_test_runs_still_compare():
+    results = Path(__file__).parents[2] / "results"
+    body = compare.compare(results / "agent-final-test", results / "baseline-final-test")
+    assert body["paired_cases"] == 30
+    assert body["unpaired"] == {"a_only": 0, "b_only": 0}
 
 
 def test_an_unfinished_run_is_refused(tmp_path):
