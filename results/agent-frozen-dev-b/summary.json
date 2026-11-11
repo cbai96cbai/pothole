@@ -1,0 +1,101 @@
+{
+  "repairer": "agent",
+  "split": "dev",
+  "cases": 13,
+  "repair_success": {
+    "correct": 12,
+    "of": 13,
+    "rate": 0.9231
+  },
+  "issue_accuracy": null,
+  "no_change_accuracy": null,
+  "repairable_answered_with_issue": {
+    "count": 1,
+    "of": 13,
+    "rate": 0.0769
+  },
+  "crashed": 0,
+  "decided_by": {
+    "agent": 13
+  },
+  "repairer_decided": {
+    "repair_success": {
+      "correct": 12,
+      "of": 13,
+      "rate": 0.9231
+    },
+    "issue_accuracy": null,
+    "no_change_accuracy": null,
+    "note": "the same rates over the cases a repairer decided, without rule-decided ones"
+  },
+  "detection_coverage_fault_cases": {
+    "detected": 13,
+    "of": 13,
+    "rate": 1.0
+  },
+  "detection_coverage_benign_control": {
+    "detected": 0,
+    "of": 0,
+    "rate": null
+  },
+  "per_family": {
+    "renamed_field": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "agent": 6
+      }
+    },
+    "date_format": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "agent": 6
+      }
+    },
+    "borough_recoding": {
+      "expected": "patch",
+      "cases": 1,
+      "correct": 0,
+      "detected": 1,
+      "decided_by": {
+        "agent": 1
+      }
+    }
+  },
+  "failures": [
+    {
+      "id": "borough_recoding-0",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue",
+      "decided_by": "agent"
+    }
+  ],
+  "run_id": "agent-frozen-dev-b",
+  "system": "agent",
+  "rerun_test": false,
+  "total_cost": "0.04776225",
+  "cases_that_called_the_repairer": 13,
+  "cost_per_case": "0.00367",
+  "mean_seconds_per_case": 14.25,
+  "median_seconds_per_case": 13.52,
+  "cases_decided_by_rule": 0,
+  "averages_over": "cases a repairer decided (rule-decided cases and benign controls excluded)",
+  "model_deployment": "pothole-agent",
+  "run_date": "2026-11-11",
+  "code_commit": "3801f94dc185cc7df9b7f9e87412608d40d7257d",
+  "code_commits": [
+    "3801f94dc185cc7df9b7f9e87412608d40d7257d"
+  ],
+  "code_dirty_at_start": true,
+  "complete": false,
+  "cases_expected": 42
+}

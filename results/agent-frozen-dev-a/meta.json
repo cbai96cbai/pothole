@@ -1,0 +1,10 @@
+{
+  "run_id": "agent-frozen-dev-a",
+  "split": "dev",
+  "system": "agent",
+  "deployment": "pothole-agent",
+  "commit": "3801f94dc185cc7df9b7f9e87412608d40d7257d",
+  "dirty": false,
+  "rerun_test": false,
+  "run_date": "2026-11-11"
+}

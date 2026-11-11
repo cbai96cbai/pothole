@@ -1,0 +1,13 @@
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "renamed_field", "id": "renamed_field-0", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "renamed_field", "id": "renamed_field-1", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "renamed_field", "id": "renamed_field-2", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "renamed_field", "id": "renamed_field-3", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "renamed_field", "id": "renamed_field-4", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "renamed_field", "id": "renamed_field-5", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "date_format", "id": "date_format-0", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "date_format", "id": "date_format-1", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "date_format", "id": "date_format-2", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "date_format", "id": "date_format-3", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "date_format", "id": "date_format-4", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "date_format", "id": "date_format-5", "reason": "output equals the clean reference on 3 days"}
+{"action": "issue", "correct": false, "decided_by": "agent", "detected": true, "expected": "patch", "family": "borough_recoding", "id": "borough_recoding-0", "reason": "expected a patch, got issue"}
