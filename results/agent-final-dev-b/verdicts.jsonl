@@ -1,0 +1,42 @@
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "renamed_field", "id": "renamed_field-0", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "renamed_field", "id": "renamed_field-1", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "renamed_field", "id": "renamed_field-2", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "renamed_field", "id": "renamed_field-3", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "renamed_field", "id": "renamed_field-4", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "renamed_field", "id": "renamed_field-5", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "date_format", "id": "date_format-0", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "date_format", "id": "date_format-1", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "date_format", "id": "date_format-2", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "date_format", "id": "date_format-3", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "date_format", "id": "date_format-4", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "date_format", "id": "date_format-5", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "borough_recoding", "id": "borough_recoding-0", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "borough_recoding", "id": "borough_recoding-1", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "borough_recoding", "id": "borough_recoding-2", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "borough_recoding", "id": "borough_recoding-3", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "borough_recoding", "id": "borough_recoding-4", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "borough_recoding", "id": "borough_recoding-5", "reason": "output equals the clean reference on 3 days"}
+{"action": "issue", "correct": true, "decided_by": "agent", "detected": true, "expected": "issue", "family": "field_dropped", "id": "field_dropped-0", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "agent", "detected": true, "expected": "issue", "family": "field_dropped", "id": "field_dropped-1", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "agent", "detected": true, "expected": "issue", "family": "field_dropped", "id": "field_dropped-2", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "agent", "detected": true, "expected": "issue", "family": "field_dropped", "id": "field_dropped-3", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "agent", "detected": true, "expected": "issue", "family": "field_dropped", "id": "field_dropped-4", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "agent", "detected": true, "expected": "issue", "family": "field_dropped", "id": "field_dropped-5", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "rule", "detected": true, "expected": "issue", "family": "partial_load", "id": "partial_load-0", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "rule", "detected": true, "expected": "issue", "family": "partial_load", "id": "partial_load-1", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "rule", "detected": true, "expected": "issue", "family": "partial_load", "id": "partial_load-2", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "rule", "detected": true, "expected": "issue", "family": "partial_load", "id": "partial_load-3", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "rule", "detected": true, "expected": "issue", "family": "partial_load", "id": "partial_load-4", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "rule", "detected": true, "expected": "issue", "family": "partial_load", "id": "partial_load-5", "reason": "expected issue, got issue"}
+{"action": "no_change", "correct": true, "decided_by": "rule", "detected": true, "expected": "no_change", "family": "spike", "id": "spike-0", "reason": "expected no_change, got no_change"}
+{"action": "no_change", "correct": true, "decided_by": "rule", "detected": true, "expected": "no_change", "family": "spike", "id": "spike-1", "reason": "expected no_change, got no_change"}
+{"action": "no_change", "correct": true, "decided_by": "rule", "detected": true, "expected": "no_change", "family": "spike", "id": "spike-2", "reason": "expected no_change, got no_change"}
+{"action": "no_change", "correct": true, "decided_by": "rule", "detected": true, "expected": "no_change", "family": "spike", "id": "spike-3", "reason": "expected no_change, got no_change"}
+{"action": "no_change", "correct": true, "decided_by": "rule", "detected": true, "expected": "no_change", "family": "spike", "id": "spike-4", "reason": "expected no_change, got no_change"}
+{"action": "no_change", "correct": true, "decided_by": "rule", "detected": true, "expected": "no_change", "family": "spike", "id": "spike-5", "reason": "expected no_change, got no_change"}
+{"action": null, "correct": true, "decided_by": null, "detected": true, "expected": "nothing", "family": "benign_field", "id": "benign_field-0", "reason": "nothing to repair"}
+{"action": null, "correct": true, "decided_by": null, "detected": true, "expected": "nothing", "family": "benign_field", "id": "benign_field-1", "reason": "nothing to repair"}
+{"action": null, "correct": true, "decided_by": null, "detected": true, "expected": "nothing", "family": "benign_field", "id": "benign_field-2", "reason": "nothing to repair"}
+{"action": null, "correct": true, "decided_by": null, "detected": true, "expected": "nothing", "family": "benign_field", "id": "benign_field-3", "reason": "nothing to repair"}
+{"action": null, "correct": true, "decided_by": null, "detected": true, "expected": "nothing", "family": "benign_field", "id": "benign_field-4", "reason": "nothing to repair"}
+{"action": null, "correct": true, "decided_by": null, "detected": true, "expected": "nothing", "family": "benign_field", "id": "benign_field-5", "reason": "nothing to repair"}

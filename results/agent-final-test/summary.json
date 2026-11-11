@@ -1,0 +1,140 @@
+{
+  "repairer": "agent",
+  "split": "test",
+  "cases": 30,
+  "repair_success": {
+    "correct": 11,
+    "of": 12,
+    "rate": 0.9167
+  },
+  "issue_accuracy": {
+    "correct": 12,
+    "of": 12,
+    "rate": 1.0
+  },
+  "no_change_accuracy": {
+    "correct": 3,
+    "of": 3,
+    "rate": 1.0
+  },
+  "repairable_answered_with_issue": {
+    "count": 1,
+    "of": 12,
+    "rate": 0.0833
+  },
+  "crashed": 0,
+  "decided_by": {
+    "agent": 20,
+    "rule": 7
+  },
+  "repairer_decided": {
+    "repair_success": {
+      "correct": 11,
+      "of": 12,
+      "rate": 0.9167
+    },
+    "issue_accuracy": {
+      "correct": 8,
+      "of": 8,
+      "rate": 1.0
+    },
+    "no_change_accuracy": null,
+    "note": "the same rates over the cases a repairer decided, without rule-decided ones"
+  },
+  "detection_coverage_fault_cases": {
+    "detected": 27,
+    "of": 27,
+    "rate": 1.0
+  },
+  "detection_coverage_benign_control": {
+    "detected": 3,
+    "of": 3,
+    "rate": 1.0
+  },
+  "per_family": {
+    "comma_thousands": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 5,
+      "detected": 6,
+      "decided_by": {
+        "agent": 6
+      }
+    },
+    "latlon_swapped": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "agent": 6
+      }
+    },
+    "null_flood": {
+      "expected": "issue",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "agent": 6
+      }
+    },
+    "source_empty": {
+      "expected": "issue",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "agent": 2,
+        "rule": 4
+      }
+    },
+    "spike": {
+      "expected": "no_change",
+      "cases": 3,
+      "correct": 3,
+      "detected": 3,
+      "decided_by": {
+        "rule": 3
+      }
+    },
+    "benign_field": {
+      "expected": "nothing",
+      "cases": 3,
+      "correct": 3,
+      "detected": 3,
+      "decided_by": {}
+    }
+  },
+  "failures": [
+    {
+      "id": "comma_thousands-3",
+      "family": "comma_thousands",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue",
+      "decided_by": "agent"
+    }
+  ],
+  "run_id": "agent-final-test",
+  "system": "agent",
+  "rerun_test": false,
+  "total_cost": "0.07499875",
+  "cases_that_called_the_repairer": 20,
+  "cost_per_case": "0.00375",
+  "mean_seconds_per_case": 14.93,
+  "median_seconds_per_case": 15.63,
+  "cases_decided_by_rule": 7,
+  "averages_over": "cases a repairer decided (rule-decided cases and benign controls excluded)",
+  "model_deployment": "pothole-agent",
+  "run_date": "2026-11-11",
+  "code_commit": "d5a3f7db2b37e27da7db5973436ea50ab3d818a3",
+  "code_commits": [
+    "d5a3f7db2b37e27da7db5973436ea50ab3d818a3"
+  ],
+  "code_dirty_at_start": false,
+  "complete": true,
+  "cases_expected": 30
+}

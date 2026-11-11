@@ -1,0 +1,35 @@
+{
+  "a": "agent-final-test",
+  "b": "baseline-final-test",
+  "paired_cases": 30,
+  "unpaired": {
+    "a_only": 0,
+    "b_only": 0
+  },
+  "repair_success": {
+    "cases": 12,
+    "a": 0.9167,
+    "b": 0.5,
+    "difference": 0.4167,
+    "interval_95": [
+      -0.1667,
+      1.0
+    ],
+    "families": 2
+  },
+  "issue_accuracy": {
+    "cases": 12,
+    "a": 1.0,
+    "b": 1.0,
+    "difference": 0.0
+  },
+  "no_change_accuracy": {
+    "cases": 3,
+    "a": 1.0,
+    "b": 1.0,
+    "difference": 0.0
+  },
+  "resamples": 10000,
+  "seed": 7,
+  "note": "only 2 families: the interval is wide and should be read loosely"
+}

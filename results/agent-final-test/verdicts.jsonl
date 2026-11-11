@@ -1,0 +1,30 @@
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "comma_thousands", "id": "comma_thousands-0", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "comma_thousands", "id": "comma_thousands-1", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "comma_thousands", "id": "comma_thousands-2", "reason": "output equals the clean reference on 3 days"}
+{"action": "issue", "correct": false, "decided_by": "agent", "detected": true, "expected": "patch", "family": "comma_thousands", "id": "comma_thousands-3", "reason": "expected a patch, got issue"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "comma_thousands", "id": "comma_thousands-4", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "comma_thousands", "id": "comma_thousands-5", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "latlon_swapped", "id": "latlon_swapped-0", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "latlon_swapped", "id": "latlon_swapped-1", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "latlon_swapped", "id": "latlon_swapped-2", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "latlon_swapped", "id": "latlon_swapped-3", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "latlon_swapped", "id": "latlon_swapped-4", "reason": "output equals the clean reference on 3 days"}
+{"action": "patch", "correct": true, "decided_by": "agent", "detected": true, "expected": "patch", "family": "latlon_swapped", "id": "latlon_swapped-5", "reason": "output equals the clean reference on 3 days"}
+{"action": "issue", "correct": true, "decided_by": "agent", "detected": true, "expected": "issue", "family": "null_flood", "id": "null_flood-0", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "agent", "detected": true, "expected": "issue", "family": "null_flood", "id": "null_flood-1", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "agent", "detected": true, "expected": "issue", "family": "null_flood", "id": "null_flood-2", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "agent", "detected": true, "expected": "issue", "family": "null_flood", "id": "null_flood-3", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "agent", "detected": true, "expected": "issue", "family": "null_flood", "id": "null_flood-4", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "agent", "detected": true, "expected": "issue", "family": "null_flood", "id": "null_flood-5", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "agent", "detected": true, "expected": "issue", "family": "source_empty", "id": "source_empty-0", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "agent", "detected": true, "expected": "issue", "family": "source_empty", "id": "source_empty-1", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "rule", "detected": true, "expected": "issue", "family": "source_empty", "id": "source_empty-2", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "rule", "detected": true, "expected": "issue", "family": "source_empty", "id": "source_empty-3", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "rule", "detected": true, "expected": "issue", "family": "source_empty", "id": "source_empty-4", "reason": "expected issue, got issue"}
+{"action": "issue", "correct": true, "decided_by": "rule", "detected": true, "expected": "issue", "family": "source_empty", "id": "source_empty-5", "reason": "expected issue, got issue"}
+{"action": "no_change", "correct": true, "decided_by": "rule", "detected": true, "expected": "no_change", "family": "spike", "id": "spike-6", "reason": "expected no_change, got no_change"}
+{"action": "no_change", "correct": true, "decided_by": "rule", "detected": true, "expected": "no_change", "family": "spike", "id": "spike-7", "reason": "expected no_change, got no_change"}
+{"action": "no_change", "correct": true, "decided_by": "rule", "detected": true, "expected": "no_change", "family": "spike", "id": "spike-8", "reason": "expected no_change, got no_change"}
+{"action": null, "correct": true, "decided_by": null, "detected": true, "expected": "nothing", "family": "benign_field", "id": "benign_field-6", "reason": "nothing to repair"}
+{"action": null, "correct": true, "decided_by": null, "detected": true, "expected": "nothing", "family": "benign_field", "id": "benign_field-7", "reason": "nothing to repair"}
+{"action": null, "correct": true, "decided_by": null, "detected": true, "expected": "nothing", "family": "benign_field", "id": "benign_field-8", "reason": "nothing to repair"}

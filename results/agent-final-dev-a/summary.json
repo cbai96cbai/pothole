@@ -1,0 +1,148 @@
+{
+  "repairer": "agent",
+  "split": "dev",
+  "cases": 42,
+  "repair_success": {
+    "correct": 17,
+    "of": 18,
+    "rate": 0.9444
+  },
+  "issue_accuracy": {
+    "correct": 12,
+    "of": 12,
+    "rate": 1.0
+  },
+  "no_change_accuracy": {
+    "correct": 6,
+    "of": 6,
+    "rate": 1.0
+  },
+  "repairable_answered_with_issue": {
+    "count": 0,
+    "of": 18,
+    "rate": 0.0
+  },
+  "crashed": 0,
+  "decided_by": {
+    "agent": 24,
+    "rule": 12
+  },
+  "repairer_decided": {
+    "repair_success": {
+      "correct": 17,
+      "of": 18,
+      "rate": 0.9444
+    },
+    "issue_accuracy": {
+      "correct": 6,
+      "of": 6,
+      "rate": 1.0
+    },
+    "no_change_accuracy": null,
+    "note": "the same rates over the cases a repairer decided, without rule-decided ones"
+  },
+  "detection_coverage_fault_cases": {
+    "detected": 36,
+    "of": 36,
+    "rate": 1.0
+  },
+  "detection_coverage_benign_control": {
+    "detected": 6,
+    "of": 6,
+    "rate": 1.0
+  },
+  "per_family": {
+    "renamed_field": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "agent": 6
+      }
+    },
+    "date_format": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "agent": 6
+      }
+    },
+    "borough_recoding": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 5,
+      "detected": 6,
+      "decided_by": {
+        "agent": 6
+      }
+    },
+    "field_dropped": {
+      "expected": "issue",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "agent": 6
+      }
+    },
+    "partial_load": {
+      "expected": "issue",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "rule": 6
+      }
+    },
+    "spike": {
+      "expected": "no_change",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "rule": 6
+      }
+    },
+    "benign_field": {
+      "expected": "nothing",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {}
+    }
+  },
+  "failures": [
+    {
+      "id": "borough_recoding-4",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "patch",
+      "correct": false,
+      "reason": "2026-11-03: row 70978323: borough is 'Manhattan', expected 'Brooklyn'",
+      "decided_by": "agent"
+    }
+  ],
+  "run_id": "agent-final-dev-a",
+  "system": "agent",
+  "rerun_test": false,
+  "total_cost": "0.09289125",
+  "cases_that_called_the_repairer": 24,
+  "cost_per_case": "0.00387",
+  "mean_seconds_per_case": 12.56,
+  "median_seconds_per_case": 13.48,
+  "cases_decided_by_rule": 12,
+  "averages_over": "cases a repairer decided (rule-decided cases and benign controls excluded)",
+  "model_deployment": "pothole-agent",
+  "run_date": "2026-11-11",
+  "code_commit": "d5a3f7db2b37e27da7db5973436ea50ab3d818a3",
+  "code_commits": [
+    "d5a3f7db2b37e27da7db5973436ea50ab3d818a3"
+  ],
+  "code_dirty_at_start": false,
+  "complete": true,
+  "cases_expected": 42
+}
