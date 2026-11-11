@@ -157,6 +157,14 @@ def repairs(root: Path) -> m.Repairs:
         _check_run(run, split, meta, summary)
         commits[run] = meta["commit"]
         rows.append(_summary(run, summary))
+    for split in SPLITS:
+        seen = {
+            s.run_id: (s.detection_coverage_fault_cases, s.detection_coverage_benign_control)
+            for s in rows
+            if s.split == split
+        }
+        if len({str(v) for v in seen.values()}) > 1:
+            raise ValueError(f"published {split} runs differ in what the checks noticed: {seen}")
     if len(set(commits.values())) > 1:
         raise ValueError(f"published runs come from different commits: {commits}")
     name = manifest.get("compare")

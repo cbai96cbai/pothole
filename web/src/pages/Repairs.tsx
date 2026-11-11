@@ -9,7 +9,7 @@ const EXPECTED: Record<string, string> = {
   nothing: "nothing to do",
 };
 const BASELINE = "baseline";
-const repairerName = (repairer: string) => (repairer === BASELINE ? "rule-based fixer" : "agent");
+const repairerName = (repairer: string) => (repairer === BASELINE ? "Rule-based fixer" : "Agent");
 const rate = (r: Rate, none: string) => (r.of === 0 ? none : `${pct(r.rate)} (${r.correct} of ${r.of})`);
 const cell = (r: Rate | null, none: string) => (r ? rate(r, none) : none);
 const signed = (x: number) => {
@@ -22,7 +22,7 @@ function labelsOf(rows: RepairSummary[]): Record<string, string> {
   const out: Record<string, string> = {};
   for (const s of rows) {
     const same = rows.filter((r) => r.repairer === s.repairer);
-    const name = s.repairer === BASELINE ? "Rule-based fixer" : "Agent";
+    const name = repairerName(s.repairer);
     out[s.run_id] = same.length > 1 ? `${name} run ${same.indexOf(s) + 1}` : name;
   }
   return out;
@@ -115,13 +115,15 @@ function Families({ rows, label }: { rows: RepairSummary[]; label: Record<string
 }
 
 function Comparison({ compare, rows }: { compare: Compare; rows: RepairSummary[] }) {
-  const name = (id: string) => repairerName(rows.find((r) => r.run_id === id)?.repairer ?? "");
+  const name = (id: string) =>
+    repairerName(rows.find((r) => r.run_id === id)?.repairer ?? "").toLowerCase();
+  const note = compare.note.charAt(0).toUpperCase() + compare.note.slice(1);
   const d = compare.repair_success;
   const [low, high] = d.interval_95;
   return (
     <p>
       {`Repairs that worked, ${name(compare.a)} minus ${name(compare.b)}: ${signed(d.difference)} points (95% interval ${signed(low)} to ${signed(high)}). `}
-      {`The interval resamples whole fault families; this split has only ${d.families} repairable families, so it is wide.`}
+      {`The interval resamples whole fault families. ${note}${note.endsWith(".") ? "" : "."}`}
     </p>
   );
 }
@@ -130,7 +132,7 @@ export function Repairs({ repairs }: { repairs: RepairsData }) {
   const splits = [...new Set(repairs.summaries.map((s) => s.split))];
   const hasBaseline = repairs.summaries.some((s) => s.repairer === BASELINE);
   const compare = repairs.compare;
-    return (
+  return (
     <>
       <h1>Repairs</h1>
       <p>

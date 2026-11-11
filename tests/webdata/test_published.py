@@ -207,6 +207,49 @@ def test_each_family_is_split_by_who_decided_it(repo: Path) -> None:
     assert fam["benign_field"]["repairer_cases"] == 0
 
 
+def add_failure(repo: Path, family: str, by: str, n: int) -> None:
+    path = results(repo) / "agent-final-test" / "summary.json"
+    data = json.loads(path.read_text())
+    base = data["failures"][0]
+    for i in range(n):
+        data["failures"].append(
+            {**base, "id": f"{family}-x{i}", "family": family, "decided_by": by}
+        )
+    path.write_text(json.dumps(data))
+
+
+def test_a_miss_the_rule_decided_is_not_charged_to_the_repairer(repo: Path) -> None:
+    add_failure(repo, "source_empty", "rule", 1)
+    fam = summaries(repo)["agent-final-test"]["per_family"]["source_empty"]
+    assert (fam["rule_cases"], fam["rule_correct"]) == (4, 3)
+    assert (fam["repairer_cases"], fam["repairer_correct"]) == (2, 2)
+
+
+def test_misses_of_both_deciders_in_one_family_are_counted_apart(repo: Path) -> None:
+    add_failure(repo, "source_empty", "rule", 1)
+    add_failure(repo, "source_empty", "agent", 1)
+    fam = summaries(repo)["agent-final-test"]["per_family"]["source_empty"]
+    assert (fam["rule_cases"], fam["rule_correct"]) == (4, 3)
+    assert (fam["repairer_cases"], fam["repairer_correct"]) == (2, 1)
+
+
+def test_more_rule_misses_than_rule_cases_stops_the_build(repo: Path) -> None:
+    add_failure(repo, "source_empty", "rule", 5)
+    with pytest.raises(ValueError, match="agent-final-test"):
+        build(repo)
+
+
+def test_runs_of_one_split_that_differ_in_what_the_checks_noticed_stop_the_build(
+    repo: Path,
+) -> None:
+    path = results(repo) / "agent-final-dev-b" / "summary.json"
+    data = json.loads(path.read_text())
+    data["detection_coverage_fault_cases"]["detected"] -= 1
+    path.write_text(json.dumps(data))
+    with pytest.raises(ValueError, match="dev"):
+        build(repo)
+
+
 def test_a_crashed_case_counts_for_the_repairer(repo: Path) -> None:
     path = results(repo) / "agent-final-test" / "summary.json"
     data = json.loads(path.read_text())

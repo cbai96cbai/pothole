@@ -67,12 +67,19 @@ def test_the_repairs_page_separates_who_decided_each_score(tmp_path: Path) -> No
         "and flagged 3 of 3 harmless changes.",
         "Repairs that worked, agent minus rule-based fixer: +42 points "
         "(95% interval \u221217 to +100). "
-        "The interval resamples whole fault families; this split has only 2 repairable families, "
-        "so it is wide.",
+        "The interval resamples whole fault families. Only 2 families: the interval is wide "
+        "and should be read loosely.",
         "5 of 6",
         "+ rule 4 of 4",
     ):
         assert phrase in text, phrase
+    test_part = text[text.index("Test split") :]
+    dev_part = text[text.index("Development split") : text.index("Test split")]
+    assert "Agent 20 92% (11 of 12) 100% (8 of 8) none (all decided by the fixed rule)" in test_part
+    assert "Agent 7 100% (4 of 4) 100% (3 of 3)" in test_part
+    assert "Repairs that worked, agent minus" not in dev_part
+    assert "(decided by the agent)" in test_part
+    assert "(decided by the rule-based fixer)" in dev_part
     assert "Agent run 3" not in text and "Rule-based fixer run" not in text
     assert text.index("Agent run 1") < text.index("Agent run 2")
     assert "Only the rule-based fixer is shown" not in text
