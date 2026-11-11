@@ -92,7 +92,7 @@ def test_a_changed_row_with_an_unrelated_defect_is_left_out_of_the_case(original
 
 def test_every_changed_row_failing_is_refused_with_the_failure(original, patched):
     rows = [dict(r) for r in catalog.clean_batch("2026-11-04")]
-    for i, r in enumerate(rows[:20]):
+    for r in rows[:20]:
         r[Y] = f"{int(r[Y]):,}" if r.get(Y) else r.get(Y, "")
         r["latitude"] = "99.0"
     with pytest.raises(ToolError, match="fail checks under the patched spec"):
