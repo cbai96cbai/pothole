@@ -1,0 +1,134 @@
+{
+  "repairer": "agent",
+  "split": "dev",
+  "cases": 42,
+  "repair_success": {
+    "correct": 15,
+    "of": 18,
+    "rate": 0.8333
+  },
+  "issue_accuracy": {
+    "correct": 11,
+    "of": 12,
+    "rate": 0.9167
+  },
+  "no_change_accuracy": {
+    "correct": 6,
+    "of": 6,
+    "rate": 1.0
+  },
+  "repairable_answered_with_issue": {
+    "count": 2,
+    "of": 18,
+    "rate": 0.1111
+  },
+  "crashed": 0,
+  "detection_coverage_fault_cases": {
+    "detected": 36,
+    "of": 36,
+    "rate": 1.0
+  },
+  "detection_coverage_benign_control": {
+    "detected": 6,
+    "of": 6,
+    "rate": 1.0
+  },
+  "per_family": {
+    "renamed_field": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 5,
+      "detected": 6
+    },
+    "date_format": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6
+    },
+    "borough_recoding": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 4,
+      "detected": 6
+    },
+    "field_dropped": {
+      "expected": "issue",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6
+    },
+    "partial_load": {
+      "expected": "issue",
+      "cases": 6,
+      "correct": 5,
+      "detected": 6
+    },
+    "spike": {
+      "expected": "no_change",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6
+    },
+    "benign_field": {
+      "expected": "nothing",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6
+    }
+  },
+  "failures": [
+    {
+      "id": "renamed_field-0",
+      "family": "renamed_field",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "borough_recoding-1",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue"
+    },
+    {
+      "id": "borough_recoding-3",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "patch",
+      "correct": false,
+      "reason": "2026-11-02: row 70968678: borough is 'Staten Island', expected 'Bronx'"
+    },
+    {
+      "id": "partial_load-5",
+      "family": "partial_load",
+      "expected": "issue",
+      "detected": true,
+      "action": "no_change",
+      "correct": false,
+      "reason": "expected issue, got no_change"
+    }
+  ],
+  "run_id": "agent-v2-dev-b",
+  "system": "agent",
+  "rerun_test": false,
+  "total_cost": "0.10720025",
+  "cases_that_called_the_repairer": 36,
+  "cost_per_case": "0.00298",
+  "mean_seconds_per_case": 10.66,
+  "median_seconds_per_case": 11.87,
+  "averages_over": "cases that called the repairer (benign controls excluded)",
+  "model_deployment": "pothole-agent",
+  "run_date": "2026-11-11",
+  "code_commit": "72448e8900c7a27a1a87ae27290fa93a99a9346d",
+  "code_commits": [
+    "72448e8900c7a27a1a87ae27290fa93a99a9346d"
+  ],
+  "code_dirty_at_start": false
+}

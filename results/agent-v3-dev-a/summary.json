@@ -1,0 +1,173 @@
+{
+  "repairer": "agent",
+  "split": "dev",
+  "cases": 42,
+  "repair_success": {
+    "correct": 13,
+    "of": 18,
+    "rate": 0.7222
+  },
+  "issue_accuracy": {
+    "correct": 12,
+    "of": 12,
+    "rate": 1.0
+  },
+  "no_change_accuracy": {
+    "correct": 6,
+    "of": 6,
+    "rate": 1.0
+  },
+  "repairable_answered_with_issue": {
+    "count": 5,
+    "of": 18,
+    "rate": 0.2778
+  },
+  "crashed": 0,
+  "decided_by": {
+    "agent": 24,
+    "rule": 12
+  },
+  "detection_coverage_fault_cases": {
+    "detected": 36,
+    "of": 36,
+    "rate": 1.0
+  },
+  "detection_coverage_benign_control": {
+    "detected": 6,
+    "of": 6,
+    "rate": 1.0
+  },
+  "per_family": {
+    "renamed_field": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "agent": 6
+      }
+    },
+    "date_format": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "agent": 6
+      }
+    },
+    "borough_recoding": {
+      "expected": "patch",
+      "cases": 6,
+      "correct": 1,
+      "detected": 6,
+      "decided_by": {
+        "agent": 6
+      }
+    },
+    "field_dropped": {
+      "expected": "issue",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "agent": 6
+      }
+    },
+    "partial_load": {
+      "expected": "issue",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "rule": 6
+      }
+    },
+    "spike": {
+      "expected": "no_change",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {
+        "rule": 6
+      }
+    },
+    "benign_field": {
+      "expected": "nothing",
+      "cases": 6,
+      "correct": 6,
+      "detected": 6,
+      "decided_by": {}
+    }
+  },
+  "failures": [
+    {
+      "id": "borough_recoding-0",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue",
+      "decided_by": "agent"
+    },
+    {
+      "id": "borough_recoding-1",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue",
+      "decided_by": "agent"
+    },
+    {
+      "id": "borough_recoding-3",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue",
+      "decided_by": "agent"
+    },
+    {
+      "id": "borough_recoding-4",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue",
+      "decided_by": "agent"
+    },
+    {
+      "id": "borough_recoding-5",
+      "family": "borough_recoding",
+      "expected": "patch",
+      "detected": true,
+      "action": "issue",
+      "correct": false,
+      "reason": "expected a patch, got issue",
+      "decided_by": "agent"
+    }
+  ],
+  "run_id": "agent-v3-dev-a",
+  "system": "agent",
+  "rerun_test": false,
+  "total_cost": "0.09494425",
+  "cases_that_called_the_repairer": 36,
+  "cost_per_case": "0.00264",
+  "mean_seconds_per_case": 8.61,
+  "median_seconds_per_case": 10.28,
+  "averages_over": "cases that called the repairer (benign controls excluded)",
+  "model_deployment": "pothole-agent",
+  "run_date": "2026-11-11",
+  "code_commit": "5c8e17f3d924c57a0d43c1475a2068df63c23053",
+  "code_commits": [
+    "5c8e17f3d924c57a0d43c1475a2068df63c23053"
+  ],
+  "code_dirty_at_start": false,
+  "complete": true,
+  "cases_expected": 42
+}

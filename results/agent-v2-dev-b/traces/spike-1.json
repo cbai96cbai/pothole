@@ -1,0 +1,99 @@
+{
+  "case": "spike-1",
+  "trace": [
+    {
+      "call": 1,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You repair a daily data pipeline over public NYC 311 service requests. A check on today's batch failed. Decide one of three things and submit it with the submit tool:\n\n- patch: the source changed shape and the pipeline spec can be fixed with the edit operations below.\n- issue: something is wrong that a person must look at, or no allowed edit can fix it.\n- no_change: the data is as it should be (for example a real spike) and nothing should change.\n\nYou can only propose these edit operations, each on one column of the spec:\n- map_field {column, source}: read the column from a different source field (a rename). A source field can feed only one column. The key column cannot be remapped.\n- set_format {column, format}: change how a timestamp or number column is read. Timestamp formats: %Y-%m-%dT%H:%M:%S.%f, %Y-%m-%dT%H:%M:%S, %Y-%m-%d %H:%M:%S, %Y-%m-%d, %m/%d/%Y %I:%M:%S %p, %m/%d/%Y %H:%M:%S, %m/%d/%Y, %d-%b-%Y. Number formats: plain, comma_thousands.\n- add_value_mapping {column, raw, value}: add one listed value (raw -> value) to a text column that already has a list of values; value must already be one of that column's values.\n\nYou can never change the checks, the source, add columns or write code. Anything else is refused. Never loosen what the data is checked against: if the only way out is to change a check, submit an issue.\n\nYour tools: read_spec, read_check_results, source_fields (each field with its type and whether it is in_use by a column, known_unused because the spec lists it as a field that holds other data, or new), sample_rows, formats_that_parse (the fixed formats under which at least 99% of a column's present values parse on the failing batch), try_patch and submit.\n\nRules the edits must follow: an add_value_mapping value must be one of that column's existing values (the right-hand side of its list), never a new spelling. map_field may not read a known_unused field: it holds different data, and a renamed field appears as a new one. Reading a field another column uses is allowed.\n\nWhen the only failing check is the volume check, the count is above the usual band and every other check passes, the right answer is usually no_change (real activity), explained in the reason.\n\nHow to work: read the check results, look at the spec, the source fields and a few failing rows, then try your edits with try_patch and look at the checks it returns. A patch is accepted only when no check fails on the failing batch afterwards. You may edit only a column that a failed check names, and map_field may only read a field the failing batch actually sends. Submit a patch with your edits and a reason; the regression test rows are chosen for you. The reason is one or two plain sentences that say what changed in the data and what the edit does. Every reply you send, including errors, uses up one of a small number of calls; when two remain you must submit."
+        },
+        {
+          "role": "user",
+          "content": "Failed checks on today's batch:\nfail volume: 6000 rows against a typical 2000 over 4 earlier same-weekday counts; allowed 1000 to 4000"
+        }
+      ],
+      "reply": {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "call_KBruMIKAol0rzLESG3khZE2a",
+            "function": {
+              "arguments": "{}",
+              "name": "read_check_results"
+            },
+            "type": "function"
+          }
+        ]
+      },
+      "finish_reason": "tool_calls",
+      "usage": {
+        "input": 1266,
+        "output": 20
+      },
+      "cost": "0.0003565",
+      "tool_results": [
+        {
+          "name": "read_check_results",
+          "content": "fail volume: 6000 rows against a typical 2000 over 4 earlier same-weekday counts; allowed 1000 to 4000"
+        }
+      ]
+    },
+    {
+      "call": 2,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You repair a daily data pipeline over public NYC 311 service requests. A check on today's batch failed. Decide one of three things and submit it with the submit tool:\n\n- patch: the source changed shape and the pipeline spec can be fixed with the edit operations below.\n- issue: something is wrong that a person must look at, or no allowed edit can fix it.\n- no_change: the data is as it should be (for example a real spike) and nothing should change.\n\nYou can only propose these edit operations, each on one column of the spec:\n- map_field {column, source}: read the column from a different source field (a rename). A source field can feed only one column. The key column cannot be remapped.\n- set_format {column, format}: change how a timestamp or number column is read. Timestamp formats: %Y-%m-%dT%H:%M:%S.%f, %Y-%m-%dT%H:%M:%S, %Y-%m-%d %H:%M:%S, %Y-%m-%d, %m/%d/%Y %I:%M:%S %p, %m/%d/%Y %H:%M:%S, %m/%d/%Y, %d-%b-%Y. Number formats: plain, comma_thousands.\n- add_value_mapping {column, raw, value}: add one listed value (raw -> value) to a text column that already has a list of values; value must already be one of that column's values.\n\nYou can never change the checks, the source, add columns or write code. Anything else is refused. Never loosen what the data is checked against: if the only way out is to change a check, submit an issue.\n\nYour tools: read_spec, read_check_results, source_fields (each field with its type and whether it is in_use by a column, known_unused because the spec lists it as a field that holds other data, or new), sample_rows, formats_that_parse (the fixed formats under which at least 99% of a column's present values parse on the failing batch), try_patch and submit.\n\nRules the edits must follow: an add_value_mapping value must be one of that column's existing values (the right-hand side of its list), never a new spelling. map_field may not read a known_unused field: it holds different data, and a renamed field appears as a new one. Reading a field another column uses is allowed.\n\nWhen the only failing check is the volume check, the count is above the usual band and every other check passes, the right answer is usually no_change (real activity), explained in the reason.\n\nHow to work: read the check results, look at the spec, the source fields and a few failing rows, then try your edits with try_patch and look at the checks it returns. A patch is accepted only when no check fails on the failing batch afterwards. You may edit only a column that a failed check names, and map_field may only read a field the failing batch actually sends. Submit a patch with your edits and a reason; the regression test rows are chosen for you. The reason is one or two plain sentences that say what changed in the data and what the edit does. Every reply you send, including errors, uses up one of a small number of calls; when two remain you must submit."
+        },
+        {
+          "role": "user",
+          "content": "Failed checks on today's batch:\nfail volume: 6000 rows against a typical 2000 over 4 earlier same-weekday counts; allowed 1000 to 4000"
+        },
+        {
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "id": "call_KBruMIKAol0rzLESG3khZE2a",
+              "function": {
+                "arguments": "{}",
+                "name": "read_check_results"
+              },
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "call_KBruMIKAol0rzLESG3khZE2a",
+          "content": "fail volume: 6000 rows against a typical 2000 over 4 earlier same-weekday counts; allowed 1000 to 4000\nYou have 5 calls left."
+        }
+      ],
+      "reply": {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "call_knxBhhMhGBXwgU3U9Ghs0pzQ",
+            "function": {
+              "arguments": "{\"action\":\"no_change\",\"reason\":\"Only the volume check failed: today's batch has 6000 requests vs the usual ~2000. All other checks passed, so this is likely a real spike in 311 activity; no spec change needed.\"}",
+              "name": "submit"
+            },
+            "type": "function"
+          }
+        ]
+      },
+      "finish_reason": "tool_calls",
+      "usage": {
+        "input": 1330,
+        "output": 68
+      },
+      "cost": "0.0004685",
+      "tool_results": [
+        {
+          "name": "submit",
+          "content": "accepted"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "run_id": "agent-v2-dev-a",
+  "split": "dev",
+  "system": "agent",
+  "deployment": "pothole-agent",
+  "commit": "72448e8900c7a27a1a87ae27290fa93a99a9346d",
+  "dirty": false,
+  "rerun_test": false,
+  "run_date": "2026-11-11"
+}
