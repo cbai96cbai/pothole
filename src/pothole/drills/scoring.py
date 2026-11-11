@@ -43,7 +43,7 @@ def run_case(case: Case, spec: PipelineSpec, repairer: Repairer) -> CaseResult:
     except Exception as err:  # any failure of a repairer is scored, never raised
         reason = f"crashed: {type(err).__name__}: {err}"
         return CaseResult(
-            case.id, case.family, case.expected_action, found, "crashed", False, reason
+            case.id, case.family, case.expected_action, found, "crashed", False, reason, "code"
         )
     action = outcome.action if outcome else None
     return CaseResult(

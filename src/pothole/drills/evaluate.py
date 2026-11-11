@@ -144,7 +144,7 @@ def _outcome_line(
         "id": case.id,
         "family": case.family,
         "action": res.action,
-        "decided_by": out.decided_by if out else None,
+        "decided_by": out.decided_by if out else res.decided_by,
         "ops": [o.model_dump() for o in out.ops] if out else [],
         "reason": out.reason if out and res.action != "crashed" else res.reason,
         "cost": str(cost),

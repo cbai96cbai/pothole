@@ -103,7 +103,7 @@ def cast_and_values(col: Column, cast: Cast, total: int) -> list[CheckResult]:
     if col.values is not None:
         n = len(cast.outside_values)
         raws = ", ".join(sorted(cast.outside_raw)[:SAMPLE])
-        accepted = ", ".join(sorted(col.values))
+        accepted = ", ".join(f"{raw} → {std}" for raw, std in sorted(col.values.items()))
         detail = f"{col.name}: {n} of {total} rows have values outside the accepted spellings"
         out.append(
             _result(
@@ -111,7 +111,7 @@ def cast_and_values(col: Column, cast: Cast, total: int) -> list[CheckResult]:
                 "fail" if n else "pass",
                 detail
                 + (
-                    f" ({raws}); accepted spellings, each mapped to a standard value: {accepted}"
+                    f" ({raws}); accepted spellings and the value each becomes: {accepted}"
                     if n
                     else ""
                 ),

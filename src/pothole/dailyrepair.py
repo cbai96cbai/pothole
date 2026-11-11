@@ -55,7 +55,7 @@ def _issue(
     env: "Env", reason: str, failing: list[spec_checks.CheckResult], day: date
 ) -> RepairRecord:
     filed = env.sink.open_issue(reason, failing, day=day)
-    return RepairRecord("issue", False, filed.ref, None, False, "rule")
+    return RepairRecord("issue", False, filed.ref, None, False, "code")
 
 
 def _file(

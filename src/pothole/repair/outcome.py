@@ -11,7 +11,9 @@ import pyarrow as pa
 from pothole.spec.ops import AddValueMapping, MapField, SetFormat
 
 Action = Literal["patch", "issue", "no_change"]
-DecidedBy = Literal["agent", "baseline", "rule"]
+# rule: the volume rule; code: an issue the code files because the model could not decide
+# (crash, timeout, AI off, unfetchable sample); agent and baseline: a repairer's own answer.
+DecidedBy = Literal["rule", "code", "agent", "baseline"]
 Op = MapField | SetFormat | AddValueMapping
 
 

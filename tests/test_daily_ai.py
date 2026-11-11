@@ -51,7 +51,7 @@ def test_a_failed_check_with_ai_off_files_an_issue_and_never_calls_the_model(
     record = daily.run(env)
     assert calls == [] and record.ai_enabled is False and record.ai_cost == "0"
     assert record.repair is not None and record.repair.action == "issue"
-    assert len(sink.issues) == 1
+    assert record.repair.decided_by == "code" and len(sink.issues) == 1
 
 
 def test_ai_off_never_calls_the_model_even_with_candidates_and_on_a_sunday(
@@ -230,3 +230,28 @@ def test_the_drill_decides_a_volume_case_by_rule_and_says_so(
     rec = dailyai.drill(sink, NoModel(), date(2026, 11, 15), spend, DEFAULT_STEPS[0])  # type: ignore[arg-type]
     assert rec.decided_by == "rule" and rec.drill and calls == []
     assert rec.verdict is not None and "decided by rule" in rec.verdict
+
+
+def test_a_step_the_model_did_not_finish_is_filed_as_decided_by_code(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from pothole.spec.checks import CheckResult
+
+    def crash(*a: Any, **k: Any) -> Any:
+        raise RuntimeError("model down")
+
+    monkeypatch.setattr(dailyai.agent, "repair", crash)
+    spec = catalog.load_spec()
+    sink = Sink()
+    cast = CheckResult("cast:created_date", "fail", "x", [])
+    rec = dailyai.real_repair(
+        sink, NoModel(), spec, [], [cast], {}, datetime(2026, 11, 10, 12), dailyai.Spend(),  # type: ignore[arg-type]
+        DEFAULT_STEPS[0],
+    )  # fmt: skip
+    assert rec.action == "issue" and rec.decided_by == "code"
+
+
+def test_an_old_record_without_decided_by_reads_as_unknown() -> None:
+    from pothole.runrecord import RepairRecord
+
+    assert RepairRecord("issue", False, None, None, False).decided_by == "unknown"

@@ -123,7 +123,7 @@ def _failed_step(
     reason = f"The {what} did not finish ({type(exc).__name__}: {exc}); a person should look."
     filed = sink.open_issue(reason, failing, day=day, drill=drill)
     verdict = f"no verdict: the {what} did not finish" if drill else None
-    return RepairRecord("issue", drill, filed.ref, verdict, False, "rule")
+    return RepairRecord("issue", drill, filed.ref, verdict, False, "code")
 
 
 def file_rule(

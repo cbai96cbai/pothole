@@ -1,6 +1,6 @@
 import { pct } from "../format";
 import type { RepairSummary, Repairs as RepairsData } from "../types";
-import { NOT_YET_RUN } from "../wording";
+import { NOT_YET_RUN, decidedBy } from "../wording";
 
 const EXPECTED: Record<string, string> = {
   patch: "propose a fix",
@@ -95,6 +95,15 @@ export function Repairs({ repairs }: { repairs: RepairsData }) {
             <Table rows={rows} split={split} />
             <h3>By fault family</h3>
             <Families rows={rows} />
+            {rows.map((r) => (
+              <p key={r.repairer} className="muted">
+                {r.repairer === "baseline" ? "Rule-based fixer" : "Agent"}, cases decided by:{" "}
+                {Object.entries(r.decided_by ?? {})
+                  .map(([by, n]) => `${decidedBy(by)} ${n}`)
+                  .join(", ") || "not recorded"}
+                .
+              </p>
+            ))}
             {rows.map((r) => (
               <details key={r.repairer}>
                 <summary>

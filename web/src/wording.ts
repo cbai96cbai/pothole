@@ -23,3 +23,12 @@ export const ACTION_WORDS: Record<string, string> = {
   no_change: "Decided nothing needed changing",
   none: "No repair step",
 };
+
+export const DECIDED_BY: Record<string, string> = {
+  rule: "the volume rule",
+  code: "the code (the model could not decide)",
+  agent: "the agent",
+  baseline: "the rule-based fixer",
+  unknown: "not recorded",
+};
+export const decidedBy = (by: string) => DECIDED_BY[by] ?? by;

@@ -47,7 +47,8 @@ class RepairRecord:
     url: str | None
     verdict: str | None
     not_judged: bool
-    decided_by: Literal["rule", "agent", "baseline"] = "agent"  # who made the decision
+    # who made the decision; a record written before this was kept has none: "unknown"
+    decided_by: Literal["rule", "code", "agent", "baseline", "unknown"] = "unknown"
 
 
 @dataclass(frozen=True)

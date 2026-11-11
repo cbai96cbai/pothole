@@ -1,6 +1,6 @@
 import { dateTime, usd } from "../format";
 import type { IncidentItem } from "../types";
-import { ACTION_WORDS, DRILL, PROPOSED_NOT_JUDGED } from "../wording";
+import { ACTION_WORDS, DRILL, PROPOSED_NOT_JUDGED, decidedBy } from "../wording";
 
 export function IncidentList({ items, empty }: { items: IncidentItem[]; empty: string }) {
   if (items.length === 0) return <p className="muted">{empty}</p>;
@@ -14,6 +14,7 @@ export function IncidentList({ items, empty }: { items: IncidentItem[]; empty: s
             <strong>{ACTION_WORDS[i.repair.action] ?? i.repair.action}</strong>
             {i.repair.not_judged && <span className="badge pending">{PROPOSED_NOT_JUDGED}</span>}
             {i.repair.verdict && <span className="badge">Judged: {i.repair.verdict}</span>}
+            <span className="badge">Decided by {decidedBy(i.repair.decided_by)}</span>
           </div>
           <p>
             Run status: {i.status.replace(/_/g, " ")}.{" "}
