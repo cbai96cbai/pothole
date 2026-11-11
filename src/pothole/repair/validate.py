@@ -13,7 +13,6 @@ from pothole.spec.checks import CheckResult
 from pothole.spec.model import PipelineSpec
 
 MIN_CASE, CASE_SIZE = 3, 5
-MAX_REPLACEMENTS = 10  # rows named by a failed check are left out and the case is tried again
 
 
 class ToolError(Exception):
@@ -106,7 +105,7 @@ def choose_rows(
     last: list[CheckResult] = []
     for wanted in range(min(CASE_SIZE, len(changed)), 0, -1):
         left_out: set[str] = set()
-        for _ in range(MAX_REPLACEMENTS):
+        while True:  # each pass leaves out at least one new row or stops, so this ends
             take = [r for r in changed if r.get(key_field) not in left_out][:wanted]
             fill = [r for r in same if r.get(key_field) not in left_out][: CASE_SIZE - wanted]
             subset = sorted(take + fill, key=lambda r: r.get(key_field, ""))

@@ -101,3 +101,18 @@ def test_every_changed_row_failing_is_refused_with_the_failure(original, patched
     ) as err:
         build_case(original, patched, rows, [Y])
     assert "not complete" not in str(err.value)
+
+
+def test_a_case_is_found_after_more_replacements_than_any_fixed_cap(original, patched):
+    # the best-ranked changed rows carry a wrong latitude the whole batch tolerates; each pass
+    # leaves out only the rows the failing check names, so the good rows come after many passes
+    rows = commas(0.3)
+    changed = changed_keys(original, patched, rows)
+    order = [r for r in rows if r["unique_key"] in changed]
+    order.sort(key=lambda r: (not r.get(Y), sum(1 for v in r.values() if not v), r["unique_key"]))
+    for r in order[:51]:  # takes well over the ten passes the old cap allowed
+        r["latitude"] = "99.0"
+    out = build_case(original, patched, rows, [Y])
+    chosen = {r["unique_key"] for r in out.rows}
+    assert len(chosen & changed) == CASE_SIZE
+    assert not any(r["latitude"] == "99.0" for r in out.rows)
