@@ -49,7 +49,7 @@ def finding(status: str = "investigated", stale: bool = False) -> Finding:
         q=0.0004,
         summary=("a leftover summary that must not be shown" if stale else "")
         if unfinished
-        else "Heat complaints in Brooklyn 12 (\"No heat\" in 20) were associated with a night's cold.",
+        else 'Heat complaints in Brooklyn 12 ("No heat" in 20) were associated with a night\'s cold.',
         evidence=[]
         if unfinished
         else [
