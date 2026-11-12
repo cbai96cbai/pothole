@@ -15,10 +15,14 @@ def prefixed(ref: int, content: str) -> str:
     return f"ref {ref}: {content}"
 
 
+ECHO = 12  # how much of a refused ref is repeated back
+MAX_REF_DIGITS = 6  # a longer digit string is not a ref (and is costly to convert)
+
+
 def _number(ref: Any) -> int | None:
     if isinstance(ref, int) and not isinstance(ref, bool):
         return ref
-    if isinstance(ref, str) and re.fullmatch(r"[0-9]+", ref):
+    if isinstance(ref, str) and re.fullmatch(rf"[0-9]{{1,{MAX_REF_DIGITS}}}", ref):
         return int(ref)
     return None
 
@@ -38,9 +42,11 @@ def cited(refs: Any, calls: dict[int, ToolCall], seen: int) -> list[int]:
             f"evidence must list the ref numbers of the tool calls you rely on; {listing}"
         )
     numbers = [_number(r) for r in refs]
-    bad = [str(r) for r, n in zip(refs, numbers, strict=True) if n is None or n not in citable]
+    bad = [
+        str(r)[:ECHO] for r, n in zip(refs, numbers, strict=True) if n is None or n not in citable
+    ]
     if bad:
-        unread = [b for b in bad if b.isdigit() and int(b) in calls]
+        unread = [n for n in numbers if n is not None and n in calls and n not in citable]
         hint = (
             "; read results first and submit in a separate reply from the calls" if unread else ""
         )
