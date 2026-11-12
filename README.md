@@ -17,9 +17,9 @@ repository.
   that uses no model.
 - **Screens for spikes.** A statistical screen picks out district-and-complaint-type counts that are
   unusually high on one day. An AI investigator writes findings with cited evidence and a
-  causal-wording filter, so a finding describes what the data shows and not why.
+  causal-wording filter.
 
-![How the pieces fit together: NYC 311 data, load and store, checks, a fixed rule or the agent, pull request or issue; the store also feeds the spike screen, the investigator and findings; run records and findings become site data and then the site; GitHub Actions runs it daily](docs/architecture.svg)
+![How the pieces fit together: NYC 311 data, load and store, checks, a fixed rule or the agent deciding on a pull request, an issue or no change; the store also feeds the spike screen, the investigator and findings; run records, results and findings are committed, and the site data and site are built from those files; the agent and investigator run only on a scheduled run with AI enabled](docs/architecture.svg)
 
 The daily workflow (`.github/workflows/daily.yml`) runs at 11:17 UTC, which is 06:17 in New York in
 winter and 07:17 in summer. The model steps run only on the scheduled event and only while the
@@ -29,8 +29,8 @@ configured. It has not been shown to run unattended for a long period.
 
 ## Results
 
-Everything here is what the site publishes. The list of published runs is
-`results/published.json`; any other run in `results/` is kept as a record and is not scored.
+The published repair scores use only the five runs listed in `results/published.json`; other runs
+in `results/` are kept as records and are excluded from published scores.
 
 **The test.** There are 30 held-out test cases: 12 faults a spec edit can fix (2 families,
 6 cases each), 12 faults it cannot (2 families), 3 volume spikes that need no change, and 3
@@ -43,7 +43,7 @@ fixer had also been scored on the test split earlier, at commit `1a68b34`
 | Repair agent | 11 of 12 |
 | Rule-based fixer | 6 of 12 |
 
-The difference is +41.7 percentage points. A descriptive bootstrap interval over whole fault
+The difference is +41.7 percentage points. A descriptive 95% family-bootstrap interval over whole fault
 families (10,000 resamples, seed 7) runs from -16.7 to +100 points. It includes zero, and with only
 2 repairable families in the test split it is very wide, so this does not show that the agent is
 reliably better. It is a measurement of these 30 cases.
@@ -67,10 +67,10 @@ as the agent's.
 Two caveats on the attribution. In the frozen records, an issue the code filed because the model's
 submissions were refused was counted as the agent's decision; one of the 20 agent-attributed test
 cases is that (the miss below). The code now records such issues as `code`. Also, the cost and time
-below are averages over the 20 cases the summary attributes to the repairer, not necessarily 20
-model decisions.
+below are the mean cost and the median elapsed time over the 20 cases the summary attributes to
+the repairer, not necessarily 20 model decisions.
 
-| Test run | Cost per case | Median time per case |
+| Test run | Mean cost per case | Median time per case |
 | :- | :-: | :-: |
 | Repair agent | $0.00375 | 15.63 s |
 | Rule-based fixer | $0 | 0.09 s |
@@ -85,8 +85,8 @@ model decisions.
 | Repair agent, run b | 18 of 18 |
 
 **Cost.** The model calls recorded locally while building and evaluating this project settled at
-$1.11 as of 12 November 2026 ($1.10905375). That excludes $0.048 of open reservations, and the
-ledger is a local file that is not in this repository.
+$1.11 as of 12 November 2026 (`data/build_spend.json`, a dated snapshot of the settled total; open
+reservations are not included). The ledger itself is a local file that is not in this repository.
 
 ## Failures
 
@@ -135,8 +135,8 @@ candidate if it is at least 10, at least twice the usual, and passes a Benjamini
 0.05. The filter narrows the candidates, and no false-discovery claim is made. On 193 simulated
 days with no real events, the share of days with any candidate was 0.5%, 7.8%, 16.6% and 30.1% when
 the data was 1, 1.5, 2 and 3 times as spread out as a Poisson count (`data/null_simulation.json`;
-the multiples describe the median simulated series). On 30 past days (12 August to 9 November 2026)
-the screen flagged 0 to 55 series a day, median 2 (`data/backtest.json`). No day there is known to
+the multiples describe the median simulated series). On 30 past days (tested days 7 October to 7 November 2026, using the stored window from 12 August
+to 9 November) the screen flagged 0 to 55 series a day, median 2 (`data/backtest.json`). No day there is known to
 be a real event, so this is not a calibration. Only the two candidates with the largest ratio are
 investigated.
 
@@ -149,8 +149,9 @@ say, a load that repeated rows. It is a rule a person can read and test, and it 
 call.
 
 **The site publishes only the listed runs.** `results/published.json` names the five runs above.
-The site build refuses to build unless each is finished, was made from a clean checkout, and all
-come from one commit, with their files in agreement. Earlier runs are not mixed in.
+The site build refuses to build unless each is finished, was made from a clean checkout, names the
+same run id and split in its records, has a recorded commit and a recorded decider for every case,
+and all come from one commit. It does not recompute scores from the case files. Earlier runs are not mixed in.
 
 ## Run it
 
@@ -195,7 +196,7 @@ OpenAI endpoint and key; see `src/pothole/config.py`.
 - **The faults are planted.** The drills inject faults into recorded days. They are not real
   breakages of the source.
 - **Few families.** Each split has only a handful of fault families (2 repairable families in the
-  test), so every interval is wide.
+  test), so the reported repair-success interval is wide.
 - **Source reloads reset `:created_at`.** The arrival-delay figures use only rows filed after the
   last full reload.
 - **One tool is shaped by what was seen.** The `value_crosstab` tool was built for the borough

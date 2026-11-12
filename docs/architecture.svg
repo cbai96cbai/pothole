@@ -1,10 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 370" width="860" height="370" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#0f172a" role="img" aria-labelledby="t d">
 <title id="t">How pothole fits together</title>
-<desc id="d">NYC 311 data is loaded into a local store and checked. A fixed rule or a repair agent decides what to do about a failed check and files a pull request or an issue. The store also feeds a spike screen, an AI investigator and a findings file. Run records and findings become site data, which builds the site. GitHub Actions runs all of it once a day.</desc>
+<desc id="d">NYC 311 data is loaded into a local store and checked. A fixed rule, or a repair agent, decides what to do about a failed check: a pull request, an issue or no change. The store also feeds a spike screen, an AI investigator and a findings file. Run records, results and findings are committed, and the site data is built from those committed files and then builds the site. The agent and the investigator run only on a scheduled run with AI enabled. GitHub Actions runs it all once a day.</desc>
 <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#334155"/></marker></defs>
 <rect width="860" height="370" fill="#ffffff"/>
 <rect x="14" y="14" width="832" height="342" rx="12" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 4"/>
 <text x="30" y="40" font-size="12" fill="#475569">GitHub Actions, once a day</text>
+<text x="30" y="336" font-size="12" fill="#475569">* dashed boxes: model steps, run only on a scheduled run with AI enabled</text>
 <line x1="160" y1="88" x2="190" y2="88" stroke="#334155" stroke-width="1.5" marker-end="url(#a)"/>
 <line x1="320" y1="88" x2="350" y2="88" stroke="#334155" stroke-width="1.5" marker-end="url(#a)"/>
 <line x1="480" y1="88" x2="510" y2="88" stroke="#334155" stroke-width="1.5" marker-end="url(#a)"/>
@@ -13,16 +14,18 @@
 <line x1="320" y1="198" x2="350" y2="198" stroke="#334155" stroke-width="1.5" marker-end="url(#a)"/>
 <line x1="480" y1="198" x2="510" y2="198" stroke="#334155" stroke-width="1.5" marker-end="url(#a)"/>
 <line x1="640" y1="198" x2="670" y2="198" stroke="#334155" stroke-width="1.5" marker-end="url(#a)"/>
-<line x1="735.0" y1="116" x2="735.0" y2="170" stroke="#334155" stroke-width="1.5" marker-end="url(#a)"/>
 <line x1="735.0" y1="226" x2="735.0" y2="280" stroke="#334155" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="670" y1="308" x2="640" y2="308" stroke="#334155" stroke-width="1.5" marker-end="url(#a)"/>
+<polyline points="575.0,116 575.0,143 770,143 770,170" fill="none" stroke="#334155" stroke-width="1.5" marker-end="url(#a)"/>
 <rect x="30" y="60" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/><text x="95.0" y="84" text-anchor="middle" font-weight="600">NYC 311</text><text x="95.0" y="102" text-anchor="middle" font-size="11" fill="#475569">public open data</text>
 <rect x="190" y="60" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/><text x="255.0" y="84" text-anchor="middle" font-weight="600">Load and store</text><text x="255.0" y="102" text-anchor="middle" font-size="11" fill="#475569">local database</text>
 <rect x="350" y="60" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/><text x="415.0" y="84" text-anchor="middle" font-weight="600">Checks</text><text x="415.0" y="102" text-anchor="middle" font-size="11" fill="#475569">on each day&#39;s rows</text>
-<rect x="510" y="60" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/><text x="575.0" y="84" text-anchor="middle" font-weight="600">Decide</text><text x="575.0" y="102" text-anchor="middle" font-size="11" fill="#475569">fixed rule or agent</text>
-<rect x="670" y="60" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/><text x="735.0" y="84" text-anchor="middle" font-weight="600">Pull request</text><text x="735.0" y="102" text-anchor="middle" font-size="11" fill="#475569">or issue</text>
+<rect x="510" y="60" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5" stroke-dasharray="5 3"/><text x="575.0" y="84" text-anchor="middle" font-weight="600">Decide</text><text x="575.0" y="102" text-anchor="middle" font-size="11" fill="#475569">rule, or agent*</text>
+<rect x="670" y="60" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/><text x="735.0" y="84" text-anchor="middle" font-weight="600">Outcome</text><text x="735.0" y="102" text-anchor="middle" font-size="11" fill="#475569">PR, issue, no change</text>
 <rect x="190" y="170" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/><text x="255.0" y="194" text-anchor="middle" font-weight="600">Spike screen</text><text x="255.0" y="212" text-anchor="middle" font-size="11" fill="#475569">unusual counts</text>
-<rect x="350" y="170" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/><text x="415.0" y="194" text-anchor="middle" font-weight="600">Investigator</text><text x="415.0" y="212" text-anchor="middle" font-size="11" fill="#475569">AI, cites evidence</text>
+<rect x="350" y="170" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5" stroke-dasharray="5 3"/><text x="415.0" y="194" text-anchor="middle" font-weight="600">Investigator*</text><text x="415.0" y="212" text-anchor="middle" font-size="11" fill="#475569">AI, cites evidence</text>
 <rect x="510" y="170" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/><text x="575.0" y="194" text-anchor="middle" font-weight="600">Findings</text><text x="575.0" y="212" text-anchor="middle" font-size="11" fill="#475569">one file per day</text>
-<rect x="670" y="170" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/><text x="735.0" y="194" text-anchor="middle" font-weight="600">Site data</text><text x="735.0" y="212" text-anchor="middle" font-size="11" fill="#475569">JSON files</text>
-<rect x="670" y="280" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/><text x="735.0" y="304" text-anchor="middle" font-weight="600">Site</text><text x="735.0" y="322" text-anchor="middle" font-size="11" fill="#475569">GitHub Pages</text>
+<rect x="670" y="170" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/><text x="735.0" y="194" text-anchor="middle" font-weight="600">Committed files</text><text x="735.0" y="212" text-anchor="middle" font-size="11" fill="#475569">run records, results</text>
+<rect x="670" y="280" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/><text x="735.0" y="304" text-anchor="middle" font-weight="600">Site data</text><text x="735.0" y="322" text-anchor="middle" font-size="11" fill="#475569">JSON files</text>
+<rect x="510" y="280" width="130" height="56" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/><text x="575.0" y="304" text-anchor="middle" font-weight="600">Site</text><text x="575.0" y="322" text-anchor="middle" font-size="11" fill="#475569">GitHub Pages</text>
 </svg>
