@@ -7,6 +7,7 @@ from pothole.analyst import detect
 from pothole.analyst.detect import Panel
 from pothole.analyst.holidays import HOLIDAYS
 from pothole.analyst.universe import Universe
+from pothole.store.coverage import Coverage
 
 UNIVERSE = Universe(frozenset({"Noise", "Heat"}), frozenset({("Queens", 3), ("Bronx", 1)}))
 START = date(2026, 8, 3)  # a Monday
@@ -109,3 +110,31 @@ def test_today_enters_neither_baseline_nor_dispersion() -> None:
     assert np.array_equal(a.expected, b.expected)
     others = [i for i, s in enumerate(a.series) if quiet.keys[int(s)] != SERIES[0]]
     assert np.array_equal(a.p[others], b.p[others])  # the type's k did not move
+
+
+def test_the_panel_spans_the_days_the_store_covers_not_the_days_with_counts() -> None:
+    t = steady(days=60)  # counts on START .. START + 59
+    held = Coverage(START - timedelta(2), START + timedelta(61))
+    panel = Panel.from_table(t, UNIVERSE, held)
+    assert panel.start == held.start and panel.days == 64
+    assert panel.matrix[:, :2].sum() == 0 and panel.matrix[:, -2:].sum() == 0  # real zeros
+    without = Panel.from_table(t, UNIVERSE)
+    assert without.start == START and without.days == 60
+
+
+def test_counts_outside_the_covered_span_are_left_out() -> None:
+    held = Coverage(START + timedelta(5), START + timedelta(30))
+    panel = Panel.from_table(steady(days=60), UNIVERSE, held)
+    assert panel.days == 26 and panel.start == held.start
+
+
+def test_the_daily_screen_tests_a_day_the_covered_span_makes_testable() -> None:
+    from pothole import daily
+
+    # counts only from START + 14; the store covers from START, so eight Mondays precede Oct 5
+    t = table({k: {START + timedelta(d): 20 + d % 3 for d in range(14, 70)} for k in SERIES})
+    day = START + timedelta(63)
+    skipped = daily.screen(t, UNIVERSE, day)
+    assert getattr(skipped, "skipped_reason", "") == "no 8-week baseline for this day"
+    tested = daily.screen(t, UNIVERSE, day, Coverage(START, START + timedelta(70)))
+    assert isinstance(tested, list) and tested[0] == 4

@@ -1,4 +1,5 @@
 import json
+from datetime import date, timedelta
 from pathlib import Path
 
 import duckdb
@@ -6,8 +7,11 @@ import pytest
 from investigator_kit import DAY, candidate, events_for, make_store, weather_for
 
 from pothole.analyst import tools
+from pothole.analyst.events import EventList
+from pothole.analyst.finding import Event
 from pothole.analyst.tools import Toolbox
 from pothole.repair.validate import ToolError
+from pothole.store.coverage import Coverage
 
 
 @pytest.fixture
@@ -51,7 +55,7 @@ def test_series_is_zero_filled_and_ends_on_the_spike_day(box: Toolbox) -> None:
     assert len(rows) == 90 and rows[-1] == (DAY, 30)
     assert rows[0][1] == 0 and rows[-2][1] == 3
     out = json.loads(box.run("series", {"days": 3}, 1))
-    assert out == [["2026-11-05", 3], ["2026-11-06", 3], ["2026-11-07", 30]]
+    assert out == {"series": [["2026-11-05", 3], ["2026-11-06", 3], ["2026-11-07", 30]]}
 
 
 def test_series_days_over_ninety_is_a_tool_error(box: Toolbox) -> None:
@@ -98,6 +102,57 @@ def test_a_failed_context_lookup_is_a_tool_error_not_a_crash(tmp_path: Path) -> 
         with pytest.raises(ToolError, match="unavailable"):
             b.run("weather", {}, 1)
         assert "c1" not in b.calls
-        assert json.loads(b.run("events", {}, 2))[0]["name"] == "Street fair"
+        assert json.loads(b.run("events", {}, 2))["events"][0]["name"] == "Street fair"
+    finally:
+        b.close()
+
+
+def covered_box(tmp_path: Path, start: date) -> Toolbox:
+    return Toolbox(
+        make_store(tmp_path / "raw.duckdb"),
+        candidate(),
+        weather_for,
+        events_for,
+        Coverage(start, DAY),
+    )
+
+
+def test_a_day_the_store_does_not_cover_is_not_a_zero(tmp_path: Path) -> None:
+    start = DAY - timedelta(days=9)  # the store's window starts mid-span
+    b = covered_box(tmp_path, start)
+    try:
+        rows = b.series_rows(30)
+        assert rows[0][0] == start and len(rows) == 10 and rows[-1] == (DAY, 30)
+        assert b.data_starts(30) == start
+        out = json.loads(b.run("series", {"days": 30}, 1))
+        assert out["series"][0][0] == start.isoformat() and len(out["series"]) == 10
+        assert out["note"] == f"data starts {start.isoformat()}: earlier days are not in the store"
+    finally:
+        b.close()
+
+
+def test_a_covered_day_with_no_requests_is_still_a_zero(tmp_path: Path) -> None:
+    b = covered_box(tmp_path, DAY - timedelta(days=60))  # covered, but requests only for 29 days
+    try:
+        rows = b.series_rows(40)
+        assert len(rows) == 40 and rows[0][1] == 0 and b.data_starts(40) is None
+        assert "note" not in json.loads(b.run("series", {"days": 40}, 1))
+    finally:
+        b.close()
+
+
+def test_the_events_tool_says_what_the_list_is_and_whether_it_is_cut_short(tmp_path: Path) -> None:
+    def capped(borough: str, board: int, day: date) -> list[Event]:
+        found = EventList(events_for(borough, board, day))
+        found.truncated = True
+        return found
+
+    b = Toolbox(make_store(tmp_path / "raw.duckdb"), candidate(), weather_for, capped)
+    try:
+        out = json.loads(b.run("events", {}, 1))
+        assert out["truncated"] is True and out["events"][0]["name"] == "Street fair"
+        assert (
+            "list this district" in out["scope"] and "not mean activity throughout" in out["scope"]
+        )
     finally:
         b.close()

@@ -226,6 +226,29 @@
       },
       "title": "Notes",
       "type": "array"
+    },
+    "data_starts": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Data Starts"
+    },
+    "events_state": {
+      "default": "complete",
+      "enum": [
+        "complete",
+        "cut_short",
+        "unavailable"
+      ],
+      "title": "Events State",
+      "type": "string"
     }
   },
   "required": [
@@ -233,8 +256,10 @@
     "borough",
     "complaint_type",
     "cost",
+    "data_starts",
     "day",
     "events",
+    "events_state",
     "evidence",
     "expected",
     "id",

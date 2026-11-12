@@ -16,12 +16,13 @@ from typing import Any
 from pothole.analyst import events as events_client
 from pothole.analyst import weather as weather_client
 from pothole.analyst.detect import SENT_ON, Candidate
-from pothole.analyst.finding import AnalystDay, Event, Finding, Weather
+from pothole.analyst.finding import AnalystDay, Event, EventsState, Finding, Weather
 from pothole.analyst.loop import Run
 from pothole.analyst.tools import ReportFailed, Toolbox
 from pothole.budget.limits import DEFAULT_LIMITS, CallLimits
 from pothole.llm.client import LLMClient
 from pothole.logs import get_logger
+from pothole.store.coverage import Coverage
 
 MAX_CALLS = 5
 log = get_logger(__name__)
@@ -50,9 +51,11 @@ def run(
     events_for: EventsFor | None = None,
     on_source_failure: SourceFailed | None = None,
     stop: Callable[[], bool] | None = None,
+    held: Coverage | None = None,
 ) -> Finding:
     """Investigate one candidate against the store at `db`. `on_source_failure(label, exc)` is
-    told of every failed weather or events lookup before the failure goes on."""
+    told of every failed weather or events lookup before the failure goes on. `held` is the span
+    the store covers: the series leaves out days before it."""
     box = Toolbox(
         db,
         candidate,
@@ -60,6 +63,7 @@ def run(
         _watched(
             "events", events_for or (lambda b, n, d: events_client.on(b, n, d)), on_source_failure
         ),
+        held,
     )
     try:
         state = Run(candidate, box, client, limits, max_calls, stop)
@@ -70,8 +74,11 @@ def run(
         series: list[tuple[date, int]] = _part(notes, "series", box.series_rows, [])
         points: list[tuple[float, float]] = _part(notes, "points", box.points, [])
         weather: Weather | None = _part(notes, "weather", box.weather, None)
+        asked = len(notes)
         found: list[Event] = _part(notes, "events", box.events, [])
-        if getattr(found, "truncated", False):
+        events_state: EventsState = "unavailable" if len(notes) > asked else "complete"
+        if events_state == "complete" and getattr(found, "truncated", False):
+            events_state = "cut_short"
             notes.append("events: the query hit its row limit; the list may be incomplete")
         return Finding(
             id=finding_id(candidate),
@@ -93,6 +100,8 @@ def run(
             trace=state.trace,
             cost=state.cost,
             notes=notes,
+            data_starts=box.data_starts(),
+            events_state=events_state,
         )
     finally:
         box.close()

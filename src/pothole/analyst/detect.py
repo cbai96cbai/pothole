@@ -26,7 +26,8 @@ from scipy.stats import nbinom
 
 from pothole.analyst.holidays import is_holiday
 from pothole.analyst.universe import Universe
-from pothole.store import counts
+from pothole.store import counts, coverage
+from pothole.store.coverage import Coverage
 from pothole.store.db import Connection
 from pothole.store.load import ANALYSIS_LAG_DAYS
 
@@ -80,13 +81,22 @@ class Panel:
         return (day - self.start).days
 
     @classmethod
-    def from_table(cls, table: pa.Table, universe: Universe) -> "Panel":
+    def from_table(
+        cls, table: pa.Table, universe: Universe, window: Coverage | None = None
+    ) -> "Panel":
+        """`window` is the span the store covers: a covered day with no counts is a real zero and
+        counts outside it are left out. Without it the span runs from the first to the last day
+        that has counts."""
         keys = sorted((b, n, t) for b, n in universe.boards for t in universe.complaint_types)
         rows = table.to_pylist()
         if not rows:
             raise ValueError("no counts to test")
-        first = min(r["date"] for r in rows)
-        last = max(r["date"] for r in rows)
+        if window is None:
+            first = min(r["date"] for r in rows)
+            last = max(r["date"] for r in rows)
+        else:
+            first, last = window.start, window.end
+            rows = [r for r in rows if first <= r["date"] <= last]
         matrix = np.zeros((len(keys), (last - first).days + 1), dtype=np.int64)
         where = {k: i for i, k in enumerate(keys)}
         for r in rows:
@@ -210,9 +220,10 @@ def eligible_days(panel: Panel) -> list[date]:
     ]
 
 
-def backtest(con: Connection, universe: Universe) -> dict[str, object]:
+def backtest(con: Connection, universe: Universe, window_days: int) -> dict[str, object]:
     """Run the detector on every eligible day of the stored window."""
-    panel = Panel.from_table(counts.regenerate(con, universe), universe)
+    held = coverage.of(con, window_days)
+    panel = Panel.from_table(counts.regenerate(con, universe), universe, held)
     days = []
     for day in eligible_days(panel):
         ev = evaluate(panel, day)

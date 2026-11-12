@@ -228,3 +228,44 @@ def test_without_a_source_failure_both_candidates_are_investigated(db: Path) -> 
         on_source_failure=lambda *_: None, stop=lambda: False,
     )  # fmt: skip
     assert [f.board for f in result.findings] == [3, 2] and result.skipped_reason is None
+
+
+def test_the_finding_says_where_the_data_starts_and_the_series_stops_there(db: Path) -> None:
+    from datetime import timedelta
+
+    from investigator_kit import DAY
+
+    from pothole.store.coverage import Coverage
+
+    start = DAY - timedelta(days=9)
+    model = Scripted([reply(tool_call("series", {"days": 30}, "s1")), reply(submit(OK, [1]))])
+    f = go(model, db, held=Coverage(start, DAY))
+    assert f.data_starts == start and f.series[0][0] == start and len(f.series) == 10
+    assert "data starts" in f.evidence[0].excerpt
+
+
+def test_a_finding_with_full_coverage_has_no_data_start(db: Path) -> None:
+    f = go(Scripted([reply(tool_call("weather", {}, "w1")), reply(submit(OK, [1]))]), db)
+    assert f.data_starts is None and f.events_state == "complete"
+
+
+def test_a_failed_events_lookup_is_unavailable_not_empty(db: Path) -> None:
+    def broken(*_: object) -> object:
+        raise TimeoutError("slow")
+
+    model = Scripted([reply(tool_call("weather", {}, "w1")), reply(submit(OK, [1]))])
+    f = investigate.run(candidate(), db, model, weather_for=weather_for, events_for=broken)  # type: ignore[arg-type]
+    assert f.events == [] and f.events_state == "unavailable"
+
+
+def test_a_capped_events_list_is_cut_short(db: Path) -> None:
+    from pothole.analyst.events import EventList
+
+    def capped(b: str, n: int, d: object) -> list:  # type: ignore[type-arg]
+        found = EventList(events_for(b, n, d))  # type: ignore[arg-type]
+        found.truncated = True
+        return found
+
+    model = Scripted([reply(tool_call("weather", {}, "w1")), reply(submit(OK, [1]))])
+    f = investigate.run(candidate(), db, model, weather_for=weather_for, events_for=capped)  # type: ignore[arg-type]
+    assert f.events_state == "cut_short" and len(f.events) == 1

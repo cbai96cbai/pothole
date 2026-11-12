@@ -8,6 +8,9 @@ from typing import Any, Literal
 
 WeatherSource = Literal["archive", "forecast_past_days"]
 Status = Literal["investigated", "unfinished"]
+# complete: the events list is whole (possibly empty); cut_short: the query hit its row limit;
+# unavailable: the lookup failed, so nothing is known about events
+EventsState = Literal["complete", "cut_short", "unavailable"]
 
 
 @dataclass(frozen=True)
@@ -55,6 +58,8 @@ class Finding:
     trace: list[dict[str, Any]] = field(default_factory=list)
     cost: Decimal = Decimal("0")
     notes: list[str] = field(default_factory=list)  # parts that could not be produced, and why
+    data_starts: date | None = None  # set when the series stops short of its first asked-for day
+    events_state: EventsState = "complete"
 
 
 @dataclass(frozen=True)

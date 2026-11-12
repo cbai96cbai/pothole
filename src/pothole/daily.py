@@ -47,7 +47,8 @@ from pothole.runrecord import CheckResult, RunRecord, Status
 from pothole.socrata.client import Socrata, SourceRejected, SourceUnavailable
 from pothole.spec import checks as spec_checks
 from pothole.spec.model import PipelineSpec
-from pothole.store import db, load, reconcile
+from pothole.store import coverage, db, load, reconcile
+from pothole.store.coverage import Coverage
 
 NEW_YORK = ZoneInfo("America/New_York")
 SUNDAY = 6
@@ -82,13 +83,16 @@ def _records(results: list[spec_checks.CheckResult]) -> list[CheckResult]:
     return [CheckResult(r.name, r.level, r.detail) for r in results]
 
 
-def screen(table: pa.Table, uni: universe.Universe, day: date) -> AnalystDay | list[Any]:
-    """A skipped day, or (as a list) tested, cleared and the candidates."""
+def screen(
+    table: pa.Table, uni: universe.Universe, day: date, held: Coverage | None = None
+) -> AnalystDay | list[Any]:
+    """A skipped day, or (as a list) tested, cleared and the candidates. `held` is the span the
+    store covers, so a covered day with no counts is a zero."""
     if is_holiday(day):
         return AnalystDay(day, 0, 0, [], skipped_reason="federal holiday: no analysis")
     if table.num_rows == 0:
         return AnalystDay(day, 0, 0, [], skipped_reason="no counts in the store")
-    panel = detect.Panel.from_table(table, uni)
+    panel = detect.Panel.from_table(table, uni, held)
     ev = detect.evaluate(panel, day)
     if ev is None:
         return AnalystDay(day, 0, 0, [], skipped_reason="no 8-week baseline for this day")
@@ -197,10 +201,10 @@ def _record(
 
 def _analyse(
     env: Env, con: db.Connection, ai: LLMClient | None, table: pa.Table, uni: universe.Universe,
-    analysed: date, spend: Spend, p: Progress,
+    analysed: date, spend: Spend, p: Progress, held: Coverage | None,
 ) -> tuple[AnalystDay, bool]:  # fmt: skip
     """The day's analysis, and whether the store connection was closed for the investigator."""
-    screened = screen(table, uni, analysed)
+    screened = screen(table, uni, analysed, held)
     if isinstance(screened, AnalystDay):
         return screened, False
     tested, cleared, found = screened
@@ -220,7 +224,7 @@ def _analyse(
     return dailyai.investigate_day(
         env.state / "raw.duckdb", found, ai, analysed, tested, cleared, spend,
         (DEFAULT_STEPS[1], DEFAULT_STEPS[2]), env.investigate_timeout_s,
-        **{**env.investigator, **watch},
+        **{**env.investigator, **watch, "held": held},
     ), True  # fmt: skip
 
 
@@ -282,6 +286,7 @@ def _run(env: Env, ai: LLMClient | None, spend: Spend, p: Progress) -> RunRecord
         uni = universe.load(env.data / "universe.json")
         analysed = day - timedelta(days=load.ANALYSIS_LAG_DAYS)
         table = refresh_counts(con, env.data, result.generation, uni)
+        held = coverage.of(con, spec.source.window_days)
         write_vintage(env.data, env.run_id, con, day)
         p.step = "analysis"
         p.analyst_day = analysed.isoformat()
@@ -289,7 +294,7 @@ def _run(env: Env, ai: LLMClient | None, spend: Spend, p: Progress) -> RunRecord
         if path.exists():  # a day's counts and analysis are one file, written once
             p.notes.append(f"already analysed: {analysed.isoformat()} is not analysed again")
         else:
-            analyst, closed = _analyse(env, con, live(), table, uni, analysed, spend, p)
+            analyst, closed = _analyse(env, con, live(), table, uni, analysed, spend, p, held)
             p.step = "analyst file"
             counted = replace(analyst, counts=day_counts(table, analysed))
             write_json(path, to_json(counted))  # temporary file then replace: whole or absent

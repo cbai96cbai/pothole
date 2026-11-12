@@ -19,6 +19,7 @@ from pothole.analyst.detect import Candidate
 from pothole.analyst.finding import Event, Weather
 from pothole.repair.validate import ToolError
 from pothole.spec.normalise import board
+from pothole.store.coverage import Coverage
 
 STATEMENT_TIMEOUT_S = 2.0
 MAX_DAYS = 90
@@ -55,6 +56,10 @@ BREAKDOWN_SQL = {
     }.items()
 }
 BREAKDOWN_BY = tuple(BREAKDOWN_SQL)
+EVENTS_SCOPE = (
+    "permitted events that list this district and whose scheduled span covers the day; "
+    "a long span does not mean activity throughout it"
+)
 
 
 def open_locked(path: Path) -> duckdb.DuckDBPyConnection:
@@ -96,9 +101,12 @@ class Toolbox:
         candidate: Candidate,
         weather_for: Callable[[date], Weather],
         events_for: Callable[[str, int, date], list[Event]],
+        held: Coverage | None = None,
     ) -> None:
+        """`held` is the span the store covers; a day before it is left out of a series."""
         self.con = open_locked(db)
         self.c = candidate
+        self.held = held
         self._weather_for, self._events_for = weather_for, events_for
         self.calls: dict[int, ToolCall] = {}  # ref number -> the successful call, for evidence
         self._context: dict[str, Any] = {}
@@ -121,15 +129,27 @@ class Toolbox:
     def _scope(self) -> list[Any]:
         return [*self._district, self.c.complaint_type]
 
+    def data_starts(self, days: int = MAX_DAYS) -> date | None:
+        """The first day the store covers, when that is after the first day asked for."""
+        asked = self.c.day - timedelta(days=days - 1)
+        return self.held.start if self.held and self.held.start > asked else None
+
     def series_rows(self, days: int = MAX_DAYS) -> list[tuple[date, int]]:
-        """Daily counts for this district and type, the `days` ending on the spike day, zeros
-        included."""
-        first = self.c.day - timedelta(days=days - 1)
+        """Daily counts for this district and type, the `days` ending on the spike day. A covered
+        day with no requests is a zero; a day the store does not cover is left out."""
+        first = self.data_starts(days) or self.c.day - timedelta(days=days - 1)
         found = {d: int(n) for d, n in self._query(SERIES_SQL, [*self._scope(), first, self.c.day])}
         return [
             (first + timedelta(days=i), found.get(first + timedelta(days=i), 0))
-            for i in range(days)
+            for i in range((self.c.day - first).days + 1)
         ]
+
+    def _series(self, days: int) -> str:
+        out: dict[str, Any] = {"series": [[d.isoformat(), n] for d, n in self.series_rows(days)]}
+        starts = self.data_starts(days)
+        if starts is not None:
+            out["note"] = f"data starts {starts.isoformat()}: earlier days are not in the store"
+        return json.dumps(out)
 
     def points(self) -> list[tuple[float, float]]:
         """At most 500 coordinates of the spike day's rows, an even deterministic sample."""
@@ -154,7 +174,7 @@ class Toolbox:
         """Run one tool. A success is kept under `ref`; a failure raises and keeps nothing."""
         if name == "series":
             days = _int(args, "days", 30, MAX_DAYS)
-            result = json.dumps([[d.isoformat(), n] for d, n in self.series_rows(days)])
+            result = self._series(days)
         elif name == "breakdown":
             result = self._breakdown(args)
         elif name == "neighbours":
@@ -162,11 +182,22 @@ class Toolbox:
         elif name == "weather":
             result = self._context_result(self.weather)
         elif name == "events":
-            result = self._context_result(lambda: [vars(e) for e in self.events()])
+            result = self._context_result(self._events_result)
         else:
             raise ToolError(f"unknown tool {name!r}")
         self.calls[ref] = ToolCall(name, args, result)
         return result
+
+    def _events_result(self) -> dict[str, Any]:
+        found = self.events()
+        return {
+            "scope": EVENTS_SCOPE,
+            "truncated": self.events_truncated(),
+            "events": [vars(e) for e in found],
+        }
+
+    def events_truncated(self) -> bool:
+        return bool(getattr(self.events(), "truncated", False))
 
     @staticmethod
     def _context_result(get: Callable[[], Any]) -> str:
