@@ -6,8 +6,36 @@ export function date(iso: string): string {
   return iso.slice(0, 10);
 }
 
+const HAS_OFFSET = /(Z|[+-]\d{2}:\d{2})$/;
+
+/** The one way a moment is shown: converted from its own offset to UTC and labelled UTC. A string
+ * with no offset is shown as written and says its zone was not recorded. Calendar dates (a
+ * finding's day, a chart's days) are never passed through here: they stay dates. */
 export function dateTime(iso: string): string {
-  return `${iso.slice(0, 10)} ${iso.slice(11, 16)} UTC`;
+  const moment = new Date(iso);
+  if (!HAS_OFFSET.test(iso) || Number.isNaN(moment.getTime())) {
+    return `${iso.slice(0, 10)} ${iso.slice(11, 16)} (zone not recorded)`;
+  }
+  const utc = moment.toISOString();
+  return `${utc.slice(0, 10)} ${utc.slice(11, 16)} UTC`;
+}
+
+/** One decimal, a half rounded away from zero: the same rule as `one_decimal` in
+ * src/pothole/analyst/numbers.py, tested against the same cases. */
+export function oneDecimal(x: number): string {
+  return (Math.sign(x) * Math.floor(Math.abs(x) * 10 + 0.5) / 10 + 0).toFixed(1);
+}
+
+/** A complaint type from the city's data (upper case) in title case. */
+export function titleCase(text: string): string {
+  return text.toLowerCase().replace(/(^|[^a-z0-9'])([a-z])/g, (_, before: string, letter: string) =>
+    before + letter.toUpperCase(),
+  );
+}
+
+/** "1 case", "2 cases". */
+export function count(n: number, noun: string): string {
+  return `${n} ${noun}${n === 1 ? "" : "s"}`;
 }
 
 export function usd(amount: string): string {

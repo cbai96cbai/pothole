@@ -23,6 +23,13 @@ def run(*cmd: str) -> subprocess.CompletedProcess[str]:
 
 
 @needs_node
+def test_the_text_formatters_give_the_same_words_as_the_python_side() -> None:
+    done = run("npx", "--no-install", "tsx", "scripts/check-format.tsx")
+    assert done.returncode == 0, done.stderr + done.stdout
+    assert "checked formatters" in done.stdout
+
+
+@needs_node
 @pytest.mark.parametrize("with_agent", [False, True])
 def test_every_route_renders_from_the_fixture_data(tmp_path: Path, with_agent: bool) -> None:
     repo = site_repo.make(tmp_path / "repo", with_agent=with_agent)
