@@ -228,7 +228,7 @@ MIT (see `LICENSE`).
 - **Code:** MIT, in `LICENSE`.
 - **311 service requests and permitted events:** NYC Open Data, under the
   [NYC Open Data terms of use](https://www.nyc.gov/html/data/terms.html). The datasets are
-  [311 Service Requests from 2010 to Present](https://data.cityofnewyork.us/d/erm2-nwe9) (`erm2-nwe9`)
+  [311 Service Requests from 2020 to Present](https://data.cityofnewyork.us/d/erm2-nwe9) (`erm2-nwe9`)
   and [NYC Permitted Event Information](https://data.cityofnewyork.us/d/tvpp-9vvx) (`tvpp-9vvx`).
 - **Weather:** [Open-Meteo](https://open-meteo.com), licensed
   [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
