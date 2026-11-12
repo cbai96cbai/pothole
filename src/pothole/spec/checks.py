@@ -90,7 +90,7 @@ def required(spec: PipelineSpec, rows: list[dict[str, str]], keys: list[str]) ->
 
 def cast_and_values(col: Column, cast: Cast, total: int) -> list[CheckResult]:
     out: list[CheckResult] = []
-    if col.type != "text":
+    if col.type != "text" or cast.cast_failed:  # a text column is reported only when it fails
         n = len(cast.cast_failed)
         out.append(
             _result(

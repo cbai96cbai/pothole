@@ -39,3 +39,11 @@ def test_no_string_makes_the_engine_raise(kind):
         row = {**ROW, **{c.source: raw for c in columns}}
         result = engine.run(SPEC, [row, dict(ROW)], [], datetime(2026, 11, 5, 12))
         assert result.table.num_rows == 2
+        cast = {c.name: c for c in result.checks if c.name.startswith("cast:")}
+        for col in columns:
+            if result.table.column(col.name)[0].as_py() is None and raw != "":
+                # a value the column could not hold is null AND reported, whatever the type
+                found = cast.get(f"cast:{col.name}")
+                assert found is not None, (kind, col.name, raw)
+                assert found.level == "fail"
+                assert found.sample_keys == [row[SPEC.column(SPEC.source.key).source]]
