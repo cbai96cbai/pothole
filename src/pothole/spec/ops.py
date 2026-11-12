@@ -51,8 +51,9 @@ _OPS = {"map_field", "set_format", "add_value_mapping"}
 
 def parse(raw: dict[str, Any]) -> MapField | SetFormat | AddValueMapping:
     """Read one submitted edit; anything but exactly one of the three operations is refused."""
-    if raw.get("op") not in _OPS:
-        raise ForbiddenEdit(f"unknown operation {raw.get('op')!r}; allowed: {sorted(_OPS)}")
+    name = raw.get("op") if isinstance(raw, dict) else None
+    if not isinstance(name, str) or name not in _OPS:
+        raise ForbiddenEdit(f"unknown operation {name!r}; allowed: {sorted(_OPS)}")
     try:
         return _ADAPTER.validate_python(raw)
     except ValidationError as err:
