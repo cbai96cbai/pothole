@@ -52,7 +52,23 @@ def finding(status: str = "investigated", stale: bool = False) -> Finding:
         else "Heat complaints in Brooklyn 12 were associated with a cold night.",
         evidence=[]
         if unfinished
-        else [Evidence(1, "breakdown", {"by": "descriptor", "top": 3}, "31 on 2026-11-06")],
+        else [
+            Evidence(1, "breakdown", {"by": "descriptor", "top": 3}, "31 on 2026-11-06"),
+            Evidence(
+                2,
+                "weather",
+                {},
+                '{"precip_mm": 0.0, "tmax_c": 3.1, "source": "forecast_past_days"}',
+            ),
+            Evidence(
+                4,
+                "events",
+                {},
+                '{"scope": "s", "truncated": false, "events": [{"name": "Street fair", '
+                '"type": "Street Event", "start": "2026-11-06T10:00:00.000", '
+                '"end": "2026-11-06T18:00:00.000"}], "shown": "first 1 of 2"}',
+            ),
+        ],
         series=[(date(2026, 10, 10 + i), 5 + i % 3) for i in range(20)] + [(date(2026, 11, 6), 31)],
         points=[(40.63 + i * 0.001, -73.99 + i * 0.001) for i in range(20)],
         weather=Weather(0.0, 3.1, "archive"),

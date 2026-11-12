@@ -110,7 +110,9 @@ for (const id of ids) {
   expect(html.includes("Map of"), `${h}: no map`);
   const file0 = read<Finding>(`findings/${id}.json`);
   const plain = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
-  expect(!/forecast_past_days|archive/.test(plain), `${h}: a source's raw name is shown`);
+  // reader-facing content only: the developer trace legitimately holds raw names
+  const reader = (html.split('<details class="dev">')[0] ?? "").replace(/<[^>]+>/g, " ");
+  expect(!/forecast_past_days|archive/.test(reader), `${h}: a source's raw name is shown`);
   expect(plain.includes(`${titleCase(file0.complaint_type)}, ${file0.borough} community district`), `${h}: complaint type not in title case`);
   expect(plain.includes(`Expected ${oneDecimal(file0.expected)}`), `${h}: expected value not rounded by the shared rule`);
   expect(plain.includes(`${oneDecimal(file0.ratio)}x`), `${h}: ratio not rounded by the shared rule`);
@@ -130,8 +132,18 @@ for (const id of ids) {
   } else {
     expect(!html.includes(UNFINISHED), `${h}: finished finding marked unfinished`);
     expect(html.includes("What the summary relied on") && html.includes(file.summary), `${h}: summary or evidence missing`);
+    let at = 0;
     for (const e of file.evidence) {
       expect(html.includes(escapeHtml(callText(e.tool, e.args))), `${h}: evidence does not show the call's arguments`);
+      const label = `ref ${e.ref} \u00b7 `;
+      const found = html.indexOf(label, at);
+      expect(found >= 0, `${h}: evidence item is not labelled "ref ${e.ref}" in ref order`);
+      at = Math.max(at, found);
+      if (e.tool === "weather") expect(/recorded weather|forecast model/.test(reader), `${h}: weather evidence not in plain words`);
+      if (e.tool === "events" && e.excerpt.includes('"shown"')) {
+        const shown = /"shown": "([^"]+)"/.exec(e.excerpt)?.[1] ?? "";
+        expect(reader.includes(shown), `${h}: a shortened events excerpt hides its "${shown}" notice`);
+      }
     }
   }
 }

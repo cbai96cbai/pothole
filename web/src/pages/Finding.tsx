@@ -1,7 +1,8 @@
+import { contextEvidence, EventItems, WeatherText } from "../components/Context";
 import { Trace } from "../components/Trace";
 import { PointsMap } from "../components/PointsMap";
 import { SeriesChart } from "../components/SeriesChart";
-import { callText, date, oneDecimal, small, titleCase, usd } from "../format";
+import { callText, oneDecimal, small, titleCase, usd } from "../format";
 import type { Finding as FindingData } from "../types";
 import {
   EVENTS_CUT_SHORT,
@@ -10,9 +11,13 @@ import {
   EVENTS_UNAVAILABLE,
   SCREEN_NOTE,
   UNFINISHED,
-  WEATHER_SOURCE_WORDS,
   WEATHER_UNAVAILABLE,
 } from "../wording";
+
+/** Weather and events evidence in plain words; any other tool stays compact JSON. */
+function Evidence({ tool, excerpt }: { tool: string; excerpt: string }) {
+  return <>{contextEvidence(tool, excerpt) ?? excerpt}</>;
+}
 
 export function Finding({ finding: f }: { finding: FindingData }) {
   // the banner already says the investigation did not finish
@@ -46,23 +51,14 @@ export function Finding({ finding: f }: { finding: FindingData }) {
 
       <h2>Weather and events</h2>
       {f.weather ? (
-        <p>
-          Central Park that day: rain {f.weather.precip_mm ?? "n/a"} mm, high{" "}
-          {f.weather.tmax_c ?? "n/a"} °C (Open-Meteo, {WEATHER_SOURCE_WORDS[f.weather.source] ?? f.weather.source}).
-        </p>
+        <p><WeatherText weather={f.weather} /></p>
       ) : (
         <p className="muted">{WEATHER_UNAVAILABLE}</p>
       )}
       <p className="muted">{EVENTS_NOTE}</p>
       {f.events_state === "unavailable" && <p className="notice">{EVENTS_UNAVAILABLE}</p>}
       {f.events_state === "complete" && f.events.length === 0 && <p>{EVENTS_EMPTY}</p>}
-      {f.events.length > 0 && (
-        <ul>
-          {f.events.map((e, i) => (
-            <li key={i}>{e.name} ({e.type}), {date(e.start)} to {date(e.end)}</li>
-          ))}
-        </ul>
-      )}
+      {f.events.length > 0 && <EventItems events={f.events} />}
       {f.events_state === "cut_short" && <p className="notice">{EVENTS_CUT_SHORT}</p>}
 
       {f.status === "investigated" && (
@@ -73,7 +69,10 @@ export function Finding({ finding: f }: { finding: FindingData }) {
           ) : (
             <ul>
               {f.evidence.map((e, i) => (
-                <li key={i}><code>{callText(e.tool, e.args)}</code>: {e.excerpt}</li>
+                <li key={i}>
+                  ref {e.ref} · <code>{callText(e.tool, e.args)}</code>:{" "}
+                  <Evidence tool={e.tool} excerpt={e.excerpt} />
+                </li>
               ))}
             </ul>
           )}
