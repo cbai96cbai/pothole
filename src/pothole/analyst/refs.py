@@ -42,13 +42,12 @@ def cited(refs: Any, calls: dict[int, ToolCall], seen: int) -> list[int]:
             f"evidence must list the ref numbers of the tool calls you rely on; {listing}"
         )
     numbers = [_number(r) for r in refs]
-    bad = [
-        str(r)[:ECHO] for r, n in zip(refs, numbers, strict=True) if n is None or n not in citable
-    ]
+    bad = [str(r) for r, n in zip(refs, numbers, strict=True) if n is None or n not in citable]
     if bad:
         unread = [n for n in numbers if n is not None and n in calls and n not in citable]
         hint = (
             "; read results first and submit in a separate reply from the calls" if unread else ""
         )
-        raise ToolError(f"evidence names refs that do not exist: {', '.join(bad)}{hint}; {listing}")
+        shown = ", ".join(b[:ECHO] for b in bad)
+        raise ToolError(f"evidence names refs that do not exist: {shown}{hint}; {listing}")
     return list(dict.fromkeys(n for n in numbers if n is not None))
