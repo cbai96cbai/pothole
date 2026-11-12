@@ -11,6 +11,7 @@ from decimal import Decimal
 from typing import Any
 
 from pothole.analyst.detect import Candidate
+from pothole.analyst.excerpt import excerpt
 from pothole.analyst.finding import Evidence
 from pothole.analyst.numbers import one_decimal
 from pothole.analyst.prompt import (
@@ -207,7 +208,7 @@ class Run:
             raise ToolError("wording_check must be true once you have re-read the summary")
         numbers = cited(refs, self.box.calls, self.seen)
         self.evidence = [
-            Evidence(t.name, t.args, cap(t.result, EXCERPT))
+            Evidence(t.name, t.args, excerpt(t.result, EXCERPT))
             for t in (self.box.calls[n] for n in numbers)
         ]
         self.summary = summary.strip()

@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from pothole.analyst.tools import BREAKDOWN_BY, MAX_DAYS, MAX_TOP
+from pothole.analyst.tools import BREAKDOWN_BY, EVENTS_SCOPE, MAX_DAYS, MAX_TOP
 from pothole.analyst.wording import PHRASES
 
 SYSTEM_PROMPT = """\
@@ -12,8 +12,7 @@ look at the day, then write a short finding with submit_finding.
 
 Tools: series (daily counts), breakdown (the day's requests split by descriptor, zip code, hour, \
 agency, location type or status), neighbours (the same complaint type that day in other \
-districts), weather (rain and the day's high at Central Park) and events (city-permitted events \
-in the district that day).
+districts), weather (rain and the day's high at Central Park) and events ({events}).
 
 Rules for the finding:
 - Say what the spike is associated with, using only what the tools returned. Use the words \
@@ -29,7 +28,7 @@ cannot cite them. Set wording_check to true only after you re-read the summary f
 words.
 Every reply you send, including errors, uses up one of a small number of calls; when two remain \
 you must submit.\
-""".format(banned=", ".join(f'"{p}"' for p in PHRASES))
+""".format(banned=", ".join(f'"{p}"' for p in PHRASES), events=EVENTS_SCOPE)
 
 CALLS_LEFT = "You have {n} calls left."
 SUBMIT_NEXT = "You have 2 calls left: call submit_finding now."
@@ -62,7 +61,9 @@ def _tool(
 TOOLS: list[dict[str, Any]] = [
     _tool(
         "series",
-        "Daily counts of this complaint type in this district, ending on the spike day.",
+        "Daily counts of this complaint type in this district, ending on the spike day. A day "
+        "before the store's first loaded day is left out, never counted as zero; the result "
+        "says where the data starts.",
         {
             "days": {
                 "type": "integer",
@@ -94,7 +95,12 @@ TOOLS: list[dict[str, Any]] = [
         [],
     ),
     _tool("weather", "Rain (mm) and the high (C) at Central Park on the spike day.", {}, []),
-    _tool("events", "City-permitted events in this district that overlap the spike day.", {}, []),
+    _tool(
+        "events",
+        f"The {EVENTS_SCOPE}; the result says whether the list was cut short.",
+        {},
+        [],
+    ),
     _tool(
         "submit_finding",
         "Submit the finding. Refused if it says any of: " + ", ".join(PHRASES) + ".",

@@ -222,7 +222,8 @@ def build(
 ) -> None:
     """Write the site data. `pending` is a run's record not yet appended to the run file: the
     site shows it as the newest run, so the record can be appended once the build has worked.
-    `now` is stamped as the build time; give it a zone, or the site says the zone is not recorded."""
+    `now` is stamped as the build time; give it a zone, or the site says the zone is not
+    recorded."""
     runs = runrecord.read(repo_root / "data" / "runs.jsonl") + ([pending] if pending else [])
     days = _load_days(repo_root)
     index, findings = _findings(days)
