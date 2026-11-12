@@ -35,3 +35,12 @@ def test_a_long_object_with_a_list_keeps_its_other_fields() -> None:
 def test_text_that_is_not_a_list_is_cut_with_a_mark() -> None:
     out = excerpt("x" * 500, 100)
     assert len(out) <= 100 and out.endswith("…")
+
+
+def test_when_no_whole_item_fits_none_is_shown_and_the_omission_is_said() -> None:
+    items = [{"name": "n" * 150, "type": "Street Event"}, {"name": "m"}]
+    out = json.loads(excerpt(json.dumps({"events": items}), 120))
+    assert out["events"] == [] and out["shown"] == "first 0 of 2"
+    assert "none is shown" in out["omitted"] and "n" * 20 not in json.dumps(out)
+    bare = excerpt(json.dumps([["x" * 150]]), 80)
+    assert bare.startswith("[] (first 0 of 1") and "none is shown" in bare and len(bare) <= 80
