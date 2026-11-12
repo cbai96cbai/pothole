@@ -136,7 +136,7 @@ def run(env: Env) -> RunRecord:
         failure = _record(env, ai, spend, progress, "error", error=message)
         if not progress.recorded and _append_error(env.data, failure, message):
             try:
-                _site(env, started.replace(tzinfo=None))
+                _site(env, started)
             except Exception as site_exc:  # the first failure is the one raised
                 log.error("site build after a failure failed", extra={"error": str(site_exc)})
         raise
@@ -243,7 +243,7 @@ def _run(env: Env, ai: LLMClient | None, spend: Spend, p: Progress) -> RunRecord
         record = _record(env, ai, spend, p, status)
         path = env.data / "runs.jsonl"
         already = runrecord.recorded(path, env.run_id, env.attempt)  # an earlier call's record
-        _site(env, now, pending=None if already else record)
+        _site(env, p.started, pending=None if already else record)
         if not already:
             runrecord.append(path, record)
         p.recorded = True

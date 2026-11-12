@@ -117,3 +117,12 @@ def test_a_complete_run_writes_the_record_counts_vintages_and_site(
     assert runrecord.read(repo / "data" / "runs.jsonl") == [record]
     assert (repo / "site" / "findings" / "index.json").exists()
     assert (repo / "data" / "analyst" / "2026-11-08.json").exists()
+
+
+def test_the_site_is_stamped_with_the_zone_it_was_built_in(
+    repo: Path, isolated_state: Path
+) -> None:
+    env, _, _ = env_for(repo, isolated_state, window_rows(TUESDAY))
+    daily.run(env)
+    generated = json.loads((repo / "site" / "meta.json").read_text())["generated"]
+    assert generated.endswith(("-05:00", "-04:00")), generated
