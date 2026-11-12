@@ -150,8 +150,9 @@ call.
 
 **The site publishes only the listed runs.** `results/published.json` names the five runs above.
 The site build refuses to build unless each is finished, was made from a clean checkout, names the
-same run id and split in its records, has a recorded commit and records decider counts by run and by family, and the decider of each listed failure,
-and all come from one commit. It does not recompute scores from the case files. Earlier runs are not mixed in.
+same run id and split in its records, has a recorded commit, records decider counts by run and by
+family, and records the decider of each listed failure, and all come from one commit. It does not
+recompute scores from the case files. Earlier runs are not mixed in.
 
 ## Run it
 
