@@ -149,7 +149,8 @@ def test_built_references_all_exist() -> None:
     html = (DIST / "index.html").read_text()
     refs = re.findall(r'(?:src|href)="([^"]+)"', html)
     assert refs
-    for ref in refs:
+    assert any(r.startswith("data:image/svg+xml,") for r in refs), "the inline favicon is missing"
+    for ref in (r for r in refs if not r.startswith("data:")):  # inline data has nothing to fetch
         assert ref.startswith("/pothole/"), f"{ref} is not under the site's base path"
         assert (DIST / ref.removeprefix("/pothole/")).is_file(), f"{ref} is not in the build"
     assert "/pothole/#/404" in (DIST / "404.html").read_text()
