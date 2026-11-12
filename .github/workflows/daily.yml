@@ -22,6 +22,8 @@ env:
 
 jobs:
   run:
+    # nothing runs, on the schedule or by dispatch, until the owner sets DAILY_ENABLED to 'true'
+    if: ${{ vars.DAILY_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -84,7 +86,7 @@ jobs:
 
   deploy:
     needs: run
-    if: ${{ vars.PAGES_ENABLED == 'true' }}
+    if: ${{ vars.DAILY_ENABLED == 'true' && vars.PAGES_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     environment:
       name: github-pages

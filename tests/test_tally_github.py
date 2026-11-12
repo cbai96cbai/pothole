@@ -94,7 +94,7 @@ def test_workflow_matches_the_plan() -> None:
     assert "key: raw-v1-${{ github.run_id }}-${{ github.run_attempt }}" in text
     assert "41898282+github-actions[bot]@users.noreply.github.com" in text
     deploy = wf["jobs"]["deploy"]
-    assert deploy["if"] == "${{ vars.PAGES_ENABLED == 'true' }}"
+    assert deploy["if"] == "${{ vars.DAILY_ENABLED == 'true' && vars.PAGES_ENABLED == 'true' }}"
     run_step = next(s for s in wf["jobs"]["run"]["steps"] if s.get("name") == "Daily run")
     for name in ("AZURE_OPENAI_ENDPOINT", "AZURE_OPENAI_API_KEY"):
         assert run_step["env"][name].startswith("${{ github.event_name == 'schedule' && secrets.")
@@ -105,6 +105,56 @@ def test_workflow_matches_the_plan() -> None:
     assert script.index("git config user.name") < script.index("git commit")
     assert script.index("git config user.email") < script.index("git pull --rebase")
     assert script.count("git pull --rebase") == 2 and script.count("git push") == 2
+
+
+def test_nothing_in_the_workflow_starts_until_the_owner_turns_it_on() -> None:
+    wf = yaml.safe_load((ROOT / ".github" / "workflows" / "daily.yml").read_text())
+    assert set(wf["jobs"]) == {"run", "deploy"}
+    for name, job in wf["jobs"].items():
+        assert str(job.get("if", "")).startswith("${{ vars.DAILY_ENABLED == 'true'"), name
+    assert wf["jobs"]["run"]["if"] == "${{ vars.DAILY_ENABLED == 'true' }}"
+
+
+def gh_with_jobs(out: str, job: str | None) -> Callable[[list[str]], str]:
+    """A `gh` whose listing is `out` and whose per-attempt job view says the `run` job `job`."""
+    asked: list[list[str]] = []
+
+    def gh(args: list[str]) -> str:
+        if args[1:3] == ["run", "list"]:
+            return out
+        asked.append(args)
+        assert args[1:3] == ["run", "view"] and "--attempt" in args and "jobs" in args[-1]
+        return json.dumps({"jobs": [] if job is None else [{"name": "run", "conclusion": job}]})
+
+    gh.asked = asked  # type: ignore[attr-defined]
+    return gh
+
+
+def test_a_run_whose_run_job_the_gate_skipped_spent_nothing(tmp_path: Path) -> None:
+    out = listing((9, "completed", "skipped", "schedule", "2026-11-11", 1))
+    tally = Tally(tmp_path / "spend.jsonl")
+    done = tally_github("o/r", date(2026, 11, 10), tmp_path / "runs.jsonl", tally,
+                        gh_with_jobs(out, "skipped"))  # fmt: skip
+    assert done.admitted == [] and done.gated_off == ["9-1"] and tally.total() == 0
+
+
+@pytest.mark.parametrize("job", ["failure", "cancelled", "success", None])
+def test_an_unexplained_missing_record_is_still_charged(tmp_path: Path, job: str | None) -> None:
+    out = listing((9, "completed", "failure", "schedule", "2026-11-11", 1))
+    tally = Tally(tmp_path / "spend.jsonl")
+    done = tally_github("o/r", date(2026, 11, 10), tmp_path / "runs.jsonl", tally,
+                        gh_with_jobs(out, job))  # fmt: skip
+    assert done.admitted == ["9-1"] and done.without_record == ["9-1"] and done.gated_off == []
+    assert tally.total() == Decimal("0.128")
+
+
+def test_each_attempt_is_checked_for_a_skipped_run_job(tmp_path: Path) -> None:
+    out = listing((9, "completed", "skipped", "schedule", "2026-11-11", 2))
+    gh = gh_with_jobs(out, "skipped")
+    tally = Tally(tmp_path / "spend.jsonl")
+    done = tally_github("o/r", date(2026, 11, 10), tmp_path / "runs.jsonl", tally, gh)
+    assert done.gated_off == ["9-1", "9-2"]
+    assert [a[a.index("--attempt") + 1] for a in gh.asked] == ["1", "2"]  # type: ignore[attr-defined]
 
 
 def paged_gh(total: int, limits: list[int]) -> "Callable[[list[str]], str]":

@@ -15,5 +15,6 @@ if [ -n "${SOCRATA_APP_TOKEN:-}" ]; then
   gh secret set SOCRATA_APP_TOKEN --repo "$REPO" --body "$SOCRATA_APP_TOKEN"
 fi
 
-# Model steps stay off until this is switched on for an observed run.
+# Nothing runs, and no model step runs, until each is switched on by hand for an observed run.
+gh variable set DAILY_ENABLED --repo "$REPO" --body false
 gh variable set AI_ENABLED --repo "$REPO" --body false
