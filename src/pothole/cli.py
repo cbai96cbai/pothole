@@ -36,6 +36,23 @@ def main() -> None:
     """A daily pipeline over public NYC 311 data."""
 
 
+@app.command("demo")
+def demo_command(
+    repo: Annotated[Path, typer.Option(help="The repository checkout to read.")] = Path("."),
+    out: Annotated[Path | None, typer.Option(help="Where the site data goes.")] = None,
+) -> None:
+    """Write the site data from the committed files: no key and no network."""
+    from pothole import sitedata
+
+    repo = repo.resolve()
+    target = out or repo / "web" / "src" / "data"
+    sitedata.build(repo, target)
+    typer.echo(f"site data written to {target}")
+    typer.echo("to build and preview the site (needs Node 24):")
+    typer.echo(f"  cd {repo / 'web'} && npm ci && npm run build")
+    typer.echo("  npx vite preview")
+
+
 @app.command("record-batches")
 def record_batches(
     out: Annotated[Path, typer.Option(help="Folder for <date>.jsonl.gz files.")] = Path(
