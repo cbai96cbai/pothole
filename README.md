@@ -1,5 +1,10 @@
 # pothole
 
+![The site: the status board, the findings, one finding with its chart and cited evidence, and the repair scores](docs/recording.gif)
+
+*A local build of the site on real NYC 311 data, recorded 2026-11-12. The two days with findings
+were analysed after the fact, with that day's data.*
+
 A daily pipeline over public NYC 311 data. It loads and checks each day's rows, has an agent
 propose a fix when a check fails, and screens for unusual spikes in complaints.
 
