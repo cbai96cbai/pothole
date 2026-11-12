@@ -49,8 +49,8 @@ def demo_command(
     sitedata.build(repo, target)
     typer.echo(f"site data written to {target}")
     typer.echo("to build and preview the site (needs Node 24):")
-    typer.echo(f"  cd {repo / 'web'} && npm ci && npm run build")
-    typer.echo("  npx vite preview")
+    typer.echo("  cd web && npm ci && npm run build")
+    typer.echo("  npx vite preview   # then open http://localhost:4173/pothole/")
 
 
 @app.command("record-batches")
