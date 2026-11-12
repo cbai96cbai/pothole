@@ -30,7 +30,7 @@ from pothole.socrata.client import Socrata, SourceRejected
 from pothole.spec import checks as ck
 from pothole.spec.checks import CheckResult
 from pothole.spec.model import PipelineSpec
-from pothole.store import counts, db
+from pothole.store import counts, coverage, db
 
 PAGE_SIZE = 50_000
 OVERLAP = timedelta(hours=1)
@@ -52,7 +52,7 @@ class LoadResult:
 
 
 def window_start(spec: PipelineSpec, now: datetime) -> str:
-    return f"{now.date() - timedelta(days=spec.source.window_days)}T00:00:00"
+    return f"{coverage.window_start(now.date(), spec.source.window_days)}T00:00:00"
 
 
 def _shift(stamp: str, delta: timedelta) -> str:
@@ -156,12 +156,13 @@ def incremental(
             break
     results = [*worst.values(), *_window_checks(con, spec, now)]
     generation = str(uuid.uuid4())
-    cutoff = f"{now.date() - timedelta(days=spec.source.window_days)}"
+    cutoff = f"{coverage.window_start(now.date(), spec.source.window_days)}"
     con.begin()
     try:
         con.execute(f"DELETE FROM {db.RAW} WHERE created_date < CAST(? AS DATE)", [cutoff])
         con.execute("DELETE FROM meta WHERE key = 'load_in_progress'")
         db.set_meta(con, "generation", generation)
+        coverage.record(con, now.date(), spec.source.window_days)
         db.set_meta(con, "last_success", now.isoformat(timespec="seconds"))
         con.commit()
     except BaseException:
