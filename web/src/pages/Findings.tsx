@@ -1,5 +1,5 @@
 import { Counts } from "../components/Counts";
-import { small } from "../format";
+import { oneDecimal, small, titleCase } from "../format";
 import { findingHref } from "../routes";
 import type { FindingsIndex } from "../types";
 import { NOTHING_NOTABLE, SCREEN_NOTE, UNFINISHED } from "../wording";
@@ -24,11 +24,11 @@ export function Findings({ index }: { index: FindingsIndex }) {
               <article key={f.id} className="card">
                 <h3>
                   <a href={findingHref(f.id)}>
-                    {f.complaint_type}, {f.borough} community district {f.board}
+                    {titleCase(f.complaint_type)}, {f.borough} community district {f.board}
                   </a>
                 </h3>
                 <p>
-                  {f.observed} filed against {f.expected.toFixed(1)} expected ({f.ratio.toFixed(1)}x,
+                  {f.observed} filed against {oneDecimal(f.expected)} expected ({oneDecimal(f.ratio)}x,
                   screen score q = {small(f.q)}).
                 </p>
                 {f.status === "unfinished" ? (

@@ -1,19 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 
-import { date } from "../format";
+import { date, oneDecimal } from "../format";
 
 const H = 240;
-const PAD = { l: 40, r: 12, t: 12, b: 32 };
+const PAD = { l: 40, r: 92, t: 12, b: 32 };
 const DEFAULT_WIDTH = 640;
 
 export function SeriesChart({
   series,
   highlight,
   expected,
+  dataStarts,
 }: {
   series: [string, number][];
   highlight: string;
   expected: number;
+  dataStarts: string | null;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(DEFAULT_WIDTH);
@@ -52,8 +54,8 @@ export function SeriesChart({
           <text className="tick" x={PAD.l - 6} y={y(0)} textAnchor="end">0</text>
           <text className="tick" x={PAD.l - 6} y={y(top) + 10} textAnchor="end">{Math.round(top)}</text>
           <line className="expected" x1={PAD.l} x2={width - PAD.r} y1={y(expected)} y2={y(expected)} />
-          <text className="tick" x={width - PAD.r} y={y(expected) - 4} textAnchor="end">
-            expected {expected.toFixed(1)}
+          <text className="tick" x={width - PAD.r + 6} y={y(expected)} dominantBaseline="middle">
+            expected {oneDecimal(expected)}
           </text>
           <path className="line" d={line.join("")} />
           {marked && <circle className="mark" cx={x(hi)} cy={y(marked[1])} r={5} />}
@@ -61,7 +63,10 @@ export function SeriesChart({
           {last && <text className="tick" x={width - PAD.r} y={H - 8} textAnchor="end">{date(last[0])}</text>}
         </svg>
       </div>
-      <figcaption className="muted">Complaints per day. The marked point is the flagged day.</figcaption>
+      <figcaption className="muted">
+        Complaints per day. The marked point is the flagged day.
+        {dataStarts && ` Data starts ${dataStarts}: the store holds nothing earlier, so earlier days are not drawn as zero.`}
+      </figcaption>
     </figure>
   );
 }

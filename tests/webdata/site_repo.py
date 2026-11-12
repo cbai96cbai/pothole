@@ -62,6 +62,8 @@ def finding(status: str = "investigated", stale: bool = False) -> Finding:
         notes=["unfinished: the model gave no accepted answer", "events: no rows"]
         if unfinished
         else [],
+        data_starts=None if unfinished else date(2026, 10, 10),
+        events_state="unavailable" if unfinished else "complete",
     )
 
 

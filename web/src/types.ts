@@ -252,6 +252,8 @@ export interface Finding {
   trace: Record<string, unknown>[];
   cost: string;
   notes: string[];
+  data_starts: string | null;
+  events_state: "complete" | "cut_short" | "unavailable";
 }
 
 export interface SiteData {

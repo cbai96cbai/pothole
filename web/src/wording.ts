@@ -1,8 +1,19 @@
 export const REPO_URL = "https://github.com/cbai96cbai/pothole";
 export const PROPOSED_NOT_JUDGED = "Proposed, not judged";
 export const DRILL = "Drill";
-export const NOTHING_NOTABLE = "Nothing notable today";
+export const NOTHING_NOTABLE = "Nothing notable that day";
 export const NOT_YET_RUN = "not yet run";
+export const WEATHER_SOURCE_WORDS: Record<string, string> = {
+  archive: "recorded weather",
+  forecast_past_days: "forecast model",
+};
+export const EVENTS_NOTE =
+  "Events shown are permitted events that list this district and whose scheduled span covers the day. A long span does not mean activity throughout it.";
+export const EVENTS_EMPTY = "No permitted event listing this district covered the day.";
+export const EVENTS_UNAVAILABLE =
+  "The events lookup was unavailable, so it is not known whether any events were listed.";
+export const EVENTS_CUT_SHORT = "The events list was cut short at its row limit and may be incomplete.";
+export const WEATHER_UNAVAILABLE = "The weather lookup was unavailable.";
 export const UNFINISHED = "The investigation did not finish; only the counts are shown.";
 
 export const SCREEN_NOTE =

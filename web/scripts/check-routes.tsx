@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { callText } from "../src/format";
+import { callText, dateTime, oneDecimal, titleCase } from "../src/format";
 import { Pages } from "../src/Pages";
 import { match, type Route } from "../src/routes";
 import type { Finding, SiteData } from "../src/types";
@@ -37,7 +37,7 @@ const hashes = [
   ...ids.map((id) => `#/findings/${id}`),
   "#/findings/does-not-exist", "#/nowhere", "#/findings/a/b",
 ];
-const lastRun = data.meta.last_success_finished?.slice(0, 10);
+const lastRun = data.meta.last_success_finished ? dateTime(data.meta.last_success_finished) : undefined;
 const pages = new Map<string, string>();
 
 for (const hash of hashes) {
@@ -72,7 +72,7 @@ if (data.drills.drills.length > 0) {
 }
 expect(!text("#/findings").includes("leftover summary"), "findings: an unfinished finding shows its summary");
 expect(text("#/findings").includes("did not finish"), "findings: unfinished finding not marked");
-expect(text("#/findings").includes("Nothing notable today") === data.findingsIndex.days.some((d) => d.findings.length === 0), "findings: quiet days not shown");
+expect(text("#/findings").includes("Nothing notable that day") === data.findingsIndex.days.some((d) => d.findings.length === 0), "findings: quiet days not shown");
 expect(text("#/repairs").includes("Rule-based fixer"), "repairs: no baseline");
 if (!data.repairs.agent_run) expect(text("#/repairs").includes("not yet run"), "repairs: no 'not yet run' for the agent");
 const f = data.meta.facts;
@@ -84,6 +84,12 @@ for (const figure of [f.window_days, f.complaint_types, f.districts, f.max_inves
 }
 expect(!/repairs (itself|its own)|fixes itself/i.test(text("#/about")), "about: says the pipeline repairs itself");
 expect(text("#/about").includes("reviews and merges"), "about: repairs are not described as reviewed pull requests");
+const tested = data.backtest.days;
+if (tested.length > 0) {
+  const span = `(${tested[0]?.day} to ${tested[tested.length - 1]?.day})`;
+  expect(text("#/").replace(/\s+/g, " ").includes(span), `board: the past-days span is not the tested days ${span}`);
+}
+expect(text("#/").includes(`Last run: ${dateTime(data.board.last_run?.finished ?? "")}`) || !data.board.last_run, "board: last run time not in the one formatter's form");
 expect(text("#/").includes("On simulated quiet days") && text("#/").includes("On past days"), "board: quiet-day rate or backtest missing");
 const escapeHtml = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const UNFINISHED = "The investigation did not finish; only the counts are shown.";
@@ -93,6 +99,17 @@ for (const id of ids) {
   const file = read<Finding>(`findings/${id}.json`);
   expect(html.includes('aria-label="Daily complaint counts'), `${h}: no series chart`);
   expect(html.includes("Map of"), `${h}: no map`);
+  const file0 = read<Finding>(`findings/${id}.json`);
+  const plain = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+  expect(!/forecast_past_days|archive/.test(plain), `${h}: a source's raw name is shown`);
+  expect(plain.includes(`${titleCase(file0.complaint_type)}, ${file0.borough} community district`), `${h}: complaint type not in title case`);
+  expect(plain.includes(`Expected ${oneDecimal(file0.expected)}`), `${h}: expected value not rounded by the shared rule`);
+  expect(plain.includes(`${oneDecimal(file0.ratio)}x`), `${h}: ratio not rounded by the shared rule`);
+  expect(plain.includes(`expected ${oneDecimal(file0.expected)}`), `${h}: the chart does not label the expected value`);
+  expect(plain.includes("list this district") && plain.includes("not mean activity throughout"), `${h}: events not described`);
+  expect(file0.data_starts === null || plain.includes(`Data starts ${file0.data_starts}`), `${h}: the chart does not say where the data starts`);
+  expect(file0.events_state !== "unavailable" || plain.includes("events lookup was unavailable"), `${h}: an unavailable events lookup is not said`);
+  expect(html.includes("Trace (for developers)"), `${h}: trace not labelled for developers`);
   if (file.status === "unfinished") {
     expect(html.includes(UNFINISHED), `${h}: unfinished finding not marked`);
     expect(!html.includes("What the summary relied on"), `${h}: unfinished finding lists evidence`);

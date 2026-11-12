@@ -71,8 +71,8 @@ export function Board({
       <p>{SCREEN_NOTE}</p>
       <h3>On past days</h3>
       <p>
-        Over {backtest.days_tested} past days ({backtest.window[0]} to{" "}
-        {backtest.window[backtest.window.length - 1]}) the screen flagged between{" "}
+        Over {backtest.days_tested} past days ({backtest.days[0]?.day} to{" "}
+        {backtest.days[backtest.days.length - 1]?.day}) the screen flagged between{" "}
         {backtest.flags_per_day.min} and {backtest.flags_per_day.max} series a day, median{" "}
         {backtest.flags_per_day.median}. <span className="muted">{backtest.label}.</span>
       </p>
