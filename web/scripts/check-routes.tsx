@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 
+import { callText } from "../src/format";
 import { Pages } from "../src/Pages";
 import { match, type Route } from "../src/routes";
 import type { Finding, SiteData } from "../src/types";
@@ -84,6 +85,7 @@ for (const figure of [f.window_days, f.complaint_types, f.districts, f.max_inves
 expect(!/repairs (itself|its own)|fixes itself/i.test(text("#/about")), "about: says the pipeline repairs itself");
 expect(text("#/about").includes("reviews and merges"), "about: repairs are not described as reviewed pull requests");
 expect(text("#/").includes("On simulated quiet days") && text("#/").includes("On past days"), "board: quiet-day rate or backtest missing");
+const escapeHtml = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const UNFINISHED = "The investigation did not finish; only the counts are shown.";
 for (const id of ids) {
   const h = `#/findings/${id}`;
@@ -94,13 +96,17 @@ for (const id of ids) {
   if (file.status === "unfinished") {
     expect(html.includes(UNFINISHED), `${h}: unfinished finding not marked`);
     expect(!html.includes("What the summary relied on"), `${h}: unfinished finding lists evidence`);
-    expect(file.summary === "" || !html.includes(file.summary), `${h}: unfinished finding shows a summary`);
+    // the summary block is the plain paragraph the investigated page puts its summary in
+    expect(!html.includes(`<p>${escapeHtml(file.summary)}</p>`), `${h}: unfinished finding shows a summary`);
     const shown = file.notes.filter((n) => !n.startsWith("unfinished:"));
     expect(shown.length === 0 || html.includes("Not computed:"), `${h}: notes not shown`);
     expect(!html.includes("Not computed: unfinished"), `${h}: notes repeat "unfinished"`);
   } else {
     expect(!html.includes(UNFINISHED), `${h}: finished finding marked unfinished`);
     expect(html.includes("What the summary relied on") && html.includes(file.summary), `${h}: summary or evidence missing`);
+    for (const e of file.evidence) {
+      expect(html.includes(escapeHtml(callText(e.tool, e.args))), `${h}: evidence does not show the call's arguments`);
+    }
   }
 }
 

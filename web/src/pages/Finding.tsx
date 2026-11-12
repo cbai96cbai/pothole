@@ -1,7 +1,7 @@
 import { Trace } from "../components/Trace";
 import { PointsMap } from "../components/PointsMap";
 import { SeriesChart } from "../components/SeriesChart";
-import { small, usd } from "../format";
+import { callText, small, usd } from "../format";
 import type { Finding as FindingData } from "../types";
 import { SCREEN_NOTE, UNFINISHED } from "../wording";
 
@@ -62,7 +62,7 @@ export function Finding({ finding: f }: { finding: FindingData }) {
           ) : (
             <ul>
               {f.evidence.map((e, i) => (
-                <li key={i}><code>{e.tool}</code>: {e.excerpt}</li>
+                <li key={i}><code>{callText(e.tool, e.args)}</code>: {e.excerpt}</li>
               ))}
             </ul>
           )}

@@ -96,6 +96,7 @@ def test_every_file_matches_its_schema(built: Path) -> None:
         "meta.json": "meta",
         "findings/2026-11-06-brooklyn-12-heat.json": "finding",
         "findings/2026-11-06-queens-6-noise.json": "finding",
+        "findings/2026-11-05-bronx-2-rodent.json": "finding",
     }
     written = {p.relative_to(built).as_posix() for p in built.rglob("*.json")}
     assert written == set(names)
@@ -196,13 +197,20 @@ def test_board_incidents_and_drills(built: Path) -> None:
 
 def test_findings_feed_keeps_the_quiet_day(built: Path) -> None:
     days = load(built, "findings/index.json")["days"]
-    assert [(d["day"], len(d["findings"])) for d in days] == [("2026-11-07", 0), ("2026-11-06", 2)]
+    assert [(d["day"], len(d["findings"])) for d in days] == [
+        ("2026-11-07", 0),
+        ("2026-11-06", 2),
+        ("2026-11-05", 1),
+    ]
     finding = load(built, "findings/2026-11-06-brooklyn-12-heat.json")
     assert len(finding["points"]) == 20
     assert len(finding["series"]) == 21
     assert finding["status"] == "investigated" and finding["notes"] == []
     unfinished = load(built, "findings/2026-11-06-queens-6-noise.json")
     assert unfinished["status"] == "unfinished" and unfinished["evidence"] == []
+    assert unfinished["summary"] == ""  # the page alone says it did not finish
+    stale = load(built, "findings/2026-11-05-bronx-2-rodent.json")
+    assert stale["status"] == "unfinished" and stale["summary"] != ""
 
 
 def test_repairs_have_the_baseline_and_no_agent_yet(built: Path) -> None:

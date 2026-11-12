@@ -27,3 +27,8 @@ export function money(amount: string): string {
   const [whole = "0", frac = ""] = Number(Number(amount).toFixed(3)).toString().split(".");
   return `$${whole}.${frac.padEnd(2, "0")}`;
 }
+
+/** A tool call as `tool(key=value, ...)`, so two calls of one tool can be told apart. */
+export function callText(tool: string, args: Record<string, unknown>): string {
+  return `${tool}(${Object.entries(args).map(([k, v]) => `${k}=${String(v)}`).join(", ")})`;
+}

@@ -31,10 +31,14 @@ def _run(n: int, day: int, **kw: object) -> RunRecord:
     return RunRecord(**{**base, **kw})  # type: ignore[arg-type]
 
 
-def finding(status: str = "investigated") -> Finding:
+def finding(status: str = "investigated", stale: bool = False) -> Finding:
+    """`unfinished` has the real shape: an empty summary. `stale` is an unfinished finding that
+    still holds a summary, which the page must not show."""
     unfinished = status == "unfinished"
     return Finding(
-        id="2026-11-06-queens-6-noise" if unfinished else "2026-11-06-brooklyn-12-heat",
+        id="2026-11-05-bronx-2-rodent"
+        if stale
+        else ("2026-11-06-queens-6-noise" if unfinished else "2026-11-06-brooklyn-12-heat"),
         day=date(2026, 11, 6),
         borough="Brooklyn",
         board=12,
@@ -43,12 +47,12 @@ def finding(status: str = "investigated") -> Finding:
         expected=6.5,
         ratio=4.77,
         q=0.0004,
-        summary="a leftover summary that must not be shown"
+        summary=("a leftover summary that must not be shown" if stale else "")
         if unfinished
         else "Heat complaints in Brooklyn 12 were associated with a cold night.",
         evidence=[]
         if unfinished
-        else [Evidence("daily_counts", {"board": 12}, "31 on 2026-11-06")],
+        else [Evidence("breakdown", {"by": "descriptor", "top": 3}, "31 on 2026-11-06")],
         series=[(date(2026, 10, 10 + i), 5 + i % 3) for i in range(20)] + [(date(2026, 11, 6), 31)],
         points=[(40.63 + i * 0.001, -73.99 + i * 0.001) for i in range(20)],
         weather=Weather(0.0, 3.1, "archive"),
@@ -88,6 +92,8 @@ def make(root: Path, *, with_agent: bool = False) -> Path:
     (analyst / "2026-11-07.json").write_text(json.dumps(to_json(quiet)))
     busy = AnalystDay(date(2026, 11, 6), 1460, 3, [finding(), finding("unfinished")])
     (analyst / "2026-11-06.json").write_text(json.dumps(to_json(busy)))
+    stale = AnalystDay(date(2026, 11, 5), 1440, 1, [finding("unfinished", stale=True)])
+    (analyst / "2026-11-05.json").write_text(json.dumps(to_json(stale)))
     scratch_repo(root)
     if with_agent:
         copy_runs(root, AGENT_RUNS)

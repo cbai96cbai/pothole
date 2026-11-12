@@ -29,7 +29,7 @@ def test_every_route_renders_from_the_fixture_data(tmp_path: Path, with_agent: b
     sitedata.build(repo, tmp_path / "out")
     done = run("npx", "--no-install", "tsx", "scripts/check-routes.tsx", str(tmp_path / "out"))
     assert done.returncode == 0, done.stderr + done.stdout
-    assert "checked 11 routes" in done.stdout
+    assert "checked 12 routes" in done.stdout
 
 
 @needs_node
