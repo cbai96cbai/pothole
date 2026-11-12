@@ -15,7 +15,9 @@ from investigator_kit import (
 )
 
 from pothole.analyst import investigate
+from pothole.analyst.tools import Toolbox
 from pothole.llm.client import CallFailed, Usage
+from pothole.repair.validate import ToolError
 
 OK = "Heat complaints in Brooklyn 3 were 30 against about 3 usual; the high was 3.1 C."
 LIST_3 = "refs you can cite: 1 series, 2 breakdown, 3 weather"
@@ -27,9 +29,8 @@ def db(tmp_path: Path) -> Path:
 
 
 def go(model: Scripted, db: Path, **kw):  # type: ignore[no-untyped-def]
-    return investigate.run(
-        candidate(), db, model, weather_for=weather_for, events_for=events_for, **kw
-    )
+    kw = {"weather_for": weather_for, "events_for": events_for, **kw}
+    return investigate.run(candidate(), db, model, **kw)
 
 
 def three_tools() -> list:  # type: ignore[type-arg]
@@ -216,3 +217,67 @@ def test_a_failed_model_call_after_a_refusal_keeps_the_cost(db: Path) -> None:
     )
     f = go(model, db)
     assert f.status == "unfinished" and f.summary == "" and str(f.cost) == "0.010"
+
+
+def _garbage(name: str) -> dict:  # type: ignore[type-arg]
+    return {"id": "g", "type": "function", "function": {"name": name, "arguments": "{not json"}}
+
+
+@pytest.mark.parametrize(
+    "kind", ["bad arguments", "garbled json", "query timeout", "source failure"]
+)
+def test_every_kind_of_failed_attempt_takes_a_number_and_is_never_citable(
+    db: Path, monkeypatch: pytest.MonkeyPatch, kind: str
+) -> None:
+    def broken(_: object) -> object:
+        raise TimeoutError("slow")
+
+    failing = {
+        "bad arguments": tool_call("series", {"days": 500}, "a"),
+        "garbled json": _garbage("series"),
+        "query timeout": tool_call("neighbours", {}, "a"),
+        "source failure": tool_call("weather", {}, "a"),
+    }[kind]
+    if kind == "query timeout":
+
+        def slow(self: object, *a: object) -> object:
+            raise ToolError("the query took longer than 2 seconds")
+
+        monkeypatch.setattr(Toolbox, "_neighbours", slow)
+    model = Scripted(
+        [
+            reply(failing, tool_call("breakdown", {"by": "descriptor", "top": 2}, "b")),
+            reply(submit(OK, [1])),
+            reply(submit(OK, [2])),
+        ]
+    )
+    f = go(model, db, **({"weather_for": broken} if kind == "source failure" else {}))
+    assert shown(f, 1, 0).startswith("ref 1: error: ") and shown(f, 1, 1).startswith("ref 2: ")
+    refusal = shown(f, 2)
+    assert "refs you can cite: 2 breakdown" in refusal
+    assert failing["function"]["name"] not in refusal.split("cite:")[1]
+    assert f.status == "investigated" and [e.tool for e in f.evidence] == ["breakdown"]
+
+
+def test_a_failing_source_and_a_refused_submission_in_one_reply_end_the_run(db: Path) -> None:
+    failures: list[str] = []
+
+    def broken(_: object) -> object:
+        failures.append("weather")
+        raise TimeoutError("slow")
+
+    model = Scripted(
+        [
+            reply(tool_call("weather", {}, "w"), submit(OK, [9])),
+            reply(submit(OK, [1])),
+        ]
+    )
+    f = investigate.run(
+        candidate(), db, model, weather_for=broken, events_for=events_for,  # type: ignore[arg-type]
+        stop=lambda: bool(failures),
+    )  # fmt: skip
+    assert len(model.sent) == 1 and len(model.script) == 1
+    assert f.status == "unfinished" and f.summary == "" and f.evidence == []
+    assert len(f.trace) == 1 and str(f.cost) == "0.001"
+    assert shown(f, 1, 1).startswith("error: ")  # the submission was refused, not accepted
+    assert any("no further model calls" in n for n in f.notes)

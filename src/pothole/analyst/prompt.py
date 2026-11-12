@@ -63,7 +63,14 @@ TOOLS: list[dict[str, Any]] = [
     _tool(
         "series",
         "Daily counts of this complaint type in this district, ending on the spike day.",
-        {"days": {"type": "integer", "description": f"how many days, 1 to {MAX_DAYS}"}},
+        {
+            "days": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": MAX_DAYS,
+                "description": f"how many days, 1 to {MAX_DAYS}",
+            }
+        },
         ["days"],
     ),
     _tool(
@@ -71,7 +78,12 @@ TOOLS: list[dict[str, Any]] = [
         "The spike day's requests in this district and type, counted by one field.",
         {
             "by": {"type": "string", "enum": list(BREAKDOWN_BY)},
-            "top": {"type": "integer", "description": f"how many values, 1 to {MAX_TOP}"},
+            "top": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": MAX_TOP,
+                "description": f"how many values, 1 to {MAX_TOP}",
+            },
         },
         ["by", "top"],
     ),

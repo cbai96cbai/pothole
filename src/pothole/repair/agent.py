@@ -26,6 +26,7 @@ from pothole.repair.tools import Submission, Toolbox, cap, render_results
 from pothole.repair.validate import ToolError
 from pothole.spec.checks import CheckResult
 from pothole.spec.model import PipelineSpec
+from pothole.toolargs import check_arguments
 
 FORCE_WHEN_LEFT = 2
 FORCE: dict[str, Any] = {"type": "function", "function": {"name": "submit"}}
@@ -139,6 +140,7 @@ class _Run:
             args = json.loads(call["function"].get("arguments") or "{}")
             if not isinstance(args, dict):
                 raise ToolError("arguments must be a JSON object")
+            check_arguments(TOOLS, name, args)
             if name == "submit":
                 sub = self.box.submit(args)
                 return "accepted", self._decided(sub)

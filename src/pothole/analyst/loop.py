@@ -31,6 +31,7 @@ from pothole.llm.client import CallFailed, CallResult, InputTooLarge, LLMClient
 from pothole.llm.tokens import count_input_tokens
 from pothole.repair.tools import cap
 from pothole.repair.validate import ToolError
+from pothole.toolargs import check_arguments
 
 FORCE_WHEN_LEFT = 2
 FORCE: dict[str, Any] = {"type": "function", "function": {"name": "submit_finding"}}
@@ -187,6 +188,9 @@ class Run:
         args = json.loads(call["function"].get("arguments") or "{}")
         if not isinstance(args, dict):
             raise ToolError("arguments must be a JSON object")
+        name = str(call["function"].get("name"))
+        # evidence is checked with the refs, so its refusal can list what is citable
+        check_arguments(TOOLS, name, {k: v for k, v in args.items() if k != "evidence"})
         return args
 
     def _submit(self, args: dict[str, Any]) -> None:
