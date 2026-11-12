@@ -55,11 +55,11 @@ class Finding:
     weather: Weather | None
     events: list[Event]
     status: Status  # unfinished: the model never produced an accepted submission
+    events_state: EventsState  # required: a record without it must fail, not read as complete
     trace: list[dict[str, Any]] = field(default_factory=list)
     cost: Decimal = Decimal("0")
     notes: list[str] = field(default_factory=list)  # parts that could not be produced, and why
     data_starts: date | None = None  # set when the series stops short of its first asked-for day
-    events_state: EventsState = "complete"
 
 
 @dataclass(frozen=True)

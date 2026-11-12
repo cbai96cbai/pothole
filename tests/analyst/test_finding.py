@@ -23,6 +23,7 @@ def test_a_day_serialises_to_json_with_dates_and_decimals_as_strings() -> None:
         weather=Weather(0.0, 3.1, "forecast_past_days"),
         events=[],
         status="investigated",
+        events_state="complete",
         cost=Decimal("0.031"),
     )
     out = to_json(AnalystDay(date(2026, 11, 7), 1400, 3, [f]))
@@ -37,3 +38,14 @@ def test_a_day_serialises_to_json_with_dates_and_decimals_as_strings() -> None:
 def test_a_quiet_day_has_no_findings() -> None:
     out = to_json(AnalystDay(date(2026, 11, 8), 1400, 0, []))
     assert out["findings"] == [] and out["skipped_reason"] is None
+
+
+def test_a_finding_must_say_whether_its_events_list_is_whole() -> None:
+    import pytest
+
+    with pytest.raises(TypeError, match="events_state"):
+        Finding(  # type: ignore[call-arg]
+            id="x", day=date(2026, 11, 7), borough="Bronx", board=9, complaint_type="T",
+            observed=1, expected=1.0, ratio=1.0, q=1.0, summary="", evidence=[], series=[],
+            points=[], weather=None, events=[], status="unfinished",
+        )  # fmt: skip
