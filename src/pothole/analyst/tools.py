@@ -70,6 +70,11 @@ def open_locked(path: Path) -> duckdb.DuckDBPyConnection:
     )
 
 
+class ReportFailed(Exception):
+    """The report of a source failure itself failed. It always ends the investigation: the run
+    cannot be told that a source failed, so no further model call may be paid for."""
+
+
 @dataclass(frozen=True)
 class ToolCall:
     name: str
@@ -167,6 +172,8 @@ class Toolbox:
     def _context_result(get: Callable[[], Any]) -> str:
         try:
             value = get()
+        except ReportFailed:
+            raise
         except Exception as exc:  # the lookup failed: the model is told, the run goes on
             raise ToolError(f"unavailable: {type(exc).__name__}: {exc}") from exc
         return json.dumps(vars(value) if hasattr(value, "__dict__") else value)

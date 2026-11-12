@@ -18,7 +18,7 @@ from pothole.analyst import weather as weather_client
 from pothole.analyst.detect import SENT_ON, Candidate
 from pothole.analyst.finding import AnalystDay, Event, Finding, Weather
 from pothole.analyst.loop import Run
-from pothole.analyst.tools import Toolbox
+from pothole.analyst.tools import ReportFailed, Toolbox
 from pothole.budget.limits import DEFAULT_LIMITS, CallLimits
 from pothole.llm.client import LLMClient
 from pothole.logs import get_logger
@@ -106,7 +106,12 @@ def _watched[**P, R](label: str, fn: Callable[P, R], report: SourceFailed | None
         try:
             return fn(*args, **kwargs)
         except Exception as exc:
-            report(label, exc)
+            try:
+                report(label, exc)
+            except Exception as failure:
+                raise ReportFailed(
+                    f"the report of the {label} failure failed: {type(failure).__name__}: {failure}"
+                ) from failure
             raise
 
     return call
@@ -117,6 +122,8 @@ def _part[T](notes: list[str], label: str, get: Callable[[], T], default: T) -> 
     are already paid for and the trace must not be lost."""
     try:
         return get()
+    except ReportFailed:
+        raise
     except Exception as exc:
         log.warning(f"{label} unavailable", extra={"error": str(exc)})
         notes.append(f"{label} unavailable: {type(exc).__name__}: {exc}")
