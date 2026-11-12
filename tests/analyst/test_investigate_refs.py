@@ -69,10 +69,10 @@ def test_numbers_map_to_the_right_call_when_a_tool_runs_twice(db: Path) -> None:
     )
     f = go(model, db)
     assert [(e.tool, e.args) for e in f.evidence] == [
-        ("series", {"days": 4}),
         ("series", {"days": 2}),
-    ]
-    assert len(f.evidence[0].excerpt) > len(f.evidence[1].excerpt)
+        ("series", {"days": 4}),
+    ]  # in ref order, not in the order the model cited them
+    assert len(f.evidence[0].excerpt) < len(f.evidence[1].excerpt)
 
 
 @pytest.mark.parametrize("bad", [[9], [0], [True], [1.5], ["1a"], [[1]], [], "1"])
@@ -281,3 +281,9 @@ def test_a_failing_source_and_a_refused_submission_in_one_reply_end_the_run(db: 
     assert len(f.trace) == 1 and str(f.cost) == "0.001"
     assert shown(f, 1, 1).startswith("error: ")  # the submission was refused, not accepted
     assert any("no further model calls" in n for n in f.notes)
+
+
+def test_stored_evidence_carries_its_ref_number_in_ref_order(db: Path) -> None:
+    model = Scripted([reply(*three_tools()), reply(submit(OK, [3, 1]))])
+    f = go(model, db)
+    assert [(e.ref, e.tool) for e in f.evidence] == [(1, "series"), (3, "weather")]

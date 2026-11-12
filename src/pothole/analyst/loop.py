@@ -208,7 +208,12 @@ class Run:
             raise ToolError("wording_check must be true once you have re-read the summary")
         numbers = cited(refs, self.box.calls, self.seen)
         self.evidence = [
-            Evidence(t.name, t.args, excerpt(t.result, EXCERPT))
-            for t in (self.box.calls[n] for n in numbers)
+            Evidence(
+                n,
+                self.box.calls[n].name,
+                self.box.calls[n].args,
+                excerpt(self.box.calls[n].result, EXCERPT),
+            )
+            for n in sorted(numbers)
         ]
         self.summary = summary.strip()

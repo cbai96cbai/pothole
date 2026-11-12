@@ -17,7 +17,7 @@ def test_a_day_serialises_to_json_with_dates_and_decimals_as_strings() -> None:
         ratio=15.8,
         q=1e-20,
         summary="Associated with the first cold night of the season.",
-        evidence=[Evidence("weather", {}, "tmax 3.1 C")],
+        evidence=[Evidence(1, "weather", {}, "tmax 3.1 C")],
         series=[(date(2026, 11, 6), 7), (date(2026, 11, 7), 89)],
         points=[(40.83, -73.86)],
         weather=Weather(0.0, 3.1, "forecast_past_days"),

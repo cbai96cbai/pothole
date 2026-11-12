@@ -30,8 +30,12 @@
       "additionalProperties": false
     },
     "Evidence": {
-      "description": "One tool call the summary relies on, with a short excerpt of its result.",
+      "description": "One tool call the summary relies on, with a short excerpt of its result. `ref` is the\nnumber the model was shown with the result and cites in its summary.",
       "properties": {
+        "ref": {
+          "title": "Ref",
+          "type": "integer"
+        },
         "tool": {
           "title": "Tool",
           "type": "string"
@@ -49,6 +53,7 @@
       "required": [
         "args",
         "excerpt",
+        "ref",
         "tool"
       ],
       "title": "Evidence",

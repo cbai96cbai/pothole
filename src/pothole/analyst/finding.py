@@ -30,8 +30,10 @@ class Event:
 
 @dataclass(frozen=True)
 class Evidence:
-    """One tool call the summary relies on, with a short excerpt of its result."""
+    """One tool call the summary relies on, with a short excerpt of its result. `ref` is the
+    number the model was shown with the result and cites in its summary."""
 
+    ref: int
     tool: str
     args: dict[str, Any]
     excerpt: str

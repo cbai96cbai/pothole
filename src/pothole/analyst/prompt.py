@@ -18,6 +18,8 @@ Rules for the finding:
 - Say what the spike is associated with, using only what the tools returned. Use the words \
 "associated with" or "coincided with". Never write any of these: {banned}. A submission \
 containing one is refused.
+- Any comparison (above, below, more, fewer, unusual, a surge, a spike) states both numbers it \
+compares, taken from the tool results, such as "58 against about 19 usual".
 - If the tools show nothing that goes with the spike, say so plainly. Do not guess.
 - Two to four plain sentences, under 450 characters (a summary over 600 is refused), with the \
 numbers you rely on.
@@ -107,7 +109,8 @@ TOOLS: list[dict[str, Any]] = [
         {
             "summary": {
                 "type": "string",
-                "description": "2 to 4 plain sentences, under 450 characters",
+                "description": "2 to 4 plain sentences, under 450 characters; a comparison states "
+                "both numbers it compares",
             },
             "evidence": {
                 "type": "array",

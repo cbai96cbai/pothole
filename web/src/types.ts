@@ -228,6 +228,7 @@ export interface Meta {
   last_success_run_id: string | null;
 }
 export interface Evidence {
+  ref: number;
   tool: string;
   args: Record<string, unknown>;
   excerpt: string;
