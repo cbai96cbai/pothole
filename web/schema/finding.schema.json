@@ -207,6 +207,15 @@
       "title": "Status",
       "type": "string"
     },
+    "events_state": {
+      "enum": [
+        "complete",
+        "cut_short",
+        "unavailable"
+      ],
+      "title": "Events State",
+      "type": "string"
+    },
     "trace": {
       "items": {
         "additionalProperties": true,
@@ -239,16 +248,6 @@
       ],
       "default": null,
       "title": "Data Starts"
-    },
-    "events_state": {
-      "default": "complete",
-      "enum": [
-        "complete",
-        "cut_short",
-        "unavailable"
-      ],
-      "title": "Events State",
-      "type": "string"
     }
   },
   "required": [
