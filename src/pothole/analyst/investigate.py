@@ -22,7 +22,6 @@ from pothole.analyst.tools import ReportFailed, Toolbox
 from pothole.budget.limits import DEFAULT_LIMITS, CallLimits
 from pothole.llm.client import LLMClient
 from pothole.logs import get_logger
-from pothole.store.coverage import Coverage
 
 MAX_CALLS = 5
 log = get_logger(__name__)
@@ -51,11 +50,9 @@ def run(
     events_for: EventsFor | None = None,
     on_source_failure: SourceFailed | None = None,
     stop: Callable[[], bool] | None = None,
-    held: Coverage | None = None,
 ) -> Finding:
     """Investigate one candidate against the store at `db`. `on_source_failure(label, exc)` is
-    told of every failed weather or events lookup before the failure goes on. `held` is the span
-    the store covers: the series leaves out days before it."""
+    told of every failed weather or events lookup before the failure goes on."""
     box = Toolbox(
         db,
         candidate,
@@ -63,7 +60,6 @@ def run(
         _watched(
             "events", events_for or (lambda b, n, d: events_client.on(b, n, d)), on_source_failure
         ),
-        held,
     )
     try:
         state = Run(candidate, box, client, limits, max_calls, stop)

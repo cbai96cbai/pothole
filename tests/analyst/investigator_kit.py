@@ -36,8 +36,14 @@ def row(i: int, day: date, board: str = "03 BROOKLYN", ctype: str = TYPE, **kw: 
     return {**out, **kw}
 
 
-def make_store(path: Path, spike: int = 30) -> Path:
-    """30 days of 3 requests a day, `spike` on DAY, and some in two other districts."""
+def make_store(
+    path: Path,
+    spike: int = 30,
+    window_start: date | None = DAY - timedelta(days=100),
+    loaded_on: datetime = datetime(2026, 11, 9, 6),
+) -> Path:
+    """30 days of 3 requests a day, `spike` on DAY, and some in two other districts. The store
+    records the span it covers (from `window_start` to `loaded_on`); None records nothing."""
     con = db.open(path)
     db.ensure_raw(con, SPEC)
     rows = [row(i, DAY - timedelta(days=d)) for d in range(1, 30) for i in range(3)]
@@ -46,6 +52,9 @@ def make_store(path: Path, spike: int = 30) -> Path:
     rows += [row(i, DAY, "12 MANHATTAN") for i in range(4)]
     rows += [row(i, DAY, "03 BROOKLYN", "NOISE - STREET/SIDEWALK") for i in range(5)]
     db.upsert(con, SPEC, rows, datetime(2026, 11, 9, 6))
+    if window_start is not None:
+        db.set_meta(con, "window_start", window_start.isoformat())
+        db.set_meta(con, "last_success", loaded_on.isoformat(timespec="seconds"))
     con.close()
     return path
 

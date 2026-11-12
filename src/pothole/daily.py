@@ -205,7 +205,7 @@ def _analyse(
     return dailyai.investigate_day(
         env.state / "raw.duckdb", found, ai, analysed, tested, cleared, spend,
         (DEFAULT_STEPS[1], DEFAULT_STEPS[2]), env.investigate_timeout_s,
-        **{**env.investigator, **watch, "held": held},
+        **{**env.investigator, **watch},
     ), True  # fmt: skip
 
 

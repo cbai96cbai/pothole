@@ -19,6 +19,7 @@ from pothole.analyst.detect import Candidate
 from pothole.analyst.finding import Event, Weather
 from pothole.repair.validate import ToolError
 from pothole.spec.normalise import board
+from pothole.store import coverage
 from pothole.store.coverage import Coverage
 
 STATEMENT_TIMEOUT_S = 2.0
@@ -101,12 +102,10 @@ class Toolbox:
         candidate: Candidate,
         weather_for: Callable[[date], Weather],
         events_for: Callable[[str, int, date], list[Event]],
-        held: Coverage | None = None,
     ) -> None:
-        """`held` is the span the store covers; a day before it is left out of a series."""
         self.con = open_locked(db)
         self.c = candidate
-        self.held = held
+        self.held: Coverage | None = coverage.of(self.con)  # the store's own record of its span
         self._weather_for, self._events_for = weather_for, events_for
         self.calls: dict[int, ToolCall] = {}  # ref number -> the successful call, for evidence
         self._context: dict[str, Any] = {}
@@ -134,21 +133,36 @@ class Toolbox:
         asked = self.c.day - timedelta(days=days - 1)
         return self.held.start if self.held and self.held.start > asked else None
 
+    def data_ends(self) -> date | None:
+        """The last day the store covers, when that is before the spike day."""
+        return self.held.end if self.held and self.held.end < self.c.day else None
+
     def series_rows(self, days: int = MAX_DAYS) -> list[tuple[date, int]]:
         """Daily counts for this district and type, the `days` ending on the spike day. A covered
-        day with no requests is a zero; a day the store does not cover is left out."""
-        first = self.data_starts(days) or self.c.day - timedelta(days=days - 1)
-        found = {d: int(n) for d, n in self._query(SERIES_SQL, [*self._scope(), first, self.c.day])}
+        day with no requests is a zero; a day the store does not cover, before its first or after
+        its last, is left out. Without a known coverage there is no series."""
+        if self.held is None:
+            raise ToolError("the store's coverage is not recorded, so no series can be given")
+        first = max(self.c.day - timedelta(days=days - 1), self.held.start)
+        last = min(self.c.day, self.held.end)
+        if first > last:
+            return []
+        found = {d: int(n) for d, n in self._query(SERIES_SQL, [*self._scope(), first, last])}
         return [
             (first + timedelta(days=i), found.get(first + timedelta(days=i), 0))
-            for i in range((self.c.day - first).days + 1)
+            for i in range((last - first).days + 1)
         ]
 
     def _series(self, days: int) -> str:
         out: dict[str, Any] = {"series": [[d.isoformat(), n] for d, n in self.series_rows(days)]}
-        starts = self.data_starts(days)
+        starts, ends = self.data_starts(days), self.data_ends()
+        notes = []
         if starts is not None:
-            out["note"] = f"data starts {starts.isoformat()}: earlier days are not in the store"
+            notes.append(f"data starts {starts.isoformat()}: earlier days are not in the store")
+        if ends is not None:
+            notes.append(f"data ends {ends.isoformat()}: later days are not in the store")
+        if notes:
+            out["note"] = "; ".join(notes)
         return json.dumps(out)
 
     def points(self) -> list[tuple[float, float]]:

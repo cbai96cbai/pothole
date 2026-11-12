@@ -1,5 +1,5 @@
 import json
-from datetime import date, timedelta
+from datetime import date, datetime, time, timedelta
 from pathlib import Path
 
 import duckdb
@@ -11,7 +11,6 @@ from pothole.analyst.events import EventList
 from pothole.analyst.finding import Event
 from pothole.analyst.tools import Toolbox
 from pothole.repair.validate import ToolError
-from pothole.store.coverage import Coverage
 
 
 @pytest.fixture
@@ -107,14 +106,13 @@ def test_a_failed_context_lookup_is_a_tool_error_not_a_crash(tmp_path: Path) -> 
         b.close()
 
 
-def covered_box(tmp_path: Path, start: date) -> Toolbox:
-    return Toolbox(
-        make_store(tmp_path / "raw.duckdb"),
-        candidate(),
-        weather_for,
-        events_for,
-        Coverage(start, DAY),
+def covered_box(tmp_path: Path, start: date, loaded_on: datetime | None = None) -> Toolbox:
+    store = make_store(
+        tmp_path / "raw.duckdb",
+        window_start=start,
+        **({"loaded_on": loaded_on} if loaded_on else {}),
     )
+    return Toolbox(store, candidate(), weather_for, events_for)
 
 
 def test_a_day_the_store_does_not_cover_is_not_a_zero(tmp_path: Path) -> None:
@@ -132,7 +130,7 @@ def test_a_day_the_store_does_not_cover_is_not_a_zero(tmp_path: Path) -> None:
 
 
 def test_a_covered_day_with_no_requests_is_still_a_zero(tmp_path: Path) -> None:
-    b = covered_box(tmp_path, DAY - timedelta(days=60))  # covered, but requests only for 29 days
+    b = covered_box(tmp_path, DAY - timedelta(days=100))  # covered, but requests only for 29 days
     try:
         rows = b.series_rows(40)
         assert len(rows) == 40 and rows[0][1] == 0 and b.data_starts(40) is None
@@ -154,5 +152,29 @@ def test_the_events_tool_says_what_the_list_is_and_whether_it_is_cut_short(tmp_p
         assert (
             "list this district" in out["scope"] and "not mean activity throughout" in out["scope"]
         )
+    finally:
+        b.close()
+
+
+def test_a_store_with_no_recorded_coverage_gives_no_series(tmp_path: Path) -> None:
+    store = make_store(tmp_path / "raw.duckdb", window_start=None)
+    b = Toolbox(store, candidate(), weather_for, events_for)
+    try:
+        with pytest.raises(ToolError, match="coverage"):
+            b.run("series", {"days": 5}, 1)
+        with pytest.raises(ToolError, match="coverage"):
+            b.series_rows(5)
+    finally:
+        b.close()
+
+
+def test_a_spike_day_after_the_last_covered_day_is_not_zero_filled(tmp_path: Path) -> None:
+    last = DAY - timedelta(days=2)
+    b = covered_box(tmp_path, DAY - timedelta(days=100), loaded_on=datetime.combine(last, time(6)))
+    try:
+        rows = b.series_rows(5)
+        assert rows[-1][0] == last and len(rows) == 3  # the 3 covered days of the 5 asked
+        out = json.loads(b.run("series", {"days": 5}, 1))
+        assert "data ends" in out["note"] and last.isoformat() in out["note"]
     finally:
         b.close()

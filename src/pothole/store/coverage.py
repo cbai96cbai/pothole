@@ -27,13 +27,15 @@ def record(con: db.Connection, load_day: date, window_days: int) -> None:
     db.set_meta(con, START_KEY, window_start(load_day, window_days).isoformat())
 
 
-def of(con: db.Connection, window_days: int) -> Coverage | None:
-    """The span the store covers, or None for a store that never finished a load. A store loaded
-    before the boundary was recorded gets it from the last load date and `window_days`."""
+def of(con: db.Connection, window_days: int | None = None) -> Coverage | None:
+    """The span the store covers, or None when it is not known: the store never finished a load,
+    or it was loaded before the boundary was recorded and `window_days` was not given to derive
+    it from the last load date."""
     finished = db.get_meta(con, "last_success")
     if finished is None:
         return None
     end = datetime.fromisoformat(finished).date()
     recorded = db.get_meta(con, START_KEY)
-    start = date.fromisoformat(recorded) if recorded else window_start(end, window_days)
-    return Coverage(start, end)
+    if recorded:
+        return Coverage(date.fromisoformat(recorded), end)
+    return None if window_days is None else Coverage(window_start(end, window_days), end)

@@ -235,11 +235,10 @@ def test_the_finding_says_where_the_data_starts_and_the_series_stops_there(db: P
 
     from investigator_kit import DAY
 
-    from pothole.store.coverage import Coverage
-
     start = DAY - timedelta(days=9)
+    store = make_store(db.parent / "cut.duckdb", window_start=start)
     model = Scripted([reply(tool_call("series", {"days": 30}, "s1")), reply(submit(OK, [1]))])
-    f = go(model, db, held=Coverage(start, DAY))
+    f = go(model, store)
     assert f.data_starts == start and f.series[0][0] == start and len(f.series) == 10
     assert "data starts" in f.evidence[0].excerpt
 
