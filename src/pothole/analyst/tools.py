@@ -95,7 +95,7 @@ class Toolbox:
         self.con = open_locked(db)
         self.c = candidate
         self._weather_for, self._events_for = weather_for, events_for
-        self.calls: dict[str, ToolCall] = {}  # tool_call_id -> what ran, for evidence
+        self.calls: dict[int, ToolCall] = {}  # ref number -> the successful call, for evidence
         self._context: dict[str, Any] = {}
         name = candidate.borough.upper()
         self._district = (f"{candidate.board:02d} {name}", f"{candidate.board} {name}")
@@ -145,9 +145,8 @@ class Toolbox:
         found: list[Event] = self._context["events"]
         return found
 
-    def run(self, name: str, args: dict[str, Any], call_id: str) -> str:
-        if call_id in self.calls:
-            raise ToolError(f"tool call id {call_id!r} was already used")
+    def run(self, name: str, args: dict[str, Any], ref: int) -> str:
+        """Run one tool. A success is kept under `ref`; a failure raises and keeps nothing."""
         if name == "series":
             days = _int(args, "days", 30, MAX_DAYS)
             result = json.dumps([[d.isoformat(), n] for d, n in self.series_rows(days)])
@@ -161,7 +160,7 @@ class Toolbox:
             result = self._context_result(lambda: [vars(e) for e in self.events()])
         else:
             raise ToolError(f"unknown tool {name!r}")
-        self.calls[call_id] = ToolCall(name, args, result)
+        self.calls[ref] = ToolCall(name, args, result)
         return result
 
     @staticmethod

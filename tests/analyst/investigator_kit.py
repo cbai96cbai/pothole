@@ -96,7 +96,7 @@ class Scripted:
         return nxt
 
 
-def submit(summary: str, refs: list[str], check: bool = True) -> dict[str, Any]:
+def submit(summary: str, refs: list[Any], check: bool = True) -> dict[str, Any]:
     return tool_call(
         "submit_finding", {"summary": summary, "evidence": refs, "wording_check": check}, "s1"
     )

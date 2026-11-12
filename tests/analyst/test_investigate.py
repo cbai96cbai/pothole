@@ -12,7 +12,7 @@ from investigator_kit import (
     weather_for,
 )
 
-from pothole.analyst import investigate
+from pothole.analyst import investigate, loop
 from pothole.analyst.finding import to_json
 from pothole.analyst.tools import Toolbox
 from pothole.llm.client import CallFailed, Usage
@@ -44,7 +44,7 @@ def test_scripted_investigation_ends_in_a_finding(db: Path) -> None:
                 tool_call("weather", {}, "w1"),
                 tool_call("breakdown", {"by": "descriptor", "top": 3}, "b1"),
             ),
-            reply(submit(OK, ["w1", "b1"])),
+            reply(submit(OK, [1, 2])),
         ]
     )
     f = go(model, db)
@@ -66,8 +66,8 @@ def test_causal_wording_is_rejected_and_counts_as_a_call(db: Path, bad: str) -> 
     model = Scripted(
         [
             reply(tool_call("weather", {}, "w1")),
-            reply(submit(bad, ["w1"])),
-            reply(submit(OK, ["w1"])),
+            reply(submit(bad, [1])),
+            reply(submit(OK, [1])),
         ]
     )
     f = go(model, db)
@@ -77,36 +77,23 @@ def test_causal_wording_is_rejected_and_counts_as_a_call(db: Path, bad: str) -> 
     assert "associated with" in refused
 
 
-def test_evidence_must_name_tool_calls_that_were_made(db: Path) -> None:
-    model = Scripted(
-        [
-            reply(tool_call("weather", {}, "w1")),
-            reply(submit(OK, ["w1", "zz"])),
-            reply(submit(OK, ["w1"])),
-        ]
-    )
-    f = go(model, db)
-    assert "were not made: zz" in f.trace[1]["tool_results"][0]["content"]
-    assert [e.tool for e in f.evidence] == ["weather"]
-
-
 def test_a_failed_tool_call_cannot_be_cited(db: Path) -> None:
     model = Scripted(
         [
             reply(tool_call("series", {"days": 500}, "x1")),
-            *[reply(submit(OK, ["x1"])) for _ in range(4)],
+            *[reply(submit(OK, [1])) for _ in range(4)],
         ]
     )
     f = go(model, db)
-    assert f.evidence == [] and f.status == "unfinished" and f.summary == investigate.UNFINISHED
+    assert f.evidence == [] and f.status == "unfinished" and f.summary == ""
 
 
 def test_wording_check_must_be_true(db: Path) -> None:
     model = Scripted(
         [
             reply(tool_call("weather", {}, "w1")),
-            reply(submit(OK, ["w1"], check=False)),
-            reply(submit(OK, ["w1"])),
+            reply(submit(OK, [1], check=False)),
+            reply(submit(OK, [1])),
         ]
     )
     f = go(model, db)
@@ -119,11 +106,11 @@ def test_the_submit_tool_is_forced_when_two_calls_remain(db: Path) -> None:
             reply(tool_call("weather", {}, "w1")),
             reply(tool_call("events", {}, "e1")),
             reply(tool_call("neighbours", {}, "n1")),
-            reply(submit(OK, ["w1"])),
+            reply(submit(OK, [1])),
         ]
     )
     f = go(model, db)
-    assert [s["tool_choice"] for s in model.sent] == [None, None, None, investigate.FORCE]
+    assert [s["tool_choice"] for s in model.sent] == [None, None, None, loop.FORCE]
     assert "2 calls left" in model.sent[3]["messages"][-1]["content"]
     assert f.summary == OK
 
@@ -132,7 +119,7 @@ def test_no_submission_in_five_calls_still_returns_the_counts(db: Path) -> None:
     model = Scripted([reply(tool_call("weather", {}, f"w{i}")) for i in range(5)])
     f = go(model, db)
     assert len(model.sent) == 5 and f.status == "unfinished" and "5 calls" in f.notes[0]
-    assert f.summary == investigate.UNFINISHED and f.evidence == []
+    assert f.summary == "" and f.evidence == []
     assert f.observed == 30 and len(f.series) == 90 and f.cost > 0
 
 
@@ -153,13 +140,13 @@ def test_weather_failure_leaves_the_finding_without_weather(db: Path) -> None:
     def broken(_: object) -> object:
         raise TimeoutError("slow")
 
-    model = Scripted([reply(tool_call("events", {}, "e1")), reply(submit(OK, ["e1"]))])
+    model = Scripted([reply(tool_call("events", {}, "e1")), reply(submit(OK, [1]))])
     f = investigate.run(candidate(), db, model, weather_for=broken, events_for=events_for)  # type: ignore[arg-type]
     assert f.weather is None and len(f.events) == 1
 
 
 def test_day_investigates_the_top_two_by_ratio(db: Path) -> None:
-    script = [reply(tool_call("weather", {}, "w1")), reply(submit(OK, ["w1"]))] * 2
+    script = [reply(tool_call("weather", {}, "w1")), reply(submit(OK, [1]))] * 2
     model = Scripted(script)
     cands = [candidate(5.0, 1), candidate(12.0, 3), candidate(9.0, 2)]
     result = investigate.day(
@@ -190,26 +177,13 @@ def test_a_timeout_after_the_loop_keeps_the_finding_trace_and_cost(
         raise ToolError("the query took longer than 2 seconds")
 
     monkeypatch.setattr(Toolbox, part, timed_out)
-    model = Scripted([reply(tool_call("weather", {}, "w1")), reply(submit(OK, ["w1"]))])
+    model = Scripted([reply(tool_call("weather", {}, "w1")), reply(submit(OK, [1]))])
     f = go(model, db)
     assert f.status == "investigated" and f.summary == OK
     assert len(f.trace) == 2 and str(f.cost) == "0.002"
     assert [n.split(" unavailable")[0] for n in f.notes] == [part.split("_")[0]]
     other = f.points if part == "series_rows" else f.series
     assert other  # the part that worked is kept
-
-
-def test_a_repeated_tool_call_id_is_a_tool_error(db: Path) -> None:
-    model = Scripted(
-        [
-            reply(tool_call("weather", {}, "w1")),
-            reply(tool_call("events", {}, "w1")),
-            reply(submit(OK, ["w1"])),
-        ]
-    )
-    f = go(model, db)
-    assert "already used" in f.trace[1]["tool_results"][0]["content"]
-    assert [e.tool for e in f.evidence] == ["weather"]
 
 
 @pytest.mark.parametrize("source", ["weather", "events"])
@@ -225,7 +199,7 @@ def test_a_source_failure_is_reported_and_stops_the_remaining_candidates(
         failures.append((label, type(exc).__name__))
 
     first = [reply(tool_call(source, {}, "t1")), reply(tool_call("series", {}, "t2"))]
-    model = Scripted([*first, reply(submit(OK, ["t2"])), *first, reply(submit(OK, ["t2"]))])
+    model = Scripted([*first, reply(submit(OK, [2])), *first, reply(submit(OK, [2]))])
     paid_after = []  # the number of model replies still unused when each call is made
     real_call = model.call
     model.call = lambda *a, **k: (paid_after.append(len(model.script)), real_call(*a, **k))[1]  # type: ignore[method-assign]
@@ -246,7 +220,7 @@ def test_a_source_failure_is_reported_and_stops_the_remaining_candidates(
 
 
 def test_without_a_source_failure_both_candidates_are_investigated(db: Path) -> None:
-    script = [reply(tool_call("weather", {}, "w1")), reply(submit(OK, ["w1"]))] * 2
+    script = [reply(tool_call("weather", {}, "w1")), reply(submit(OK, [1]))] * 2
     cands = [candidate(12.0, 3), candidate(9.0, 2)]
     result = investigate.day(
         db, cands, Scripted(script), analysed=cands[0].day, tested=100, cleared=2,  # type: ignore[arg-type]

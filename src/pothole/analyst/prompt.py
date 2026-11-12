@@ -20,9 +20,12 @@ Rules for the finding:
 "associated with" or "coincided with". Never write any of these: {banned}. A submission \
 containing one is refused.
 - If the tools show nothing that goes with the spike, say so plainly. Do not guess.
-- Two to four plain sentences, at most 600 characters, with the numbers you rely on.
-- evidence lists the tool_call_id of each tool call the summary relies on (ids you were given in \
-this conversation). Set wording_check to true only after you re-read the summary for the banned \
+- Two to four plain sentences, under 450 characters (a summary over 600 is refused), with the \
+numbers you rely on.
+- Every tool result begins "ref <n>:", a number. evidence lists the numbers of the tool calls the \
+summary relies on, for example [1, 3]. You can cite only results you have already read, so call \
+the tools first and submit in a later reply: a submission in the same reply as new tool calls \
+cannot cite them. Set wording_check to true only after you re-read the summary for the banned \
 words.
 Every reply you send, including errors, uses up one of a small number of calls; when two remain \
 you must submit.\
@@ -31,6 +34,14 @@ you must submit.\
 CALLS_LEFT = "You have {n} calls left."
 SUBMIT_NEXT = "You have 2 calls left: call submit_finding now."
 LAST_CALL = "This is your last call: submit_finding now."
+CALL_BUDGET = (
+    "You have {n} calls in all; each reply uses one. Read the tool results, then submit in a "
+    "separate reply."
+)
+TOO_FEW_CALLS = (
+    " With {n} calls you cannot read a result and then submit: the submission is forced at once "
+    "and has nothing to cite."
+)
 NUDGE_NO_TOOL = "Call one of the tools."
 NUDGE_LENGTH = "Your reply was cut off. Answer with a shorter tool call."
 
@@ -76,11 +87,15 @@ TOOLS: list[dict[str, Any]] = [
         "submit_finding",
         "Submit the finding. Refused if it says any of: " + ", ".join(PHRASES) + ".",
         {
-            "summary": {"type": "string", "description": "2 to 4 plain sentences, 600 chars max"},
+            "summary": {
+                "type": "string",
+                "description": "2 to 4 plain sentences, under 450 characters",
+            },
             "evidence": {
                 "type": "array",
-                "items": {"type": "string"},
-                "description": "tool_call_id of each tool call the summary relies on",
+                "items": {"type": "integer"},
+                "description": 'the ref numbers ("ref <n>:" at the start of a tool result) of '
+                "the tool calls the summary relies on, only ones from earlier replies",
             },
             "wording_check": {
                 "type": "boolean",

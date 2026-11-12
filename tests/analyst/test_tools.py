@@ -50,26 +50,26 @@ def test_series_is_zero_filled_and_ends_on_the_spike_day(box: Toolbox) -> None:
     rows = box.series_rows(90)
     assert len(rows) == 90 and rows[-1] == (DAY, 30)
     assert rows[0][1] == 0 and rows[-2][1] == 3
-    out = json.loads(box.run("series", {"days": 3}, "c1"))
+    out = json.loads(box.run("series", {"days": 3}, 1))
     assert out == [["2026-11-05", 3], ["2026-11-06", 3], ["2026-11-07", 30]]
 
 
 def test_series_days_over_ninety_is_a_tool_error(box: Toolbox) -> None:
     with pytest.raises(ToolError):
-        box.run("series", {"days": 91}, "c1")
+        box.run("series", {"days": 91}, 1)
 
 
 def test_breakdown_counts_one_field_and_rejects_others(box: Toolbox) -> None:
-    out = json.loads(box.run("breakdown", {"by": "descriptor", "top": 5}, "c1"))
+    out = json.loads(box.run("breakdown", {"by": "descriptor", "top": 5}, 1))
     assert out == [["ENTIRE BUILDING", 20], ["APARTMENT ONLY", 10]]
-    assert json.loads(box.run("breakdown", {"by": "hour", "top": 2}, "c2"))[0][1] == 2
+    assert json.loads(box.run("breakdown", {"by": "hour", "top": 2}, 2))[0][1] == 2
     for bad in ({"by": "unique_key; DROP TABLE raw", "top": 3}, {"by": "status", "top": 11}):
         with pytest.raises(ToolError):
-            box.run("breakdown", bad, "c3")
+            box.run("breakdown", bad, 3)
 
 
 def test_neighbours_lists_other_districts_of_the_same_type(box: Toolbox) -> None:
-    out = json.loads(box.run("neighbours", {}, "c1"))
+    out = json.loads(box.run("neighbours", {}, 1))
     assert out["this_district"] == 30
     assert out["other_districts"] == [
         {"borough": "Queens", "board": 5, "count": 8},
@@ -96,8 +96,8 @@ def test_a_failed_context_lookup_is_a_tool_error_not_a_crash(tmp_path: Path) -> 
     b = Toolbox(make_store(tmp_path / "raw.duckdb"), candidate(), broken, events_for)  # type: ignore[arg-type]
     try:
         with pytest.raises(ToolError, match="unavailable"):
-            b.run("weather", {}, "c1")
+            b.run("weather", {}, 1)
         assert "c1" not in b.calls
-        assert json.loads(b.run("events", {}, "c2"))[0]["name"] == "Street fair"
+        assert json.loads(b.run("events", {}, 2))[0]["name"] == "Street fair"
     finally:
         b.close()
