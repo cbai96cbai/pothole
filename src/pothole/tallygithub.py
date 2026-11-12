@@ -2,7 +2,8 @@
 
 Every attempt of a scheduled daily run on or after `since` is charged the run envelope once,
 whatever its conclusion (success, failure, cancelled, timed out), unless that attempt's committed
-record says AI was off. A run with no committed record, as after a crash, is charged. A re-run
+record says AI was off. A run with no committed record, as after a crash, is charged, unless
+GitHub says the attempt's `run` job was skipped (the DAILY_ENABLED gate): nothing ran. A re-run
 keeps its run id and raises the attempt number, so each attempt is its own charge (idempotent by
 run id and attempt). Manual dispatches never use the model and are not listed here.
 
@@ -46,6 +47,7 @@ class Admitted:
     already: list[str] = field(default_factory=list)
     ai_off: list[str] = field(default_factory=list)  # the attempt's record says AI was off
     without_record: list[str] = field(default_factory=list)  # charged, no committed record
+    gated_off: list[str] = field(default_factory=list)  # the run job was skipped: nothing spent
 
 
 def _listing(repo: str, since: date, run: Runner) -> list[dict[str, Any]]:
@@ -68,6 +70,22 @@ def _listing(repo: str, since: date, run: Runner) -> list[dict[str, Any]]:
                 "older runs may be missing, so the tally was not changed"
             )
         limit = min(limit * 2, MAX_RUNS)
+
+
+def _run_job_skipped(repo: str, run_id: object, attempt: int, run: Runner) -> bool:
+    """True only when GitHub reports this attempt's `run` job as skipped. Anything else, an
+    unreadable answer included, is not proof that nothing ran, so the attempt is charged."""
+    out = run(
+        [
+            "gh", "run", "view", str(run_id), "--repo", repo, "--attempt", str(attempt),
+            "--json", "jobs",
+        ]
+    )  # fmt: skip
+    try:
+        jobs = json.loads(out).get("jobs", [])
+    except (json.JSONDecodeError, AttributeError):
+        return False
+    return any(j.get("name") == "run" and j.get("conclusion") == "skipped" for j in jobs)
 
 
 def tally_github(
@@ -95,6 +113,8 @@ def tally_github(
                 result.ai_off.append(tag)
             elif tally.has(f"github-{tag}"):
                 result.already.append(tag)
+            elif not held and _run_job_skipped(repo, item["databaseId"], attempt, run):
+                result.gated_off.append(tag)
             else:
                 tally.admit(f"github-{tag}", amount, github=True)
                 result.admitted.append(tag)
