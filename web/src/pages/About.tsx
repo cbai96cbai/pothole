@@ -34,7 +34,8 @@ export function About({
           complaint locations; it does not show addresses or free-text fields.
         </li>
         <li>
-          Weather: <a href="https://open-meteo.com">Open-Meteo</a>, Central Park point, licensed CC BY 4.0.
+          Weather: <a href="https://open-meteo.com">Open-Meteo</a>, Central Park point, licensed{" "}
+          <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.
         </li>
         <li>
           Map tiles: <a href="https://openfreemap.org">OpenFreeMap</a>, with data © OpenStreetMap

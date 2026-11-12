@@ -3,7 +3,7 @@
 ![The site: the status board, the findings, one finding with its chart and cited evidence, and the repair scores](docs/recording.gif)
 
 *A local build of the site on real NYC 311 data, recorded 2026-11-12. The two days with findings
-were analysed after the fact, with that day's data.*
+were analysed after the fact, using data retrieved later for those dates.*
 
 A daily pipeline over public NYC 311 data. It loads and checks each day's rows, has an agent
 propose a fix when a check fails, and screens for unusual spikes in complaints.
@@ -28,8 +28,10 @@ repository.
 
 The daily workflow (`.github/workflows/daily.yml`) runs at 11:17 UTC, which is 06:17 in New York in
 winter and 07:17 in summer. The model steps run only on the scheduled event and only while the
-repository variable `AI_ENABLED` is `true`; a manual dispatch runs without them. The site is
-deployed only while the variable `PAGES_ENABLED` is `true`. This describes how the workflow is
+repository variable `AI_ENABLED` is `true`; a manual dispatch runs without them. Nothing in the
+workflow starts, on the schedule or by dispatch, until the repository variable `DAILY_ENABLED` is
+`true` (`scripts/setup-repo.sh` sets it to `false`). The site is deployed only while the variable
+`PAGES_ENABLED` is `true` as well. This describes how the workflow is
 configured. It has not been shown to run unattended for a long period.
 
 ## Results
@@ -219,4 +221,17 @@ OpenAI endpoint and key; see `src/pothole/config.py`.
 
 ## License
 
-MIT.
+MIT (see `LICENSE`).
+
+## Data and credits
+
+- **Code:** MIT, in `LICENSE`.
+- **311 service requests and permitted events:** NYC Open Data, under the
+  [NYC Open Data terms of use](https://www.nyc.gov/html/data/terms.html). The datasets are
+  [311 Service Requests from 2010 to Present](https://data.cityofnewyork.us/d/erm2-nwe9) (`erm2-nwe9`)
+  and [NYC Permitted Event Information](https://data.cityofnewyork.us/d/tvpp-9vvx) (`tvpp-9vvx`).
+- **Weather:** [Open-Meteo](https://open-meteo.com), licensed
+  [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+- **Map tiles:** [OpenFreeMap](https://openfreemap.org), drawn from
+  [OpenStreetMap](https://www.openstreetmap.org/copyright) data under the
+  [ODbL](https://opendatacommons.org/licenses/odbl/1-0/).

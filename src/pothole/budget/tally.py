@@ -13,7 +13,7 @@ DEFAULT_PATH = Path("~/.pothole/spend.jsonl")
 DEFAULT_CAP = Decimal("25")
 # the last dollars of the cap are kept for runs on GitHub, so local work cannot starve them
 GITHUB_RESERVE = Decimal("3")
-# local AI work after this moment needs Camellia's explicit OK (after_credit=True)
+# local AI work after this moment needs the owner's explicit OK (after_credit=True)
 CUTOFF = datetime(2026, 11, 20, 15, 0, tzinfo=UTC)
 
 
