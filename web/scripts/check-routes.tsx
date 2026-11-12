@@ -80,7 +80,8 @@ if (data.drills.drills.length > 0) {
   expect(n >= data.drills.drills.length + 1, "drills: an entry is not labeled Drill");
 }
 expect(!text("#/findings").includes("leftover summary"), "findings: an unfinished finding shows its summary");
-expect(text("#/findings").includes("did not finish"), "findings: unfinished finding not marked");
+const anyUnfinished = data.findingsIndex.days.some((d) => d.findings.some((f) => f.status === "unfinished"));
+expect(!anyUnfinished || text("#/findings").includes("did not finish"), "findings: unfinished finding not marked");
 expect(text("#/findings").includes("Nothing notable that day") === data.findingsIndex.days.some((d) => d.findings.length === 0), "findings: quiet days not shown");
 expect(text("#/repairs").includes("Rule-based fixer"), "repairs: no baseline");
 if (!data.repairs.agent_run) expect(text("#/repairs").includes("not yet run"), "repairs: no 'not yet run' for the agent");
@@ -100,7 +101,9 @@ if (tested.length > 0) {
 }
 expect(text("#/").includes(`Last run: ${dateTime(data.board.last_run?.finished ?? "")}`) || !data.board.last_run, "board: last run time not in the one formatter's form");
 expect(text("#/").includes("On simulated quiet days") && text("#/").includes("On past days"), "board: quiet-day rate or backtest missing");
-const escapeHtml = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+// as React writes text into HTML
+const escapeHtml = (t: string) =>
+  t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;");
 const UNFINISHED = "The investigation did not finish; only the counts are shown.";
 for (const id of ids) {
   const h = `#/findings/${id}`;
@@ -131,7 +134,7 @@ for (const id of ids) {
     expect(!html.includes("Not computed: unfinished"), `${h}: notes repeat "unfinished"`);
   } else {
     expect(!html.includes(UNFINISHED), `${h}: finished finding marked unfinished`);
-    expect(html.includes("What the summary relied on") && html.includes(file.summary), `${h}: summary or evidence missing`);
+    expect(html.includes("What the summary relied on") && html.includes(`<p>${escapeHtml(file.summary)}</p>`),`${h}: summary or evidence missing`);
     let at = 0;
     for (const e of file.evidence) {
       expect(html.includes(escapeHtml(callText(e.tool, e.args))), `${h}: evidence does not show the call's arguments`);
