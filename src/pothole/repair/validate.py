@@ -44,12 +44,18 @@ def failed(results: list[CheckResult]) -> list[CheckResult]:
     return [r for r in results if r.level == "fail"]
 
 
+NO_READABLE_DATE = "the chosen rows have no readable created_date"
+TOO_LATE_DATE = "the chosen rows' created_date is too late to date a case"
+
+
 def case_day(spec: PipelineSpec, rows: list[dict[str, str]]) -> date:
     """The day the case's rows were created: the latest `created_date` as the spec reads it."""
     created = engine.run(spec, rows, [], datetime(2100, 1, 1)).table.column("created_date")
     newest = max((v for v in created.to_pylist() if v is not None), default=None)
     if newest is None:
-        raise ToolError("the chosen rows have no readable created_date")
+        raise ToolError(NO_READABLE_DATE)
+    if newest.date() > date.max - timedelta(days=2):
+        raise ToolError(TOO_LATE_DATE)  # case_now would pass the last date there is
     return newest.date()  # type: ignore[no-any-return]
 
 
@@ -68,17 +74,21 @@ def _changed_rows(
     return [b != a for b, a in zip(before, after, strict=True)]
 
 
-UNREADABLE = "unreadable created_date"
-
-
 def _problems(patched: PipelineSpec, row: dict[str, str]) -> list[str]:
     """What stops this row from standing alone: the checks the patched engine fails on this row
-    by itself, or the reason it cannot be read. Empty means the row is clean."""
+    by itself, or why its created date cannot date a case. Empty means the row is clean. Only
+    the ToolError `case_day` raises is caught; anything else is a defect and propagates."""
+    if not row.get(patched.column("created_date").source):
+        return ["missing created_date"]
     try:
-        results = engine.run(patched, [row], [], case_now(case_day(patched, [row]))).checks
-    except (ToolError, ValueError, OverflowError):
-        return [UNREADABLE]
-    return [r.name for r in failed(results)]
+        day = case_day(patched, [row])
+    except ToolError as err:
+        return [
+            "created_date too late to date a case"
+            if str(err) == TOO_LATE_DATE
+            else "unreadable created_date"
+        ]
+    return [r.name for r in failed(engine.run(patched, [row], [], case_now(day)).checks)]
 
 
 def _counts(problems: Counter[str]) -> str:

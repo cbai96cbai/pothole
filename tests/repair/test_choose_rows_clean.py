@@ -39,7 +39,7 @@ def alone_clean(spec: PipelineSpec, row: dict[str, str]) -> bool:
     """This test's own one-row engine run: no failing check and nothing raised."""
     try:
         return not failed(engine.run(spec, [row], [], case_now(case_day(spec, [row]))).checks)
-    except (ToolError, ValueError, OverflowError):
+    except ToolError:
         return False
 
 
@@ -177,8 +177,9 @@ def mutated_batch(rng: random.Random, pool) -> list[dict[str, str]]:
     return rows
 
 
-def expected_keys(original, patched, rows, edited_source) -> tuple[list[str], bool]:
-    """The oracle: its own rank, one-row runs, change test and distinct-key count."""
+def expected_rows(original, patched, rows, edited_source) -> list[dict[str, str]] | None:
+    """The oracle: its own rank, one-row runs and change test. The exact rows by input position, in
+    the documented output order (by key), or None when the case must be refused."""
 
     def rank(i: int) -> tuple:
         row = rows[i]
@@ -188,15 +189,13 @@ def expected_keys(original, patched, rows, edited_source) -> tuple[list[str], bo
     order = sorted(range(len(rows)), key=rank)
     clean = [i for i in order if alone_clean(patched, rows[i])]
     changed = [i for i in clean if changed_alone(original, patched, rows[i])]
-    keys = {rows[i]["unique_key"] for i in clean}
-    if not changed or len(keys) < MIN_CASE:
-        return [], True
-    taken: list[str] = []
+    if not changed or len({rows[i]["unique_key"] for i in clean}) < MIN_CASE:
+        return None
+    taken: dict[str, int] = {}
     for i in changed + [i for i in clean if i not in changed]:
-        k = rows[i]["unique_key"]
-        if k not in taken and len(taken) < CASE_SIZE:
-            taken.append(k)
-    return taken, False
+        if rows[i]["unique_key"] not in taken and len(taken) < CASE_SIZE:
+            taken[rows[i]["unique_key"]] = i
+    return sorted((rows[i] for i in taken.values()), key=lambda r: r["unique_key"])
 
 
 def test_property_300_random_batches_agree_with_a_brute_force_oracle(original, patched, pool):
@@ -204,19 +203,49 @@ def test_property_300_random_batches_agree_with_a_brute_force_oracle(original, p
     refused = chosen_count = 0
     for _ in range(300):
         rows = mutated_batch(rng, pool)
-        want, must_refuse = expected_keys(original, patched, rows, Y)
+        want = expected_rows(original, patched, rows, Y)
         try:
             chosen = choose_rows(original, patched, rows, [Y])
         except ToolError:
-            assert must_refuse or len(rows) < MIN_CASE, rows
+            assert want is None or len(rows) < MIN_CASE, rows
             refused += 1
             continue
-        assert not must_refuse
+        assert want is not None
         chosen_count += 1
-        keys = [r["unique_key"] for r in chosen]
-        assert len(set(keys)) == len(keys) == len(want)
-        assert set(keys) == set(want)
-        assert all(alone_clean(patched, r) for r in chosen)
-        assert any(changed_alone(original, patched, r) for r in chosen)
+        assert chosen == want  # the exact rows, in the documented order
+        assert len({r["unique_key"] for r in chosen}) == len(chosen)
         assert passes_engine(patched, chosen)
     assert refused > 20 and chosen_count > 20  # both outcomes were exercised
+
+
+def test_a_duplicate_key_keeps_the_better_ranked_row_not_the_first_seen(original, patched, pool):
+    # both rows share a key, both are clean and changed: the one with fewer empty fields is the
+    # case's row, though the key set would be the same with the other
+    full = with_comma(pool[0])
+    sparse = full | {"descriptor": "", "location_type": ""}
+    rows = [sparse] + [with_comma(r) for r in pool[1:5]] + [full]
+    chosen = choose_rows(original, patched, rows, [Y])
+    mine = [r for r in chosen if r["unique_key"] == full["unique_key"]]
+    assert mine == [full]
+
+
+def test_a_created_date_at_the_end_of_time_is_skipped_not_an_error(original, patched, pool):
+    bad = with_comma(pool[0]) | {"created_date": "9999-12-31T23:00:00.000"}
+    rows = [bad] + [with_comma(r) for r in pool[1:4]] + pool[4:8]
+    chosen = choose_rows(original, patched, rows, [Y])
+    assert bad["unique_key"] not in {r["unique_key"] for r in chosen}
+
+
+def test_the_refusal_counts_use_the_real_reason_for_each_row(original, patched, pool):
+    rows = [
+        with_comma(pool[0]) | {"created_date": ""},
+        with_comma(pool[1]) | {"created_date": "x"},
+        with_comma(pool[2]) | {"created_date": "9999-12-31T23:00:00.000"},
+        with_comma(pool[3]) | {"x_coordinate_state_plane": "9223372036854775808"},
+    ] + pool[4:8]
+    with pytest.raises(ToolError) as err:
+        choose_rows(original, patched, rows, [Y])
+    text = str(err.value)
+    for reason in ("missing created_date", "unreadable created_date", "too late"):
+        assert reason + " in 1" in text or reason in text
+    assert "cast:x_coordinate_state_plane in 1" in text
