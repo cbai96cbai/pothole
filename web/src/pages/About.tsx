@@ -1,3 +1,4 @@
+import { Scroll } from "../components/Scroll";
 import { money, num, pct } from "../format";
 import type { Delay, Facts, NullSimulation } from "../types";
 import { REPO_URL, SCREEN_NOTE } from "../wording";
@@ -63,7 +64,7 @@ export function About({
         complaints already present after each number of days is below. Only days old enough to have
         had that many days to arrive count at each step, so later steps rest on fewer rows.
       </p>
-      <div className="scroll">
+      <Scroll label="Share of a day's complaints present, by days after filing">
         <table>
           <thead>
             <tr><th>Days after filing</th>{Object.keys(delay.share_by_lag_days).map((k) => <th key={k}>{k}</th>)}</tr>
@@ -79,7 +80,7 @@ export function About({
             </tr>
           </tbody>
         </table>
-      </div>
+      </Scroll>
       <p className="muted">{delay.label}. A run can be missed or late; the last successful run date is at the top of every page.</p>
       <p className="muted">
         Quiet-day simulation: {nullSimulation.dispersion}. Rule tested: {nullSimulation.rule}.

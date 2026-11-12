@@ -61,6 +61,15 @@ for (const h of hashes.filter((h) => !notFound.includes(h))) {
   expect(!pages.get(h)?.includes("Page not found"), `${h}: unexpectedly a 404 page`);
 }
 
+for (const [hash, html] of pages) {
+  for (const m of html.matchAll(/<div class="scroll"([^>]*)>/g)) {
+    const attrs = m[1] ?? "";
+    expect(attrs.includes('tabindex="0"') && /aria-label="[^"]+"/.test(attrs), `${hash}: a scrolling table is not reachable by keyboard or has no label`);
+  }
+  const boxes = html.split('class="scroll"').length - 1;
+  const hints = html.split("scroll-hint").length - 1;
+  expect(boxes === hints, `${hash}: a scrolling table has no visible cue`);
+}
 const text = (h: string) => (pages.get(h) ?? "").replace(/<[^>]+>/g, " ");
 if (data.incidents.incidents.some((i) => i.repair.not_judged)) {
   expect(text("#/incidents").includes("Proposed, not judged"), "incidents: proposal not marked as not judged");

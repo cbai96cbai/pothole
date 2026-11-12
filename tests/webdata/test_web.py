@@ -68,7 +68,11 @@ def test_the_repairs_page_separates_who_decided_each_score(tmp_path: Path) -> No
         "Decided by the repairer",
         "Cases it decided",
         "Decided by the fixed volume rule, no AI",
-        "none (all decided by the fixed rule)",
+        "Where a cell says none, the fixed rule decided all of those cases",
+        "repeats of the same frozen agent: its answers vary from run to run, so scores can differ",
+        "Agent run 1: 1 case not handled correctly",
+        "Agent run 2: 0 cases not handled correctly",
+        "Rule-based fixer: 7 cases not handled correctly",
         "a fixed rule decides, not either repairer, so those cases are scored separately",
         "The checks noticed the planted fault in 27 of 27 fault cases "
         "and flagged 3 of 3 harmless changes.",
@@ -82,11 +86,14 @@ def test_the_repairs_page_separates_who_decided_each_score(tmp_path: Path) -> No
         assert phrase in text, phrase
     test_part = text[text.index("Test split") :]
     dev_part = text[text.index("Development split") : text.index("Test split")]
-    assert "Agent 20 92% (11 of 12) 100% (8 of 8) none (all decided by the fixed rule)" in test_part
+    assert "Agent 20 92% (11 of 12) 100% (8 of 8) none" in test_part
     assert "Agent 7 100% (4 of 4) 100% (3 of 3)" in test_part
     assert "Repairs that worked, agent minus" not in dev_part
     assert "(decided by the agent)" in test_part
     assert "(decided by the rule-based fixer)" in dev_part
+    assert "none (all decided" not in text  # said once per table, not in a row
+    assert test_part.count("Where a cell says none") == 1  # once for the table, not per row
+    assert "1 cases" not in text
     assert "Agent run 3" not in text and "Rule-based fixer run" not in text
     assert text.index("Agent run 1") < text.index("Agent run 2")
     assert "Only the rule-based fixer is shown" not in text

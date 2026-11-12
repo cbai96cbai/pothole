@@ -1,4 +1,5 @@
-import { pct } from "../format";
+import { Scroll } from "../components/Scroll";
+import { count, pct } from "../format";
 import type { Compare, DecidedRates, Family, Rate, RepairSummary, Repairs as RepairsData } from "../types";
 import { NOT_YET_RUN, decidedBy } from "../wording";
 
@@ -28,17 +29,37 @@ function labelsOf(rows: RepairSummary[]): Record<string, string> {
   return out;
 }
 
+/** One line when a split holds several runs of one repairer: why their scores can differ. */
+function repeats(rows: RepairSummary[], label: Record<string, string>): string {
+  const names = [...new Set(rows.map((r) => r.repairer))].filter(
+    (name) => rows.filter((r) => r.repairer === name).length > 1,
+  );
+  return names
+    .map((name) => {
+      const runs = rows.filter((r) => r.repairer === name).map((r) => label[r.run_id]);
+      return `${runs.join(" and ")} are repeats of the same frozen ${repairerName(name).toLowerCase()}: its answers vary from run to run, so scores can differ.`;
+    })
+    .join(" ");
+}
+
 const repairerCases = (s: RepairSummary) => (s.decided_by[s.repairer] ?? 0) + (s.decided_by.code ?? 0);
 
 function RepairerTable({ rows, label }: { rows: RepairSummary[]; label: Record<string, string> }) {
-  const none = "none (all decided by the fixed rule)";
+  const none = "none";
+  const anyNone = rows.some((s) =>
+    [s.repairer_decided.repair_success, s.repairer_decided.issue_accuracy, s.repairer_decided.no_change_accuracy].some(
+      (r) => !r || r.of === 0,
+    ),
+  );
+  const same = repeats(rows, label);
   return (
-    <div className="scroll">
+    <>
+      <Scroll label="Scores of the repairers on the cases they decided">
       <table>
         <thead>
           <tr>
             <th>Repairer</th><th>Cases it decided</th><th>Repairs that worked</th>
-            <th>Right to open an issue</th><th>Right to change nothing</th>
+            <th>Right on issues</th><th>Right on no change</th>
           </tr>
         </thead>
         <tbody>
@@ -53,18 +74,23 @@ function RepairerTable({ rows, label }: { rows: RepairSummary[]; label: Record<s
           ))}
         </tbody>
       </table>
-    </div>
+      </Scroll>
+      {anyNone && (
+        <p className="muted">Where a cell says none, the fixed rule decided all of those cases.</p>
+      )}
+      {same && <p className="muted">{same}</p>}
+    </>
   );
 }
 
 function RuleTable({ rows, label }: { rows: RepairSummary[]; label: Record<string, string> }) {
   const rates = (d: DecidedRates) => [d.issue_accuracy, d.no_change_accuracy];
   return (
-    <div className="scroll">
+    <Scroll label="Scores of the fixed volume rule">
       <table>
         <thead>
           <tr>
-            <th>Repairer</th><th>Cases</th><th>Right to open an issue</th><th>Right to change nothing</th>
+            <th>Repairer</th><th>Cases</th><th>Right on issues</th><th>Right on no change</th>
           </tr>
         </thead>
         <tbody>
@@ -77,7 +103,7 @@ function RuleTable({ rows, label }: { rows: RepairSummary[]; label: Record<strin
           ))}
         </tbody>
       </table>
-    </div>
+    </Scroll>
   );
 }
 
@@ -92,7 +118,7 @@ function Families({ rows, label }: { rows: RepairSummary[]; label: Record<string
   const names = [...new Set(rows.flatMap((r) => Object.keys(r.per_family)))];
   const expected = (n: string) => rows.find((r) => r.per_family[n])?.per_family[n]?.expected ?? "";
   return (
-    <div className="scroll">
+    <Scroll label="Scores by fault family">
       <table>
         <thead>
           <tr>
@@ -110,7 +136,7 @@ function Families({ rows, label }: { rows: RepairSummary[]; label: Record<string
           ))}
         </tbody>
       </table>
-    </div>
+    </Scroll>
   );
 }
 
@@ -171,7 +197,7 @@ export function Repairs({ repairs }: { repairs: RepairsData }) {
             {rows.map((r) => (
               <details key={r.run_id}>
                 <summary>
-                  {label[r.run_id]}: {r.failures.length} cases not handled correctly
+                  {label[r.run_id]}: {count(r.failures.length, "case")} not handled correctly
                 </summary>
                 <ul>
                   {r.failures.map((f) => (

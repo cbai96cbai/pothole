@@ -1,4 +1,5 @@
 import { Counts } from "../components/Counts";
+import { Scroll } from "../components/Scroll";
 import { dateTime, money, num, pct, usd } from "../format";
 import type { Backtest, Board as BoardData, Facts, NullSimulation } from "../types";
 import { NOTHING_NOTABLE, SCREEN_NOTE, STATUS_WORDS } from "../wording";
@@ -37,7 +38,7 @@ export function Board({
       {board.checks.length === 0 ? (
         <p className="muted">No checks recorded yet.</p>
       ) : (
-        <div className="scroll">
+        <Scroll label="Checks, last result">
           <table>
             <thead>
               <tr><th>Check</th><th>Result</th><th>Detail</th><th>Run finished</th></tr>
@@ -53,7 +54,7 @@ export function Board({
               ))}
             </tbody>
           </table>
-        </div>
+        </Scroll>
       )}
 
       <h2>Latest analysed day</h2>
@@ -83,7 +84,7 @@ export function Board({
         shows how the share of quiet days that still get a flag grows with the noise.{" "}
         <span className="muted">{nullSimulation.label}.</span>
       </p>
-      <div className="scroll">
+      <Scroll label="Quiet days with a flag, by noise level">
         <table className="rates">
           <thead>
             <tr><th>Noise, as a multiple of the simple model</th><th>Quiet days with at least one flag</th></tr>
@@ -96,7 +97,7 @@ export function Board({
               ))}
           </tbody>
         </table>
-      </div>
+      </Scroll>
 
       <h2>Cost</h2>
       <p>
