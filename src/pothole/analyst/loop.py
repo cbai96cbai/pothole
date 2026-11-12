@@ -12,6 +12,7 @@ from typing import Any
 
 from pothole.analyst.detect import Candidate
 from pothole.analyst.finding import Evidence
+from pothole.analyst.numbers import one_decimal
 from pothole.analyst.prompt import (
     CALL_BUDGET,
     CALLS_LEFT,
@@ -48,7 +49,7 @@ def _brief(c: Candidate) -> str:
     return (
         f"Date {c.day.isoformat()} ({c.day.strftime('%A')}). {c.complaint_type} in "
         f"{c.borough} community district {c.board}: {c.observed} requests, against about "
-        f"{c.expected:.1f} usual for that weekday ({c.ratio:.1f} times)."
+        f"{one_decimal(c.expected)} usual for that weekday ({one_decimal(c.ratio)} times)."
     )
 
 
