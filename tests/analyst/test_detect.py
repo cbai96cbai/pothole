@@ -129,12 +129,12 @@ def test_counts_outside_the_covered_span_are_left_out() -> None:
 
 
 def test_the_daily_screen_tests_a_day_the_covered_span_makes_testable() -> None:
-    from pothole import daily
+    from pothole import dailycounts
 
     # counts only from START + 14; the store covers from START, so eight Mondays precede Oct 5
     t = table({k: {START + timedelta(d): 20 + d % 3 for d in range(14, 70)} for k in SERIES})
     day = START + timedelta(63)
-    skipped = daily.screen(t, UNIVERSE, day)
+    skipped = dailycounts.screen(t, UNIVERSE, day)
     assert getattr(skipped, "skipped_reason", "") == "no 8-week baseline for this day"
-    tested = daily.screen(t, UNIVERSE, day, Coverage(START, START + timedelta(70)))
+    tested = dailycounts.screen(t, UNIVERSE, day, Coverage(START, START + timedelta(70)))
     assert isinstance(tested, list) and tested[0] == 4

@@ -30,13 +30,12 @@ from zoneinfo import ZoneInfo
 import pyarrow as pa
 
 from pothole import dailyai, dailyrepair, runrecord, sitedata
-from pothole.analyst import detect, universe
+from pothole.analyst import universe
 from pothole.analyst.finding import AnalystDay, to_json
-from pothole.analyst.holidays import is_holiday
 from pothole.budget.envelope import DEFAULT_STEPS, RunConfig, run_envelope
 from pothole.budget.tally import Tally, settle_if_complete
 from pothole.dailyai import Sink, Spend
-from pothole.dailycounts import day_counts, refresh_counts, write_json, write_vintage
+from pothole.dailycounts import day_counts, refresh_counts, screen, write_json, write_vintage
 from pothole.dailyerror import Progress, describe
 from pothole.llm.client import LLMClient
 from pothole.logs import get_logger
@@ -48,7 +47,6 @@ from pothole.socrata.client import Socrata, SourceRejected, SourceUnavailable
 from pothole.spec import checks as spec_checks
 from pothole.spec.model import PipelineSpec
 from pothole.store import coverage, db, load, reconcile
-from pothole.store.coverage import Coverage
 
 NEW_YORK = ZoneInfo("America/New_York")
 SUNDAY = 6
@@ -81,23 +79,6 @@ class Env:
 
 def _records(results: list[spec_checks.CheckResult]) -> list[CheckResult]:
     return [CheckResult(r.name, r.level, r.detail) for r in results]
-
-
-def screen(
-    table: pa.Table, uni: universe.Universe, day: date, held: Coverage | None = None
-) -> AnalystDay | list[Any]:
-    """A skipped day, or (as a list) tested, cleared and the candidates. `held` is the span the
-    store covers, so a covered day with no counts is a zero."""
-    if is_holiday(day):
-        return AnalystDay(day, 0, 0, [], skipped_reason="federal holiday: no analysis")
-    if table.num_rows == 0:
-        return AnalystDay(day, 0, 0, [], skipped_reason="no counts in the store")
-    panel = detect.Panel.from_table(table, uni, held)
-    ev = detect.evaluate(panel, day)
-    if ev is None:
-        return AnalystDay(day, 0, 0, [], skipped_reason="no 8-week baseline for this day")
-    found = detect.screen(panel, day)
-    return [len(ev.series), len(found), found]
 
 
 def _outage(env: Env, con: db.Connection, exc: Exception, now: datetime) -> Status:
@@ -201,7 +182,7 @@ def _record(
 
 def _analyse(
     env: Env, con: db.Connection, ai: LLMClient | None, table: pa.Table, uni: universe.Universe,
-    analysed: date, spend: Spend, p: Progress, held: Coverage | None,
+    analysed: date, spend: Spend, p: Progress, held: coverage.Coverage | None,
 ) -> tuple[AnalystDay, bool]:  # fmt: skip
     """The day's analysis, and whether the store connection was closed for the investigator."""
     screened = screen(table, uni, analysed, held)
