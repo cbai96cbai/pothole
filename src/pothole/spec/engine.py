@@ -27,8 +27,14 @@ class EngineResult:
     checks: list[CheckResult]
 
 
+INT64 = range(-(2**63), 2**63)
+
+
 def cast_value(col: Column, raw: str) -> Any:
+    """A value the column's type can hold, or ValueError: whatever the source sends, the engine
+    never raises past this, so one bad value is a cast failure and not a crashed run."""
     if col.type == "text":
+        raw.encode("utf-8")  # a lone surrogate cannot be stored: UnicodeEncodeError is a ValueError
         return raw
     if col.type == "timestamp":
         return datetime.strptime(raw, col.format) if col.format else datetime.fromisoformat(raw)
@@ -38,7 +44,10 @@ def cast_value(col: Column, raw: str) -> Any:
         raise ValueError(raw)
     if col.type == "float":
         return number
-    return int(text)
+    whole = int(text)
+    if whole not in INT64:
+        raise ValueError(raw)
+    return whole
 
 
 def _column(col: Column, rows: list[dict[str, str]], keys: list[str]) -> ck.Cast:
