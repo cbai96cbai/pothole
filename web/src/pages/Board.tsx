@@ -2,7 +2,7 @@ import { Counts } from "../components/Counts";
 import { Scroll } from "../components/Scroll";
 import { dateTime, money, num, pct, usd } from "../format";
 import type { Backtest, Board as BoardData, Facts, NullSimulation } from "../types";
-import { NOTHING_NOTABLE, SCREEN_NOTE, STATUS_WORDS } from "../wording";
+import { FLAGGED_NOT_INVESTIGATED, NOTHING_NOTABLE, SCREEN_NOTE, STATUS_WORDS } from "../wording";
 
 export function Board({
   board,
@@ -60,7 +60,7 @@ export function Board({
       <h2>Latest analysed day</h2>
       {day ? (
         <p>
-          <strong>{day.day}</strong>: <Counts tested={day.tested} cleared={day.cleared} />, {day.findings === 0 ? NOTHING_NOTABLE.toLowerCase() : `${day.findings} investigated`}.{" "}
+          <strong>{day.day}</strong>: <Counts tested={day.tested} cleared={day.cleared} />, {day.findings > 0 ? `${day.findings} investigated` : (day.cleared > 0 ? FLAGGED_NOT_INVESTIGATED : NOTHING_NOTABLE).toLowerCase()}.{" "}
           {day.skipped_reason && <span>Skipped: {day.skipped_reason}. </span>}
           <a href="#/findings">All days</a>
         </p>

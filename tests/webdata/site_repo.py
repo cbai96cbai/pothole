@@ -114,6 +114,9 @@ def make(root: Path, *, with_agent: bool = False) -> Path:
     (analyst / "2026-11-06.json").write_text(json.dumps(to_json(busy)))
     stale = AnalystDay(date(2026, 11, 5), 1440, 1, [finding("unfinished", stale=True)])
     (analyst / "2026-11-05.json").write_text(json.dumps(to_json(stale)))
+    # flagged by the screen with AI off: not a quiet day
+    flagged = AnalystDay(date(2026, 11, 4), 1450, 2, [], skipped_reason="AI is not enabled")
+    (analyst / "2026-11-04.json").write_text(json.dumps(to_json(flagged)))
     scratch_repo(root)
     if with_agent:
         copy_runs(root, AGENT_RUNS)

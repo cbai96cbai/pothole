@@ -82,7 +82,9 @@ if (data.drills.drills.length > 0) {
 expect(!text("#/findings").includes("leftover summary"), "findings: an unfinished finding shows its summary");
 const anyUnfinished = data.findingsIndex.days.some((d) => d.findings.some((f) => f.status === "unfinished"));
 expect(!anyUnfinished || text("#/findings").includes("did not finish"), "findings: unfinished finding not marked");
-expect(text("#/findings").includes("Nothing notable that day") === data.findingsIndex.days.some((d) => d.findings.length === 0), "findings: quiet days not shown");
+const emptyDays = data.findingsIndex.days.filter((d) => d.findings.length === 0);
+expect(text("#/findings").includes("Nothing notable that day") === emptyDays.some((d) => d.cleared === 0), "findings: quiet days not shown, or a flagged day called quiet");
+expect(text("#/findings").includes("Flagged by the screen, not investigated") === emptyDays.some((d) => d.cleared > 0), "findings: a flagged day without findings is not said");
 expect(text("#/repairs").includes("Rule-based fixer"), "repairs: no baseline");
 if (!data.repairs.agent_run) expect(text("#/repairs").includes("not yet run"), "repairs: no 'not yet run' for the agent");
 const f = data.meta.facts;

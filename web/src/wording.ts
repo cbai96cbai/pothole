@@ -2,6 +2,8 @@ export const REPO_URL = "https://github.com/cbai96cbai/pothole";
 export const PROPOSED_NOT_JUDGED = "Proposed, not judged";
 export const DRILL = "Drill";
 export const NOTHING_NOTABLE = "Nothing notable that day";
+// a day the screen flagged but nobody investigated is not a quiet day
+export const FLAGGED_NOT_INVESTIGATED = "Flagged by the screen, not investigated";
 export const NOT_YET_RUN = "not yet run";
 export const WEATHER_SOURCE_WORDS: Record<string, string> = {
   archive: "recorded weather",

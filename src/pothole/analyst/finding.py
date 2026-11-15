@@ -78,7 +78,8 @@ class DayCount:
 @dataclass(frozen=True)
 class AnalystDay:
     """One analysed day: how many series were tested, how many cleared the bar, and the
-    findings for the (at most two) that were investigated. An empty list is a quiet day."""
+    findings for the (at most two) that were investigated. No findings with nothing cleared is a
+    quiet day; with candidates cleared and no findings, they were counted, not investigated."""
 
     day: date
     tested: int

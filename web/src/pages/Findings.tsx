@@ -2,7 +2,7 @@ import { Counts } from "../components/Counts";
 import { oneDecimal, small, titleCase } from "../format";
 import { findingHref } from "../routes";
 import type { FindingsIndex } from "../types";
-import { NOTHING_NOTABLE, SCREEN_NOTE, UNFINISHED } from "../wording";
+import { FLAGGED_NOT_INVESTIGATED, NOTHING_NOTABLE, SCREEN_NOTE, UNFINISHED } from "../wording";
 
 export function Findings({ index }: { index: FindingsIndex }) {
   return (
@@ -18,7 +18,7 @@ export function Findings({ index }: { index: FindingsIndex }) {
             {d.skipped_reason ? ` Skipped: ${d.skipped_reason}.` : ""}
           </p>
           {d.findings.length === 0 ? (
-            <p className="quiet">{NOTHING_NOTABLE}</p>
+            <p className="quiet">{d.cleared > 0 ? FLAGGED_NOT_INVESTIGATED : NOTHING_NOTABLE}</p>
           ) : (
             d.findings.map((f) => (
               <article key={f.id} className="card">

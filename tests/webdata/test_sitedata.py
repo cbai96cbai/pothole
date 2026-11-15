@@ -201,6 +201,7 @@ def test_findings_feed_keeps_the_quiet_day(built: Path) -> None:
         ("2026-11-07", 0),
         ("2026-11-06", 2),
         ("2026-11-05", 1),
+        ("2026-11-04", 0),
     ]
     finding = load(built, "findings/2026-11-06-brooklyn-12-heat.json")
     assert len(finding["points"]) == 20
