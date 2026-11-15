@@ -1,0 +1,1173 @@
+{
+ "cleared": 0,
+ "counts": [
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 3
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 4
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 7
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 3
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Street Light Condition",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "Blocked Driveway",
+   "n": 3
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 9
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "Damaged Tree",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "Blocked Driveway",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 3
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 3
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Condition",
+   "n": 3
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Damaged Tree",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 5
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Condition",
+   "n": 5
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 4
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 2
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 2
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "Damaged Tree",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 4
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Condition",
+   "n": 2
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 5
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 5
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 4
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 2
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 3
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 2
+  },
+  {
+   "board": 16,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 2
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 1
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 2
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 1
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 2
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Parking",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 9
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 4
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Parking",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 2
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 3
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 6
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 8
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 3
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 4
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 3
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Damaged Tree",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 3
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 3
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 3
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 4
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Damaged Tree",
+   "n": 3
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 4
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 3
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 3
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 5
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 3
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 2
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Illegal Parking",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Noise - Residential",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Street Condition",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Water Maintenance",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Damaged Tree",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Illegal Parking",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Noise - Residential",
+   "n": 1
+  }
+ ],
+ "day": "2026-11-11",
+ "findings": [],
+ "skipped_reason": "federal holiday: no analysis",
+ "tested": 0
+}
