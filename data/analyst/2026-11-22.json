@@ -1,0 +1,9801 @@
+{
+ "cleared": 6,
+ "counts": [
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "Blocked Driveway",
+   "n": 7
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 3
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "Encampment",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "GENERAL",
+   "n": 4
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 21
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 4
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 24
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 3
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "PLUMBING",
+   "n": 6
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "WATER LEAK",
+   "n": 3
+  },
+  {
+   "board": 1,
+   "borough": "Bronx",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "Blocked Driveway",
+   "n": 8
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "Dirty Condition",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 11
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 7
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 12
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "PLUMBING",
+   "n": 4
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Bronx",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "Blocked Driveway",
+   "n": 3
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 3
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "Dirty Condition",
+   "n": 6
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 13
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 12
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 64
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 22
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Vehicle",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 4
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "PLUMBING",
+   "n": 4
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 9
+  },
+  {
+   "board": 3,
+   "borough": "Bronx",
+   "complaint_type": "WATER LEAK",
+   "n": 5
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Blocked Driveway",
+   "n": 6
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 3
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Dirty Condition",
+   "n": 6
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Encampment",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "GENERAL",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 31
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 22
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Noise",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Commercial",
+   "n": 13
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 55
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 46
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Vehicle",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 9
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "PLUMBING",
+   "n": 7
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 4
+  },
+  {
+   "board": 4,
+   "borough": "Bronx",
+   "complaint_type": "WATER LEAK",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Blocked Driveway",
+   "n": 7
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Encampment",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "GENERAL",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 29
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 35
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Commercial",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 47
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 27
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Vehicle",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "PLUMBING",
+   "n": 8
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Street Condition",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Street Light Condition",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 11
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "WATER LEAK",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Bronx",
+   "complaint_type": "Water Maintenance",
+   "n": 2
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "Blocked Driveway",
+   "n": 7
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 5
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "Dirty Condition",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 11
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 11
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 33
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 4
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 6
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "PLUMBING",
+   "n": 6
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 9
+  },
+  {
+   "board": 6,
+   "borough": "Bronx",
+   "complaint_type": "WATER LEAK",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Blocked Driveway",
+   "n": 3
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 7
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Dirty Condition",
+   "n": 3
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "GENERAL",
+   "n": 4
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 34
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 19
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Noise",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 61
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 35
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 5
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "PLUMBING",
+   "n": 5
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 9
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "WATER LEAK",
+   "n": 6
+  },
+  {
+   "board": 7,
+   "borough": "Bronx",
+   "complaint_type": "Water Maintenance",
+   "n": 3
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 3
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Blocked Driveway",
+   "n": 6
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Dirty Condition",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "GENERAL",
+   "n": 6
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 17
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 41
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Noise",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Commercial",
+   "n": 3
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 28
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 7
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Vehicle",
+   "n": 3
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 6
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "PLUMBING",
+   "n": 4
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Street Condition",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Street Light Condition",
+   "n": 3
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 11
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "WATER LEAK",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Bronx",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "Blocked Driveway",
+   "n": 13
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 6
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "Dirty Condition",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 19
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 38
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 30
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 5
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 4
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "PLUMBING",
+   "n": 2
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "Street Condition",
+   "n": 4
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 8
+  },
+  {
+   "board": 9,
+   "borough": "Bronx",
+   "complaint_type": "WATER LEAK",
+   "n": 5
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 5
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "Blocked Driveway",
+   "n": 19
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "Dirty Condition",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 7
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 34
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Commercial",
+   "n": 5
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 14
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "PLUMBING",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "Street Condition",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Bronx",
+   "complaint_type": "Street Light Condition",
+   "n": 4
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 3
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "Blocked Driveway",
+   "n": 16
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "Dirty Condition",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 12
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 23
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 23
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 14
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "PLUMBING",
+   "n": 3
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 3
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "WATER LEAK",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Bronx",
+   "complaint_type": "Water Maintenance",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "Blocked Driveway",
+   "n": 10
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "Dirty Condition",
+   "n": 6
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 10
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "Illegal Parking",
+   "n": 28
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "Noise",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Residential",
+   "n": 39
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "Noise - Vehicle",
+   "n": 5
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "Street Light Condition",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 6
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "WATER LEAK",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Bronx",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 4
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 10
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 6
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Encampment",
+   "n": 4
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 6
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Dumping",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 255
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 4
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 31
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 34
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 23
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 4
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Condition",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Water Maintenance",
+   "n": 5
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 4
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 3
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "GENERAL",
+   "n": 3
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 12
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 116
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 8
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 4
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 24
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 7
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 4
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 3
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Light Condition",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 3
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Brooklyn",
+   "complaint_type": "Water Maintenance",
+   "n": 4
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 10
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 11
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "GENERAL",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 13
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Dumping",
+   "n": 4
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 24
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 3
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 9
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 25
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 8
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 4
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Condition",
+   "n": 3
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Light Condition",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 7
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "WATER LEAK",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Brooklyn",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 4
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 8
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 3
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 6
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Dumping",
+   "n": 3
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 24
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 6
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 12
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 19
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 17
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Condition",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 4
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "WATER LEAK",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Brooklyn",
+   "complaint_type": "Water Maintenance",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 27
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 25
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 7
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Dumping",
+   "n": 4
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 44
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 48
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 4
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Condition",
+   "n": 4
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "WATER LEAK",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Brooklyn",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 4
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 3
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Encampment",
+   "n": 3
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Dumping",
+   "n": 2
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 317
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 3
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 8
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 7
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 3
+  },
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 13
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 3
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Dumping",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 72
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 3
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 12
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 9
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 16
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Light Condition",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 3
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 6
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Encampment",
+   "n": 3
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "GENERAL",
+   "n": 4
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 11
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Dumping",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 27
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 9
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 20
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 8
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 4
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Condition",
+   "n": 4
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 8
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 2
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 5
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 4
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 14
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 17
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 3
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 9
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 15
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 4
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 2
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Condition",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 3
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "WATER LEAK",
+   "n": 2
+  },
+  {
+   "board": 9,
+   "borough": "Brooklyn",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 4
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Encampment",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 15
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 59
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 3
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 14
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Condition",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Brooklyn",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 17
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 6
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 7
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Dumping",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 84
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 41
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Light Condition",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "WATER LEAK",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Brooklyn",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 3
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 14
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "GENERAL",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 5
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 4
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Dumping",
+   "n": 3
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 26
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 4
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 26
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 6
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Condition",
+   "n": 5
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 2
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 2
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "Encampment",
+   "n": 2
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 11
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 20
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 16
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 2
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "WATER LEAK",
+   "n": 3
+  },
+  {
+   "board": 13,
+   "borough": "Brooklyn",
+   "complaint_type": "Water Maintenance",
+   "n": 8
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 14
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 4
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 3
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "GENERAL",
+   "n": 3
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 2
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 16
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 4
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Dumping",
+   "n": 2
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 26
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 3
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 6
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 59
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 8
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 3
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 5
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 8
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 14
+  },
+  {
+   "board": 14,
+   "borough": "Brooklyn",
+   "complaint_type": "WATER LEAK",
+   "n": 4
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 19
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 4
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 2
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 8
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Dumping",
+   "n": 2
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 59
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 2
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 4
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 16
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 1
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 2
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Light Condition",
+   "n": 3
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 3
+  },
+  {
+   "board": 15,
+   "borough": "Brooklyn",
+   "complaint_type": "Water Maintenance",
+   "n": 7
+  },
+  {
+   "board": 16,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 6
+  },
+  {
+   "board": 16,
+   "borough": "Brooklyn",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 16,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 6
+  },
+  {
+   "board": 16,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 5
+  },
+  {
+   "board": 16,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 3
+  },
+  {
+   "board": 16,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 13
+  },
+  {
+   "board": 16,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 5
+  },
+  {
+   "board": 16,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 16,
+   "borough": "Brooklyn",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 2
+  },
+  {
+   "board": 16,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 3
+  },
+  {
+   "board": 16,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Condition",
+   "n": 1
+  },
+  {
+   "board": 16,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 3
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 5
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 14
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 2
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 6
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "GENERAL",
+   "n": 3
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 16
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Dumping",
+   "n": 4
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 21
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 5
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 11
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 28
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 6
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Vehicle",
+   "n": 4
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 5
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 7
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Condition",
+   "n": 5
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 8
+  },
+  {
+   "board": 17,
+   "borough": "Brooklyn",
+   "complaint_type": "WATER LEAK",
+   "n": 5
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 7
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Blocked Driveway",
+   "n": 10
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Dirty Condition",
+   "n": 2
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Encampment",
+   "n": 3
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "GENERAL",
+   "n": 2
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 2
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 5
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "n": 39
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise",
+   "n": 4
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Commercial",
+   "n": 2
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Residential",
+   "n": 22
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 4
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "PLUMBING",
+   "n": 1
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Condition",
+   "n": 4
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 3
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "WATER LEAK",
+   "n": 2
+  },
+  {
+   "board": 18,
+   "borough": "Brooklyn",
+   "complaint_type": "Water Maintenance",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Blocked Driveway",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Dirty Condition",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Encampment",
+   "n": 3
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 6
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Parking",
+   "n": 16
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 8
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 3
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 8
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 9
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "Street Condition",
+   "n": 3
+  },
+  {
+   "board": 1,
+   "borough": "Manhattan",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Blocked Driveway",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Dirty Condition",
+   "n": 5
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Encampment",
+   "n": 13
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 6
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 5
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Parking",
+   "n": 16
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 11
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 13
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 8
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "PLUMBING",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Street Condition",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Street Light Condition",
+   "n": 6
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 9
+  },
+  {
+   "board": 2,
+   "borough": "Manhattan",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Blocked Driveway",
+   "n": 3
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Dirty Condition",
+   "n": 5
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Encampment",
+   "n": 24
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 12
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 3
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Dumping",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Parking",
+   "n": 42
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 12
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 15
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 42
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 13
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 4
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "PLUMBING",
+   "n": 9
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Street Condition",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 4
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "WATER LEAK",
+   "n": 4
+  },
+  {
+   "board": 3,
+   "borough": "Manhattan",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Dirty Condition",
+   "n": 8
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Encampment",
+   "n": 14
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 11
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Dumping",
+   "n": 3
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Parking",
+   "n": 26
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 7
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 16
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 19
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 4
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "PLUMBING",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Street Condition",
+   "n": 5
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Street Light Condition",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Manhattan",
+   "complaint_type": "WATER LEAK",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Blocked Driveway",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Dirty Condition",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Encampment",
+   "n": 11
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 7
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Parking",
+   "n": 51
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 4
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 7
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 6
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "PLUMBING",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Street Condition",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Street Light Condition",
+   "n": 2
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Manhattan",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Dirty Condition",
+   "n": 3
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Encampment",
+   "n": 19
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 7
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 3
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Parking",
+   "n": 13
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 4
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 4
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 12
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 6
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 2
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Street Condition",
+   "n": 3
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 2
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Manhattan",
+   "complaint_type": "Water Maintenance",
+   "n": 4
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Dirty Condition",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Encampment",
+   "n": 13
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "GENERAL",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 8
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 4
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Dumping",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Parking",
+   "n": 34
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 4
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 3
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 21
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 18
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 5
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "PLUMBING",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Street Condition",
+   "n": 5
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Street Light Condition",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 13
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "WATER LEAK",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Manhattan",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Blocked Driveway",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 10
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Parking",
+   "n": 27
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 11
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 3
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 12
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 4
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 3
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "PLUMBING",
+   "n": 4
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Street Condition",
+   "n": 3
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Street Light Condition",
+   "n": 5
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 3
+  },
+  {
+   "board": 8,
+   "borough": "Manhattan",
+   "complaint_type": "Water Maintenance",
+   "n": 2
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Blocked Driveway",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Dirty Condition",
+   "n": 2
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 26
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 2
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Parking",
+   "n": 16
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 3
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 27
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 11
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 3
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "PLUMBING",
+   "n": 7
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Street Condition",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 4
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "WATER LEAK",
+   "n": 2
+  },
+  {
+   "board": 9,
+   "borough": "Manhattan",
+   "complaint_type": "Water Maintenance",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "Blocked Driveway",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "Dirty Condition",
+   "n": 4
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 32
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Parking",
+   "n": 25
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 8
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 27
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 18
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 3
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "PLUMBING",
+   "n": 8
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "Street Condition",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 16
+  },
+  {
+   "board": 10,
+   "borough": "Manhattan",
+   "complaint_type": "WATER LEAK",
+   "n": 5
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "Dirty Condition",
+   "n": 5
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "Encampment",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 10
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Parking",
+   "n": 6
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 6
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 6
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 14
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 17
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 7
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "PLUMBING",
+   "n": 4
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "Street Condition",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 8
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "WATER LEAK",
+   "n": 3
+  },
+  {
+   "board": 11,
+   "borough": "Manhattan",
+   "complaint_type": "Water Maintenance",
+   "n": 3
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 3
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 7
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "Dirty Condition",
+   "n": 4
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "GENERAL",
+   "n": 4
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 44
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "Illegal Parking",
+   "n": 28
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Commercial",
+   "n": 9
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Residential",
+   "n": 43
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 132
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "Noise - Vehicle",
+   "n": 27
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 5
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "PLUMBING",
+   "n": 7
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "Street Light Condition",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 3
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 12
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "WATER LEAK",
+   "n": 4
+  },
+  {
+   "board": 12,
+   "borough": "Manhattan",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 15
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Dirty Condition",
+   "n": 3
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Encampment",
+   "n": 3
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "GENERAL",
+   "n": 18
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 23
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Illegal Dumping",
+   "n": 8
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 119
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Noise",
+   "n": 4
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 11
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 27
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 24
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 4
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "PLUMBING",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Street Condition",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 6
+  },
+  {
+   "board": 1,
+   "borough": "Queens",
+   "complaint_type": "Water Maintenance",
+   "n": 4
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 6
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 3
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Dirty Condition",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "GENERAL",
+   "n": 4
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 4
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 106
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Noise",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 3
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 18
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 15
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 4
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 4
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "PLUMBING",
+   "n": 3
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Street Condition",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Queens",
+   "complaint_type": "WATER LEAK",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 19
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 3
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Dirty Condition",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 13
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 60
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Noise",
+   "n": 5
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 7
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 21
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 7
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 7
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 4
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "PLUMBING",
+   "n": 4
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Street Condition",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 6
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "WATER LEAK",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Queens",
+   "complaint_type": "Water Maintenance",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 23
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Dirty Condition",
+   "n": 3
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "GENERAL",
+   "n": 2
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 5
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 28
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 3
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 24
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 4
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "PLUMBING",
+   "n": 1
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Street Condition",
+   "n": 3
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 7
+  },
+  {
+   "board": 4,
+   "borough": "Queens",
+   "complaint_type": "Water Maintenance",
+   "n": 4
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 8
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 32
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Dirty Condition",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 100
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Noise",
+   "n": 4
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 5
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 22
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 4
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Street Condition",
+   "n": 3
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 1
+  },
+  {
+   "board": 5,
+   "borough": "Queens",
+   "complaint_type": "Water Maintenance",
+   "n": 3
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 7
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Dirty Condition",
+   "n": 2
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 6
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 5
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 19
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Noise",
+   "n": 3
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 26
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "PLUMBING",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Street Condition",
+   "n": 4
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 2
+  },
+  {
+   "board": 6,
+   "borough": "Queens",
+   "complaint_type": "Water Maintenance",
+   "n": 3
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 5
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 29
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Dirty Condition",
+   "n": 5
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 3
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 8
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Illegal Dumping",
+   "n": 5
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 46
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Noise",
+   "n": 4
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 2
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 47
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 14
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 5
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "PLUMBING",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Street Condition",
+   "n": 7
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "WATER LEAK",
+   "n": 1
+  },
+  {
+   "board": 7,
+   "borough": "Queens",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 5
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 8
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "Damaged Tree",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "Dirty Condition",
+   "n": 4
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "GENERAL",
+   "n": 6
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 8
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 58
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 24
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 3
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 8
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "PLUMBING",
+   "n": 2
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "WATER LEAK",
+   "n": 1
+  },
+  {
+   "board": 8,
+   "borough": "Queens",
+   "complaint_type": "Water Maintenance",
+   "n": 3
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 5
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 27
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Dirty Condition",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 3
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 69
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 3
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 19
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 4
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 8
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "PLUMBING",
+   "n": 1
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Street Condition",
+   "n": 9
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 3
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 2
+  },
+  {
+   "board": 9,
+   "borough": "Queens",
+   "complaint_type": "Water Maintenance",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 5
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 19
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Dirty Condition",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Encampment",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 45
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Noise",
+   "n": 4
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 5
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 117
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 11
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 11
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Street Condition",
+   "n": 4
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Street Light Condition",
+   "n": 2
+  },
+  {
+   "board": 10,
+   "borough": "Queens",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 6
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "Damaged Tree",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "Dirty Condition",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 28
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 3
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 9
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "Street Condition",
+   "n": 7
+  },
+  {
+   "board": 11,
+   "borough": "Queens",
+   "complaint_type": "Water Maintenance",
+   "n": 5
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 12
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 26
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Dirty Condition",
+   "n": 3
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Encampment",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 3
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 5
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Illegal Dumping",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 31
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Noise",
+   "n": 3
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 41
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 5
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "PAINT/PLASTER",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "PLUMBING",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Street Condition",
+   "n": 9
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Street Light Condition",
+   "n": 2
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 12
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "WATER LEAK",
+   "n": 11
+  },
+  {
+   "board": 12,
+   "borough": "Queens",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 3
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 6
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 7
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Illegal Dumping",
+   "n": 3
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 26
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Noise",
+   "n": 2
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 2
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 16
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Noise - Vehicle",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Street Condition",
+   "n": 6
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Street Light Condition",
+   "n": 1
+  },
+  {
+   "board": 13,
+   "borough": "Queens",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "Blocked Driveway",
+   "n": 6
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "Dirty Condition",
+   "n": 3
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 6
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "Illegal Parking",
+   "n": 10
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "Noise",
+   "n": 1
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "Noise - Commercial",
+   "n": 2
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "Noise - Residential",
+   "n": 15
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "PLUMBING",
+   "n": 3
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "Street Condition",
+   "n": 2
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "Street Light Condition",
+   "n": 2
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "Traffic Signal Condition",
+   "n": 1
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 7
+  },
+  {
+   "board": 14,
+   "borough": "Queens",
+   "complaint_type": "Water Maintenance",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 4
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Blocked Driveway",
+   "n": 3
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "DOOR/WINDOW",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Dirty Condition",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Illegal Dumping",
+   "n": 3
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Illegal Parking",
+   "n": 19
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Noise",
+   "n": 2
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Noise - Residential",
+   "n": 33
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 12
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Street Light Condition",
+   "n": 3
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 7
+  },
+  {
+   "board": 1,
+   "borough": "Staten Island",
+   "complaint_type": "Water Maintenance",
+   "n": 5
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 3
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Blocked Driveway",
+   "n": 3
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Dirty Condition",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "GENERAL",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Homeless Person Assistance",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Illegal Parking",
+   "n": 19
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Noise - Residential",
+   "n": 15
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "PLUMBING",
+   "n": 2
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Street Condition",
+   "n": 3
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Street Light Condition",
+   "n": 5
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "UNSANITARY CONDITION",
+   "n": 1
+  },
+  {
+   "board": 2,
+   "borough": "Staten Island",
+   "complaint_type": "Water Maintenance",
+   "n": 6
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Abandoned Vehicle",
+   "n": 5
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Blocked Driveway",
+   "n": 3
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Damaged Tree",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Dirty Condition",
+   "n": 3
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "General Construction/Plumbing",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "HEAT/HOT WATER",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Illegal Dumping",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Illegal Parking",
+   "n": 9
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Noise - Commercial",
+   "n": 1
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Noise - Residential",
+   "n": 5
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Noise - Street/Sidewalk",
+   "n": 2
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Street Condition",
+   "n": 4
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Street Light Condition",
+   "n": 8
+  },
+  {
+   "board": 3,
+   "borough": "Staten Island",
+   "complaint_type": "Water Maintenance",
+   "n": 1
+  }
+ ],
+ "day": "2026-11-22",
+ "findings": [
+  {
+   "board": 6,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "cost": "0.00230950",
+   "data_starts": "2026-08-26",
+   "day": "2026-11-22",
+   "events": [],
+   "events_state": "complete",
+   "evidence": [
+    {
+     "args": {
+      "days": 60
+     },
+     "excerpt": "{\"series\": [[\"2026-11-11\", 114], [\"2026-11-12\", 42], [\"2026-11-13\", 109], [\"2026-11-14\", 116], [\"2026-11-15\", 179], [\"2026-11-16\", 163], [\"2026-11-17\", 154], [\"2026-11-18\", 104], [\"2026-11-19\", 215], [\"2026-11-20\", 67], [\"2026-11-21\", 43], [\"2026-11-22\", 317]], \"shown\": \"last 12 of 60\"}",
+     "ref": 1,
+     "tool": "series"
+    },
+    {
+     "args": {
+      "by": "descriptor",
+      "top": 6
+     },
+     "excerpt": "[[\"Posted Parking Sign Violation\", 269], [\"Blocked Sidewalk\", 17], [\"Blocked Bike Lane\", 16], [\"Blocked Hydrant\", 7], [\"Blocked Crosswalk\", 5], [\"License Plate Obscured\", 3]]",
+     "ref": 2,
+     "tool": "breakdown"
+    },
+    {
+     "args": {},
+     "excerpt": "{\"this_district\": 317, \"other_districts\": [{\"borough\": \"Brooklyn\", \"board\": 1, \"count\": 255}, {\"borough\": \"Queens\", \"board\": 1, \"count\": 119}, {\"borough\": \"Brooklyn\", \"board\": 2, \"count\": 116}, {\"borough\": \"Queens\", \"board\": 2, \"count\": 106}], \"shown\": \"first 4 of 10\"}",
+     "ref": 3,
+     "tool": "neighbours"
+    }
+   ],
+   "expected": 58.5,
+   "id": "2026-11-22-brooklyn-6-illegal-parking",
+   "notes": [],
+   "observed": 317,
+   "points": [
+    [
+     40.67859,
+     -73.99049
+    ],
+    [
+     40.68049,
+     -73.99468
+    ],
+    [
+     40.68364,
+     -74.0003
+    ],
+    [
+     40.68364,
+     -74.0003
+    ],
+    [
+     40.67334,
+     -73.97132
+    ],
+    [
+     40.67393,
+     -73.97206
+    ],
+    [
+     40.67828,
+     -73.98244
+    ],
+    [
+     40.67682,
+     -73.97704
+    ],
+    [
+     40.66664,
+     -73.98103
+    ],
+    [
+     40.66946,
+     -73.98863
+    ],
+    [
+     40.6696,
+     -73.98715
+    ],
+    [
+     40.67697,
+     -73.98334
+    ],
+    [
+     40.6696,
+     -73.98715
+    ],
+    [
+     40.67828,
+     -73.98244
+    ],
+    [
+     40.66984,
+     -73.97249
+    ],
+    [
+     40.66664,
+     -73.98103
+    ],
+    [
+     40.67638,
+     -73.98373
+    ],
+    [
+     40.67974,
+     -73.98145
+    ],
+    [
+     40.68244,
+     -73.97741
+    ],
+    [
+     40.67582,
+     -73.98415
+    ],
+    [
+     40.67178,
+     -73.97093
+    ],
+    [
+     40.67957,
+     -73.98157
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.67496,
+     -73.98811
+    ],
+    [
+     40.67001,
+     -73.98799
+    ],
+    [
+     40.67974,
+     -73.98145
+    ],
+    [
+     40.66979,
+     -73.97355
+    ],
+    [
+     40.67877,
+     -73.98211
+    ],
+    [
+     40.66946,
+     -73.98863
+    ],
+    [
+     40.67624,
+     -73.98383
+    ],
+    [
+     40.67227,
+     -73.99036
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.66481,
+     -73.97669
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.67771,
+     -73.98995
+    ],
+    [
+     40.68364,
+     -74.0003
+    ],
+    [
+     40.68364,
+     -74.0003
+    ],
+    [
+     40.68364,
+     -74.0003
+    ],
+    [
+     40.68364,
+     -74.0003
+    ],
+    [
+     40.67916,
+     -73.99163
+    ],
+    [
+     40.6812,
+     -74.00002
+    ],
+    [
+     40.6785,
+     -73.99178
+    ],
+    [
+     40.67574,
+     -73.97669
+    ],
+    [
+     40.67852,
+     -73.98381
+    ],
+    [
+     40.67496,
+     -73.98811
+    ],
+    [
+     40.67887,
+     -73.98676
+    ],
+    [
+     40.67001,
+     -73.98799
+    ],
+    [
+     40.67496,
+     -73.98811
+    ],
+    [
+     40.68258,
+     -73.97954
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.67091,
+     -73.97242
+    ],
+    [
+     40.66619,
+     -73.97887
+    ],
+    [
+     40.66633,
+     -73.97542
+    ],
+    [
+     40.67833,
+     -73.98241
+    ],
+    [
+     40.67183,
+     -73.98748
+    ],
+    [
+     40.68229,
+     -73.97906
+    ],
+    [
+     40.67128,
+     -73.98793
+    ],
+    [
+     40.67508,
+     -73.98476
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.67656,
+     -73.98294
+    ],
+    [
+     40.67878,
+     -73.98512
+    ],
+    [
+     40.6762,
+     -73.98685
+    ],
+    [
+     40.66946,
+     -73.98863
+    ],
+    [
+     40.66789,
+     -73.97412
+    ],
+    [
+     40.67589,
+     -73.98409
+    ],
+    [
+     40.66789,
+     -73.97412
+    ],
+    [
+     40.66549,
+     -73.97689
+    ],
+    [
+     40.67706,
+     -73.97798
+    ],
+    [
+     40.67887,
+     -73.98676
+    ],
+    [
+     40.68234,
+     -73.9797
+    ],
+    [
+     40.66487,
+     -73.98087
+    ],
+    [
+     40.66219,
+     -73.98056
+    ],
+    [
+     40.67819,
+     -73.99083
+    ],
+    [
+     40.6695,
+     -74.00435
+    ],
+    [
+     40.68364,
+     -74.0003
+    ],
+    [
+     40.68364,
+     -74.0003
+    ],
+    [
+     40.66649,
+     -73.9912
+    ],
+    [
+     40.66649,
+     -73.9912
+    ],
+    [
+     40.6811,
+     -73.97532
+    ],
+    [
+     40.67393,
+     -73.97206
+    ],
+    [
+     40.66946,
+     -73.98863
+    ],
+    [
+     40.67116,
+     -73.97141
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.67656,
+     -73.98294
+    ],
+    [
+     40.67551,
+     -73.98368
+    ],
+    [
+     40.67001,
+     -73.98799
+    ],
+    [
+     40.66716,
+     -73.9914
+    ],
+    [
+     40.67496,
+     -73.98811
+    ],
+    [
+     40.67055,
+     -73.9891
+    ],
+    [
+     40.68303,
+     -73.97924
+    ],
+    [
+     40.66826,
+     -73.98439
+    ],
+    [
+     40.67682,
+     -73.97704
+    ],
+    [
+     40.67838,
+     -73.98238
+    ],
+    [
+     40.67719,
+     -73.97994
+    ],
+    [
+     40.67508,
+     -73.98476
+    ],
+    [
+     40.68043,
+     -73.98049
+    ],
+    [
+     40.68273,
+     -73.97944
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.66874,
+     -73.99005
+    ],
+    [
+     40.68195,
+     -73.97996
+    ],
+    [
+     40.67887,
+     -73.98676
+    ],
+    [
+     40.66789,
+     -73.97412
+    ],
+    [
+     40.66826,
+     -73.98439
+    ],
+    [
+     40.67702,
+     -73.9833
+    ],
+    [
+     40.67656,
+     -73.97881
+    ],
+    [
+     40.67221,
+     -73.97493
+    ],
+    [
+     40.67897,
+     -73.99021
+    ],
+    [
+     40.67392,
+     -74.00226
+    ],
+    [
+     40.68364,
+     -74.0003
+    ],
+    [
+     40.67392,
+     -73.97581
+    ],
+    [
+     40.67334,
+     -73.97132
+    ],
+    [
+     40.67184,
+     -73.99178
+    ],
+    [
+     40.67554,
+     -73.98438
+    ],
+    [
+     40.67758,
+     -73.98293
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.67574,
+     -73.97669
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.6683,
+     -73.98968
+    ],
+    [
+     40.67574,
+     -73.97669
+    ],
+    [
+     40.67574,
+     -73.97669
+    ],
+    [
+     40.66578,
+     -73.97587
+    ],
+    [
+     40.67878,
+     -73.98512
+    ],
+    [
+     40.67974,
+     -73.98145
+    ],
+    [
+     40.67682,
+     -73.97704
+    ],
+    [
+     40.66826,
+     -73.98439
+    ],
+    [
+     40.67411,
+     -73.98558
+    ],
+    [
+     40.66578,
+     -73.97587
+    ],
+    [
+     40.67712,
+     -73.97815
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.67974,
+     -73.98145
+    ],
+    [
+     40.67974,
+     -73.98145
+    ],
+    [
+     40.66979,
+     -73.97355
+    ],
+    [
+     40.67234,
+     -73.98705
+    ],
+    [
+     40.67602,
+     -73.98399
+    ],
+    [
+     40.67656,
+     -73.97881
+    ],
+    [
+     40.67178,
+     -73.97093
+    ],
+    [
+     40.66789,
+     -73.97412
+    ],
+    [
+     40.67081,
+     -73.98833
+    ],
+    [
+     40.67865,
+     -73.97896
+    ],
+    [
+     40.66874,
+     -73.99005
+    ],
+    [
+     40.66821,
+     -73.98429
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.66619,
+     -73.97887
+    ],
+    [
+     40.6696,
+     -73.98715
+    ],
+    [
+     40.66633,
+     -73.97542
+    ],
+    [
+     40.67001,
+     -73.98799
+    ],
+    [
+     40.67089,
+     -73.97826
+    ],
+    [
+     40.67503,
+     -74.00173
+    ],
+    [
+     40.67392,
+     -74.00226
+    ],
+    [
+     40.68364,
+     -74.0003
+    ],
+    [
+     40.68364,
+     -74.0003
+    ],
+    [
+     40.68078,
+     -73.97752
+    ],
+    [
+     40.6762,
+     -73.98685
+    ],
+    [
+     40.67574,
+     -73.97669
+    ],
+    [
+     40.67406,
+     -73.98562
+    ],
+    [
+     40.67415,
+     -73.98554
+    ],
+    [
+     40.66692,
+     -73.99157
+    ],
+    [
+     40.66946,
+     -73.98863
+    ],
+    [
+     40.67682,
+     -73.97704
+    ],
+    [
+     40.67838,
+     -73.98238
+    ],
+    [
+     40.66716,
+     -73.9914
+    ],
+    [
+     40.6805,
+     -73.98096
+    ],
+    [
+     40.68303,
+     -73.97924
+    ],
+    [
+     40.67702,
+     -73.9833
+    ],
+    [
+     40.66821,
+     -73.98429
+    ],
+    [
+     40.67215,
+     -73.99043
+    ],
+    [
+     40.66821,
+     -73.98429
+    ],
+    [
+     40.67001,
+     -73.98799
+    ],
+    [
+     40.67227,
+     -73.99036
+    ],
+    [
+     40.68043,
+     -73.98045
+    ],
+    [
+     40.67081,
+     -73.98833
+    ],
+    [
+     40.67656,
+     -73.97881
+    ],
+    [
+     40.66578,
+     -73.97587
+    ],
+    [
+     40.67574,
+     -73.97669
+    ],
+    [
+     40.67638,
+     -73.98373
+    ],
+    [
+     40.6754,
+     -73.9845
+    ],
+    [
+     40.66619,
+     -73.97887
+    ],
+    [
+     40.67682,
+     -73.97704
+    ],
+    [
+     40.67496,
+     -73.98811
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.67178,
+     -73.97093
+    ],
+    [
+     40.67183,
+     -73.98748
+    ],
+    [
+     40.67183,
+     -73.98748
+    ],
+    [
+     40.6826,
+     -73.9778
+    ],
+    [
+     40.67563,
+     -73.97465
+    ],
+    [
+     40.67496,
+     -73.98811
+    ],
+    [
+     40.67496,
+     -73.98811
+    ],
+    [
+     40.67301,
+     -73.98974
+    ],
+    [
+     40.67183,
+     -73.98748
+    ],
+    [
+     40.66633,
+     -73.97542
+    ],
+    [
+     40.67411,
+     -73.98558
+    ],
+    [
+     40.67496,
+     -73.98811
+    ],
+    [
+     40.6804,
+     -73.99071
+    ],
+    [
+     40.68364,
+     -74.0003
+    ],
+    [
+     40.67702,
+     -73.9833
+    ],
+    [
+     40.67393,
+     -73.97206
+    ],
+    [
+     40.67852,
+     -73.98381
+    ],
+    [
+     40.67574,
+     -73.97669
+    ],
+    [
+     40.66984,
+     -73.97249
+    ],
+    [
+     40.66549,
+     -73.97689
+    ],
+    [
+     40.67554,
+     -73.98438
+    ],
+    [
+     40.67656,
+     -73.97881
+    ],
+    [
+     40.67178,
+     -73.97093
+    ],
+    [
+     40.67754,
+     -73.97968
+    ],
+    [
+     40.66716,
+     -73.9914
+    ],
+    [
+     40.67178,
+     -73.97093
+    ],
+    [
+     40.66619,
+     -73.97887
+    ],
+    [
+     40.66665,
+     -73.98109
+    ],
+    [
+     40.6729,
+     -73.98661
+    ],
+    [
+     40.67656,
+     -73.97881
+    ],
+    [
+     40.67838,
+     -73.98238
+    ],
+    [
+     40.66984,
+     -73.97249
+    ],
+    [
+     40.66979,
+     -73.97355
+    ],
+    [
+     40.67574,
+     -73.97669
+    ],
+    [
+     40.66979,
+     -73.97355
+    ],
+    [
+     40.66664,
+     -73.98103
+    ],
+    [
+     40.67814,
+     -73.98254
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.67858,
+     -73.98224
+    ],
+    [
+     40.66578,
+     -73.97587
+    ],
+    [
+     40.67496,
+     -73.98811
+    ],
+    [
+     40.67393,
+     -73.97206
+    ],
+    [
+     40.67496,
+     -73.98811
+    ],
+    [
+     40.67828,
+     -73.98244
+    ],
+    [
+     40.66821,
+     -73.98429
+    ],
+    [
+     40.6696,
+     -73.98715
+    ],
+    [
+     40.67178,
+     -73.97093
+    ],
+    [
+     40.6762,
+     -73.98685
+    ],
+    [
+     40.67128,
+     -73.98793
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.66716,
+     -73.9914
+    ],
+    [
+     40.67091,
+     -73.97242
+    ],
+    [
+     40.68204,
+     -73.9799
+    ],
+    [
+     40.68234,
+     -73.9797
+    ],
+    [
+     40.66619,
+     -73.97887
+    ],
+    [
+     40.66481,
+     -73.97669
+    ],
+    [
+     40.67865,
+     -73.97896
+    ],
+    [
+     40.67858,
+     -73.97985
+    ],
+    [
+     40.68375,
+     -73.98901
+    ],
+    [
+     40.67713,
+     -73.99171
+    ],
+    [
+     40.67859,
+     -73.99049
+    ],
+    [
+     40.68364,
+     -74.0003
+    ],
+    [
+     40.68364,
+     -74.0003
+    ],
+    [
+     40.67702,
+     -73.9833
+    ],
+    [
+     40.6762,
+     -73.98685
+    ],
+    [
+     40.67393,
+     -73.97206
+    ],
+    [
+     40.67682,
+     -73.97704
+    ],
+    [
+     40.66492,
+     -73.9766
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.66979,
+     -73.97355
+    ],
+    [
+     40.66454,
+     -73.97691
+    ],
+    [
+     40.66874,
+     -73.99005
+    ],
+    [
+     40.67858,
+     -73.98224
+    ],
+    [
+     40.67183,
+     -73.98748
+    ],
+    [
+     40.66826,
+     -73.98439
+    ],
+    [
+     40.67582,
+     -73.98415
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.67326,
+     -73.98629
+    ],
+    [
+     40.66549,
+     -73.97689
+    ],
+    [
+     40.67183,
+     -73.98748
+    ],
+    [
+     40.67758,
+     -73.98293
+    ],
+    [
+     40.67227,
+     -73.99441
+    ],
+    [
+     40.67957,
+     -73.98157
+    ],
+    [
+     40.67574,
+     -73.97669
+    ],
+    [
+     40.67227,
+     -73.99036
+    ],
+    [
+     40.67166,
+     -73.98762
+    ],
+    [
+     40.66874,
+     -73.99005
+    ],
+    [
+     40.6742,
+     -73.9855
+    ],
+    [
+     40.68259,
+     -73.97783
+    ],
+    [
+     40.6769,
+     -73.98012
+    ],
+    [
+     40.67178,
+     -73.97093
+    ],
+    [
+     40.68258,
+     -73.97775
+    ],
+    [
+     40.66789,
+     -73.97412
+    ],
+    [
+     40.66716,
+     -73.9914
+    ],
+    [
+     40.66664,
+     -73.98103
+    ],
+    [
+     40.6754,
+     -73.9845
+    ],
+    [
+     40.67877,
+     -73.98211
+    ],
+    [
+     40.66789,
+     -73.97412
+    ],
+    [
+     40.67326,
+     -73.98629
+    ],
+    [
+     40.67838,
+     -73.98238
+    ],
+    [
+     40.67864,
+     -73.98524
+    ],
+    [
+     40.67702,
+     -73.9833
+    ],
+    [
+     40.66219,
+     -73.98056
+    ],
+    [
+     40.68375,
+     -73.98901
+    ],
+    [
+     40.67393,
+     -73.97206
+    ],
+    [
+     40.68214,
+     -73.97983
+    ],
+    [
+     40.66619,
+     -73.97887
+    ],
+    [
+     40.67326,
+     -73.98629
+    ],
+    [
+     40.66874,
+     -73.99005
+    ],
+    [
+     40.67091,
+     -73.97242
+    ],
+    [
+     40.66578,
+     -73.97587
+    ],
+    [
+     40.67656,
+     -73.97881
+    ],
+    [
+     40.67215,
+     -73.99043
+    ],
+    [
+     40.67508,
+     -73.98476
+    ],
+    [
+     40.68258,
+     -73.97954
+    ],
+    [
+     40.66826,
+     -73.98439
+    ],
+    [
+     40.67001,
+     -73.98799
+    ],
+    [
+     40.67508,
+     -73.98476
+    ],
+    [
+     40.67769,
+     -73.98284
+    ],
+    [
+     40.67183,
+     -73.98748
+    ],
+    [
+     40.67496,
+     -73.98811
+    ],
+    [
+     40.66826,
+     -73.98439
+    ],
+    [
+     40.67496,
+     -73.98811
+    ],
+    [
+     40.68367,
+     -73.97881
+    ],
+    [
+     40.67183,
+     -73.98748
+    ],
+    [
+     40.67589,
+     -73.98409
+    ],
+    [
+     40.66549,
+     -73.97689
+    ],
+    [
+     40.67702,
+     -73.9833
+    ],
+    [
+     40.67183,
+     -73.98748
+    ],
+    [
+     40.67116,
+     -73.97141
+    ],
+    [
+     40.66946,
+     -73.98863
+    ],
+    [
+     40.66874,
+     -73.99005
+    ],
+    [
+     40.67574,
+     -73.97669
+    ],
+    [
+     40.67582,
+     -73.98415
+    ],
+    [
+     40.66946,
+     -73.98863
+    ],
+    [
+     40.67853,
+     -73.98228
+    ]
+   ],
+   "q": 6.846524047469391e-10,
+   "ratio": 5.418803418803419,
+   "series": [
+    [
+     "2026-08-26",
+     36
+    ],
+    [
+     "2026-08-27",
+     47
+    ],
+    [
+     "2026-08-28",
+     34
+    ],
+    [
+     "2026-08-29",
+     26
+    ],
+    [
+     "2026-08-30",
+     26
+    ],
+    [
+     "2026-08-31",
+     43
+    ],
+    [
+     "2026-09-01",
+     34
+    ],
+    [
+     "2026-09-02",
+     23
+    ],
+    [
+     "2026-09-03",
+     42
+    ],
+    [
+     "2026-09-04",
+     16
+    ],
+    [
+     "2026-09-05",
+     15
+    ],
+    [
+     "2026-09-06",
+     35
+    ],
+    [
+     "2026-09-07",
+     38
+    ],
+    [
+     "2026-09-08",
+     52
+    ],
+    [
+     "2026-09-09",
+     46
+    ],
+    [
+     "2026-09-10",
+     56
+    ],
+    [
+     "2026-09-11",
+     50
+    ],
+    [
+     "2026-09-12",
+     44
+    ],
+    [
+     "2026-09-13",
+     30
+    ],
+    [
+     "2026-09-14",
+     54
+    ],
+    [
+     "2026-09-15",
+     63
+    ],
+    [
+     "2026-09-16",
+     43
+    ],
+    [
+     "2026-09-17",
+     45
+    ],
+    [
+     "2026-09-18",
+     47
+    ],
+    [
+     "2026-09-19",
+     37
+    ],
+    [
+     "2026-09-20",
+     28
+    ],
+    [
+     "2026-09-21",
+     35
+    ],
+    [
+     "2026-09-22",
+     41
+    ],
+    [
+     "2026-09-23",
+     57
+    ],
+    [
+     "2026-09-24",
+     40
+    ],
+    [
+     "2026-09-25",
+     42
+    ],
+    [
+     "2026-09-26",
+     19
+    ],
+    [
+     "2026-09-27",
+     39
+    ],
+    [
+     "2026-09-28",
+     55
+    ],
+    [
+     "2026-09-29",
+     60
+    ],
+    [
+     "2026-09-30",
+     101
+    ],
+    [
+     "2026-10-01",
+     65
+    ],
+    [
+     "2026-10-02",
+     58
+    ],
+    [
+     "2026-10-03",
+     41
+    ],
+    [
+     "2026-10-04",
+     26
+    ],
+    [
+     "2026-10-05",
+     37
+    ],
+    [
+     "2026-10-06",
+     54
+    ],
+    [
+     "2026-10-07",
+     69
+    ],
+    [
+     "2026-10-08",
+     63
+    ],
+    [
+     "2026-10-09",
+     63
+    ],
+    [
+     "2026-10-10",
+     32
+    ],
+    [
+     "2026-10-11",
+     28
+    ],
+    [
+     "2026-10-12",
+     38
+    ],
+    [
+     "2026-10-13",
+     52
+    ],
+    [
+     "2026-10-14",
+     101
+    ],
+    [
+     "2026-10-15",
+     68
+    ],
+    [
+     "2026-10-16",
+     56
+    ],
+    [
+     "2026-10-17",
+     38
+    ],
+    [
+     "2026-10-18",
+     68
+    ],
+    [
+     "2026-10-19",
+     51
+    ],
+    [
+     "2026-10-20",
+     76
+    ],
+    [
+     "2026-10-21",
+     49
+    ],
+    [
+     "2026-10-22",
+     61
+    ],
+    [
+     "2026-10-23",
+     238
+    ],
+    [
+     "2026-10-24",
+     50
+    ],
+    [
+     "2026-10-25",
+     57
+    ],
+    [
+     "2026-10-26",
+     121
+    ],
+    [
+     "2026-10-27",
+     61
+    ],
+    [
+     "2026-10-28",
+     69
+    ],
+    [
+     "2026-10-29",
+     84
+    ],
+    [
+     "2026-10-30",
+     236
+    ],
+    [
+     "2026-10-31",
+     146
+    ],
+    [
+     "2026-11-01",
+     34
+    ],
+    [
+     "2026-11-02",
+     141
+    ],
+    [
+     "2026-11-03",
+     88
+    ],
+    [
+     "2026-11-04",
+     107
+    ],
+    [
+     "2026-11-05",
+     73
+    ],
+    [
+     "2026-11-06",
+     45
+    ],
+    [
+     "2026-11-07",
+     47
+    ],
+    [
+     "2026-11-08",
+     37
+    ],
+    [
+     "2026-11-09",
+     68
+    ],
+    [
+     "2026-11-10",
+     180
+    ],
+    [
+     "2026-11-11",
+     114
+    ],
+    [
+     "2026-11-12",
+     42
+    ],
+    [
+     "2026-11-13",
+     109
+    ],
+    [
+     "2026-11-14",
+     116
+    ],
+    [
+     "2026-11-15",
+     179
+    ],
+    [
+     "2026-11-16",
+     163
+    ],
+    [
+     "2026-11-17",
+     154
+    ],
+    [
+     "2026-11-18",
+     104
+    ],
+    [
+     "2026-11-19",
+     215
+    ],
+    [
+     "2026-11-20",
+     67
+    ],
+    [
+     "2026-11-21",
+     43
+    ],
+    [
+     "2026-11-22",
+     317
+    ]
+   ],
+   "status": "investigated",
+   "summary": "The 317 illegal parking requests on 2026-11-22 in Brooklyn CD 6 coincided with 269 reports labeled \u201cPosted Parking Sign Violation.\u201d The 317 requests were higher than the next-largest district count of 255 on the same day.",
+   "trace": [
+    {
+     "call": 1,
+     "cost": "0.00068325",
+     "finish_reason": "tool_calls",
+     "messages": [
+      {
+       "content": "You look into one unusual day in the public NYC 311 service-request data: one complaint type in one community district had far more requests than the usual for that weekday. Use the tools to look at the day, then write a short finding with submit_finding.\n\nTools: series (daily counts), breakdown (the day's requests split by descriptor, zip code, hour, agency, location type or status), neighbours (the same complaint type that day in other districts), weather (rain and the day's high at Central Park) and events (permitted events that list this district and whose scheduled span covers the day; a long span does not mean activity throughout it).\n\nRules for the finding:\n- Say what the spike is associated with, using only what the tools returned. Use the words \"associated with\" or \"coincided with\". Never write any of these: \"caused\", \"causing\", \"cause of\", \"because of\", \"due to\", \"owing to\", \"led to\", \"leads to\", \"leading to\", \"result of\", \"resulted in\", \"results in\", \"as a result\", \"triggered by\". A submission containing one is refused.\n- Any comparison (above, below, more, fewer, unusual, a surge, a spike) states both numbers it compares, taken from the tool results, such as \"58 against about 19 usual\".\n- If the tools show nothing that goes with the spike, say so plainly. Do not guess.\n- Two to four plain sentences, under 450 characters (a summary over 600 is refused), with the numbers you rely on.\n- Every tool result begins \"ref <n>:\", a number. evidence lists the numbers of the tool calls the summary relies on, for example [1, 3]. You can cite only results you have already read, so call the tools first and submit in a later reply: a submission in the same reply as new tool calls cannot cite them. Set wording_check to true only after you re-read the summary for the banned words.\nEvery reply you send, including errors, uses up one of a small number of calls; when two remain you must submit.",
+       "role": "system"
+      },
+      {
+       "content": "Date 2026-11-22 (Sunday). Illegal Parking in Brooklyn community district 6: 317 requests, against about 58.5 usual for that weekday (5.4 times). You have 5 calls in all; each reply uses one. Read the tool results, then submit in a separate reply.",
+       "role": "user"
+      }
+     ],
+     "reply": {
+      "role": "assistant",
+      "tool_calls": [
+       {
+        "function": {
+         "arguments": "{\"days\": 60}",
+         "name": "series"
+        },
+        "id": "call_rPbMBxcVIrdR7xvhHbaFNCpv",
+        "type": "function"
+       },
+       {
+        "function": {
+         "arguments": "{\"by\": \"descriptor\", \"top\": 6}",
+         "name": "breakdown"
+        },
+        "id": "call_N48nhleh0nuheHEe5KDMvHHw",
+        "type": "function"
+       },
+       {
+        "function": {
+         "arguments": "{}",
+         "name": "neighbours"
+        },
+        "id": "call_K2yDxCLF8EtwnEO4SWWDnCVt",
+        "type": "function"
+       },
+       {
+        "function": {
+         "arguments": "{}",
+         "name": "weather"
+        },
+        "id": "call_tbwOpQgTz72g5vxzoQheQi7i",
+        "type": "function"
+       },
+       {
+        "function": {
+         "arguments": "{}",
+         "name": "events"
+        },
+        "id": "call_J6IX2L7Cb4dKYLTuf7UUbPk9",
+        "type": "function"
+       }
+      ]
+     },
+     "tool_results": [
+      {
+       "content": "ref 1: {\"series\": [[\"2026-09-24\", 40], [\"2026-09-25\", 42], [\"2026-09-26\", 19], [\"2026-09-27\", 39], [\"2026-09-28\", 55], [\"2026-09-29\", 60], [\"2026-09-30\", 101], [\"2026-10-01\", 65], [\"2026-10-02\", 58], [\"2026-10-03\", 41], [\"2026-10-04\", 26], [\"2026-10-05\", 37], [\"2026-10-06\", 54], [\"2026-10-07\", 69], [\"2026-10-08\", 63], [\"2026-10-09\", 63], [\"2026-10-10\", 32], [\"2026-10-11\", 28], [\"2026-10-12\", 38], [\"2026-10-13\", 52], [\"2026-10-14\", 101], [\"2026-10-15\", 68], [\"2026-10-16\", 56], [\"2026-10-17\", 38], [\"2026-10-18\", 68], [\"2026-10-19\", 51], [\"2026-10-20\", 76], [\"2026-10-21\", 49], [\"2026-10-22\", 61], [\"2026-10-23\", 238], [\"2026-10-24\", 50], [\"2026-10-25\", 57], [\"2026-10-26\", 121], [\"2026-10-27\", 61], [\"2026-10-28\", 69], [\"2026-10-29\", 84], [\"2026-10-30\", 236], [\"2026-10-31\", 146], [\"2026-11-01\", 34], [\"2026-11-02\", 141], [\"2026-11-03\", 88], [\"2026-11-04\", 107], [\"2026-11-05\", 73], [\"2026-11-06\", 45], [\"2026-11-07\", 47], [\"2026-11-08\", 37], [\"2026-11-09\", 68], [\"2026-11-10\", 180], [\"2026-11-11\", 114], [\"2026-11-12\", 42], [\"2026-11-13\", 109], [\"2026-11-14\", 116], [\"2026-11-15\", 179], [\"2026-11-16\", 163], [\"2026-11-17\", 154], [\"2026-11-18\", 104], [\"2026-11-19\", 215], [\"2026-11-20\", 67], [\"2026-11-21\", 43], [\"2026-11-22\", 317]]}",
+       "name": "series"
+      },
+      {
+       "content": "ref 2: [[\"Posted Parking Sign Violation\", 269], [\"Blocked Sidewalk\", 17], [\"Blocked Bike Lane\", 16], [\"Blocked Hydrant\", 7], [\"Blocked Crosswalk\", 5], [\"License Plate Obscured\", 3]]",
+       "name": "breakdown"
+      },
+      {
+       "content": "ref 3: {\"this_district\": 317, \"other_districts\": [{\"borough\": \"Brooklyn\", \"board\": 1, \"count\": 255}, {\"borough\": \"Queens\", \"board\": 1, \"count\": 119}, {\"borough\": \"Brooklyn\", \"board\": 2, \"count\": 116}, {\"borough\": \"Queens\", \"board\": 2, \"count\": 106}, {\"borough\": \"Queens\", \"board\": 5, \"count\": 100}, {\"borough\": \"Brooklyn\", \"board\": 11, \"count\": 84}, {\"borough\": \"Brooklyn\", \"board\": 7, \"count\": 72}, {\"borough\": \"Queens\", \"board\": 9, \"count\": 69}, {\"borough\": \"Queens\", \"board\": 3, \"count\": 60}, {\"borough\": \"Brooklyn\", \"board\": 10, \"count\": 59}]}",
+       "name": "neighbours"
+      },
+      {
+       "content": "ref 4: {\"precip_mm\": 0.0, \"tmax_c\": 15.4, \"source\": \"forecast_past_days\"}",
+       "name": "weather"
+      },
+      {
+       "content": "ref 5: {\"scope\": \"permitted events that list this district and whose scheduled span covers the day; a long span does not mean activity throughout it\", \"truncated\": false, \"events\": []}",
+       "name": "events"
+      }
+     ],
+     "usage": {
+      "input": 1005,
+      "output": 216
+     }
+    },
+    {
+     "call": 2,
+     "cost": "0.00162625",
+     "finish_reason": "tool_calls",
+     "messages": [
+      {
+       "content": "You look into one unusual day in the public NYC 311 service-request data: one complaint type in one community district had far more requests than the usual for that weekday. Use the tools to look at the day, then write a short finding with submit_finding.\n\nTools: series (daily counts), breakdown (the day's requests split by descriptor, zip code, hour, agency, location type or status), neighbours (the same complaint type that day in other districts), weather (rain and the day's high at Central Park) and events (permitted events that list this district and whose scheduled span covers the day; a long span does not mean activity throughout it).\n\nRules for the finding:\n- Say what the spike is associated with, using only what the tools returned. Use the words \"associated with\" or \"coincided with\". Never write any of these: \"caused\", \"causing\", \"cause of\", \"because of\", \"due to\", \"owing to\", \"led to\", \"leads to\", \"leading to\", \"result of\", \"resulted in\", \"results in\", \"as a result\", \"triggered by\". A submission containing one is refused.\n- Any comparison (above, below, more, fewer, unusual, a surge, a spike) states both numbers it compares, taken from the tool results, such as \"58 against about 19 usual\".\n- If the tools show nothing that goes with the spike, say so plainly. Do not guess.\n- Two to four plain sentences, under 450 characters (a summary over 600 is refused), with the numbers you rely on.\n- Every tool result begins \"ref <n>:\", a number. evidence lists the numbers of the tool calls the summary relies on, for example [1, 3]. You can cite only results you have already read, so call the tools first and submit in a later reply: a submission in the same reply as new tool calls cannot cite them. Set wording_check to true only after you re-read the summary for the banned words.\nEvery reply you send, including errors, uses up one of a small number of calls; when two remain you must submit.",
+       "role": "system"
+      },
+      {
+       "content": "Date 2026-11-22 (Sunday). Illegal Parking in Brooklyn community district 6: 317 requests, against about 58.5 usual for that weekday (5.4 times). You have 5 calls in all; each reply uses one. Read the tool results, then submit in a separate reply.",
+       "role": "user"
+      },
+      {
+       "role": "assistant",
+       "tool_calls": [
+        {
+         "function": {
+          "arguments": "{\"days\": 60}",
+          "name": "series"
+         },
+         "id": "call_rPbMBxcVIrdR7xvhHbaFNCpv",
+         "type": "function"
+        },
+        {
+         "function": {
+          "arguments": "{\"by\": \"descriptor\", \"top\": 6}",
+          "name": "breakdown"
+         },
+         "id": "call_N48nhleh0nuheHEe5KDMvHHw",
+         "type": "function"
+        },
+        {
+         "function": {
+          "arguments": "{}",
+          "name": "neighbours"
+         },
+         "id": "call_K2yDxCLF8EtwnEO4SWWDnCVt",
+         "type": "function"
+        },
+        {
+         "function": {
+          "arguments": "{}",
+          "name": "weather"
+         },
+         "id": "call_tbwOpQgTz72g5vxzoQheQi7i",
+         "type": "function"
+        },
+        {
+         "function": {
+          "arguments": "{}",
+          "name": "events"
+         },
+         "id": "call_J6IX2L7Cb4dKYLTuf7UUbPk9",
+         "type": "function"
+        }
+       ]
+      },
+      {
+       "content": "ref 1: {\"series\": [[\"2026-09-24\", 40], [\"2026-09-25\", 42], [\"2026-09-26\", 19], [\"2026-09-27\", 39], [\"2026-09-28\", 55], [\"2026-09-29\", 60], [\"2026-09-30\", 101], [\"2026-10-01\", 65], [\"2026-10-02\", 58], [\"2026-10-03\", 41], [\"2026-10-04\", 26], [\"2026-10-05\", 37], [\"2026-10-06\", 54], [\"2026-10-07\", 69], [\"2026-10-08\", 63], [\"2026-10-09\", 63], [\"2026-10-10\", 32], [\"2026-10-11\", 28], [\"2026-10-12\", 38], [\"2026-10-13\", 52], [\"2026-10-14\", 101], [\"2026-10-15\", 68], [\"2026-10-16\", 56], [\"2026-10-17\", 38], [\"2026-10-18\", 68], [\"2026-10-19\", 51], [\"2026-10-20\", 76], [\"2026-10-21\", 49], [\"2026-10-22\", 61], [\"2026-10-23\", 238], [\"2026-10-24\", 50], [\"2026-10-25\", 57], [\"2026-10-26\", 121], [\"2026-10-27\", 61], [\"2026-10-28\", 69], [\"2026-10-29\", 84], [\"2026-10-30\", 236], [\"2026-10-31\", 146], [\"2026-11-01\", 34], [\"2026-11-02\", 141], [\"2026-11-03\", 88], [\"2026-11-04\", 107], [\"2026-11-05\", 73], [\"2026-11-06\", 45], [\"2026-11-07\", 47], [\"2026-11-08\", 37], [\"2026-11-09\", 68], [\"2026-11-10\", 180], [\"2026-11-11\", 114], [\"2026-11-12\", 42], [\"2026-11-13\", 109], [\"2026-11-14\", 116], [\"2026-11-15\", 179], [\"2026-11-16\", 163], [\"2026-11-17\", 154], [\"2026-11-18\", 104], [\"2026-11-19\", 215], [\"2026-11-20\", 67], [\"2026-11-21\", 43], [\"2026-11-22\", 317]]}",
+       "role": "tool",
+       "tool_call_id": "call_rPbMBxcVIrdR7xvhHbaFNCpv"
+      },
+      {
+       "content": "ref 2: [[\"Posted Parking Sign Violation\", 269], [\"Blocked Sidewalk\", 17], [\"Blocked Bike Lane\", 16], [\"Blocked Hydrant\", 7], [\"Blocked Crosswalk\", 5], [\"License Plate Obscured\", 3]]",
+       "role": "tool",
+       "tool_call_id": "call_N48nhleh0nuheHEe5KDMvHHw"
+      },
+      {
+       "content": "ref 3: {\"this_district\": 317, \"other_districts\": [{\"borough\": \"Brooklyn\", \"board\": 1, \"count\": 255}, {\"borough\": \"Queens\", \"board\": 1, \"count\": 119}, {\"borough\": \"Brooklyn\", \"board\": 2, \"count\": 116}, {\"borough\": \"Queens\", \"board\": 2, \"count\": 106}, {\"borough\": \"Queens\", \"board\": 5, \"count\": 100}, {\"borough\": \"Brooklyn\", \"board\": 11, \"count\": 84}, {\"borough\": \"Brooklyn\", \"board\": 7, \"count\": 72}, {\"borough\": \"Queens\", \"board\": 9, \"count\": 69}, {\"borough\": \"Queens\", \"board\": 3, \"count\": 60}, {\"borough\": \"Brooklyn\", \"board\": 10, \"count\": 59}]}",
+       "role": "tool",
+       "tool_call_id": "call_K2yDxCLF8EtwnEO4SWWDnCVt"
+      },
+      {
+       "content": "ref 4: {\"precip_mm\": 0.0, \"tmax_c\": 15.4, \"source\": \"forecast_past_days\"}",
+       "role": "tool",
+       "tool_call_id": "call_tbwOpQgTz72g5vxzoQheQi7i"
+      },
+      {
+       "content": "ref 5: {\"scope\": \"permitted events that list this district and whose scheduled span covers the day; a long span does not mean activity throughout it\", \"truncated\": false, \"events\": []}\nYou have 4 calls left.",
+       "role": "tool",
+       "tool_call_id": "call_J6IX2L7Cb4dKYLTuf7UUbPk9"
+      }
+     ],
+     "reply": {
+      "role": "assistant",
+      "tool_calls": [
+       {
+        "function": {
+         "arguments": "{\"summary\":\"The 317 illegal parking requests on 2026-11-22 in Brooklyn CD 6 coincided with 269 reports labeled \u201cPosted Parking Sign Violation.\u201d The 317 requests were higher than the next-largest district count of 255 on the same day.\",\"evidence\":[1,2,3],\"wording_check\":true}",
+         "name": "submit_finding"
+        },
+        "id": "call_QBJw7QnP3fS6SouvfiIAyQSj",
+        "type": "function"
+       }
+      ]
+     },
+     "tool_results": [
+      {
+       "content": "accepted",
+       "name": "submit_finding"
+      }
+     ],
+     "usage": {
+      "input": 2201,
+      "output": 538
+     }
+    }
+   ],
+   "weather": {
+    "precip_mm": 0.0,
+    "source": "forecast_past_days",
+    "tmax_c": 15.4
+   }
+  },
+  {
+   "board": 1,
+   "borough": "Brooklyn",
+   "complaint_type": "Illegal Parking",
+   "cost": "0.00251725",
+   "data_starts": "2026-08-26",
+   "day": "2026-11-22",
+   "events": [
+    {
+     "end": "2026-12-15T13:30:00.000",
+     "name": "Religious Event",
+     "start": "2026-11-16T00:01:00.000",
+     "type": "Religious Event"
+    },
+    {
+     "end": "2026-12-15T13:30:00.000",
+     "name": "Religious Event",
+     "start": "2026-11-16T00:01:00.000",
+     "type": "Religious Event"
+    }
+   ],
+   "events_state": "complete",
+   "evidence": [
+    {
+     "args": {
+      "days": 28
+     },
+     "excerpt": "{\"series\": [[\"2026-11-10\", 77], [\"2026-11-11\", 79], [\"2026-11-12\", 91], [\"2026-11-13\", 89], [\"2026-11-14\", 64], [\"2026-11-15\", 61], [\"2026-11-16\", 110], [\"2026-11-17\", 58], [\"2026-11-18\", 84], [\"2026-11-19\", 79], [\"2026-11-20\", 82], [\"2026-11-21\", 68], [\"2026-11-22\", 255]], \"shown\": \"last 13 of 28\"}",
+     "ref": 1,
+     "tool": "series"
+    },
+    {
+     "args": {
+      "by": "descriptor",
+      "top": 6
+     },
+     "excerpt": "[[\"Posted Parking Sign Violation\", 187], [\"Blocked Sidewalk\", 35], [\"Blocked Bike Lane\", 7], [\"Blocked Crosswalk\", 7], [\"Blocked Hydrant\", 7], [\"Parking Permit Improper Use\", 7]]",
+     "ref": 2,
+     "tool": "breakdown"
+    },
+    {
+     "args": {},
+     "excerpt": "{\"precip_mm\": 0.0, \"tmax_c\": 15.4, \"source\": \"forecast_past_days\"}",
+     "ref": 4,
+     "tool": "weather"
+    }
+   ],
+   "expected": 61.5,
+   "id": "2026-11-22-brooklyn-1-illegal-parking",
+   "notes": [],
+   "observed": 255,
+   "points": [
+    [
+     40.71182,
+     -73.942
+    ],
+    [
+     40.70428,
+     -73.94606
+    ],
+    [
+     40.70428,
+     -73.94606
+    ],
+    [
+     40.70676,
+     -73.94911
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72649,
+     -73.94857
+    ],
+    [
+     40.72679,
+     -73.94767
+    ],
+    [
+     40.70428,
+     -73.94606
+    ],
+    [
+     40.70692,
+     -73.96787
+    ],
+    [
+     40.7146,
+     -73.9668
+    ],
+    [
+     40.7132,
+     -73.96747
+    ],
+    [
+     40.71563,
+     -73.96634
+    ],
+    [
+     40.7146,
+     -73.9668
+    ],
+    [
+     40.70692,
+     -73.96787
+    ],
+    [
+     40.7146,
+     -73.9668
+    ],
+    [
+     40.7146,
+     -73.9668
+    ],
+    [
+     40.71016,
+     -73.96851
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.7159,
+     -73.96622
+    ],
+    [
+     40.73408,
+     -73.95117
+    ],
+    [
+     40.72012,
+     -73.96192
+    ],
+    [
+     40.73408,
+     -73.95117
+    ],
+    [
+     40.73408,
+     -73.95117
+    ],
+    [
+     40.71938,
+     -73.96316
+    ],
+    [
+     40.71785,
+     -73.96439
+    ],
+    [
+     40.73242,
+     -73.96146
+    ],
+    [
+     40.72076,
+     -73.96093
+    ],
+    [
+     40.72173,
+     -73.9602
+    ],
+    [
+     40.7336,
+     -73.95822
+    ],
+    [
+     40.72007,
+     -73.96277
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.7132,
+     -73.96747
+    ],
+    [
+     40.7169,
+     -73.96538
+    ],
+    [
+     40.71314,
+     -73.96747
+    ],
+    [
+     40.7107,
+     -73.96851
+    ],
+    [
+     40.71354,
+     -73.9673
+    ],
+    [
+     40.7146,
+     -73.9668
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.70773,
+     -73.96813
+    ],
+    [
+     40.7132,
+     -73.96747
+    ],
+    [
+     40.71016,
+     -73.96851
+    ],
+    [
+     40.70764,
+     -73.9684
+    ],
+    [
+     40.73579,
+     -73.95945
+    ],
+    [
+     40.72369,
+     -73.95809
+    ],
+    [
+     40.73107,
+     -73.96016
+    ],
+    [
+     40.7193,
+     -73.9628
+    ],
+    [
+     40.73741,
+     -73.9541
+    ],
+    [
+     40.72546,
+     -73.95749
+    ],
+    [
+     40.73522,
+     -73.9545
+    ],
+    [
+     40.72221,
+     -73.96033
+    ],
+    [
+     40.72007,
+     -73.96277
+    ],
+    [
+     40.72007,
+     -73.96277
+    ],
+    [
+     40.72245,
+     -73.95942
+    ],
+    [
+     40.72007,
+     -73.96277
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.73527,
+     -73.95396
+    ],
+    [
+     40.7169,
+     -73.96538
+    ],
+    [
+     40.71319,
+     -73.96745
+    ],
+    [
+     40.70542,
+     -73.9678
+    ],
+    [
+     40.71257,
+     -73.96776
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.71334,
+     -73.96754
+    ],
+    [
+     40.7132,
+     -73.96747
+    ],
+    [
+     40.7107,
+     -73.96851
+    ],
+    [
+     40.71354,
+     -73.9673
+    ],
+    [
+     40.7132,
+     -73.96747
+    ],
+    [
+     40.70764,
+     -73.9684
+    ],
+    [
+     40.7107,
+     -73.96851
+    ],
+    [
+     40.71257,
+     -73.96776
+    ],
+    [
+     40.7146,
+     -73.9668
+    ],
+    [
+     40.7169,
+     -73.96538
+    ],
+    [
+     40.73361,
+     -73.95629
+    ],
+    [
+     40.72239,
+     -73.95949
+    ],
+    [
+     40.71857,
+     -73.96358
+    ],
+    [
+     40.72546,
+     -73.95749
+    ],
+    [
+     40.72007,
+     -73.96277
+    ],
+    [
+     40.71719,
+     -73.9584
+    ],
+    [
+     40.73242,
+     -73.96146
+    ],
+    [
+     40.71996,
+     -73.96262
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.73527,
+     -73.95403
+    ],
+    [
+     40.71257,
+     -73.96776
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.7169,
+     -73.96538
+    ],
+    [
+     40.7146,
+     -73.9668
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.70555,
+     -73.96786
+    ],
+    [
+     40.71275,
+     -73.96765
+    ],
+    [
+     40.7132,
+     -73.96747
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.71257,
+     -73.96776
+    ],
+    [
+     40.71353,
+     -73.9638
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.71304,
+     -73.96752
+    ],
+    [
+     40.71319,
+     -73.96745
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.71304,
+     -73.96752
+    ],
+    [
+     40.7132,
+     -73.96747
+    ],
+    [
+     40.70764,
+     -73.9684
+    ],
+    [
+     40.71257,
+     -73.96776
+    ],
+    [
+     40.71319,
+     -73.96745
+    ],
+    [
+     40.71354,
+     -73.9673
+    ],
+    [
+     40.703,
+     -73.96567
+    ],
+    [
+     40.70984,
+     -73.93388
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.73471,
+     -73.95974
+    ],
+    [
+     40.72007,
+     -73.96277
+    ],
+    [
+     40.72422,
+     -73.94947
+    ],
+    [
+     40.71938,
+     -73.96316
+    ],
+    [
+     40.73408,
+     -73.95117
+    ],
+    [
+     40.71798,
+     -73.96421
+    ],
+    [
+     40.71777,
+     -73.96367
+    ],
+    [
+     40.71785,
+     -73.96439
+    ],
+    [
+     40.72422,
+     -73.94947
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.7133,
+     -73.96742
+    ],
+    [
+     40.71016,
+     -73.96851
+    ],
+    [
+     40.71564,
+     -73.96224
+    ],
+    [
+     40.71016,
+     -73.96851
+    ],
+    [
+     40.7146,
+     -73.9668
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.71354,
+     -73.9673
+    ],
+    [
+     40.70991,
+     -73.96853
+    ],
+    [
+     40.71016,
+     -73.96851
+    ],
+    [
+     40.70803,
+     -73.94387
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.71275,
+     -73.96765
+    ],
+    [
+     40.70764,
+     -73.9684
+    ],
+    [
+     40.7107,
+     -73.96851
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.73579,
+     -73.95945
+    ],
+    [
+     40.73579,
+     -73.95945
+    ],
+    [
+     40.73361,
+     -73.95629
+    ],
+    [
+     40.73148,
+     -73.95785
+    ],
+    [
+     40.71857,
+     -73.96358
+    ],
+    [
+     40.72546,
+     -73.95749
+    ],
+    [
+     40.71894,
+     -73.96268
+    ],
+    [
+     40.73408,
+     -73.95117
+    ],
+    [
+     40.73579,
+     -73.95945
+    ],
+    [
+     40.73107,
+     -73.96016
+    ],
+    [
+     40.73474,
+     -73.9584
+    ],
+    [
+     40.71785,
+     -73.96439
+    ],
+    [
+     40.71857,
+     -73.96358
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.70773,
+     -73.96813
+    ],
+    [
+     40.71733,
+     -73.96441
+    ],
+    [
+     40.7169,
+     -73.96538
+    ],
+    [
+     40.71257,
+     -73.96776
+    ],
+    [
+     40.7132,
+     -73.96747
+    ],
+    [
+     40.70437,
+     -73.96726
+    ],
+    [
+     40.7169,
+     -73.96538
+    ],
+    [
+     40.70764,
+     -73.9684
+    ],
+    [
+     40.71354,
+     -73.9673
+    ],
+    [
+     40.71563,
+     -73.96634
+    ],
+    [
+     40.71016,
+     -73.96851
+    ],
+    [
+     40.70275,
+     -73.96535
+    ],
+    [
+     40.70906,
+     -73.94801
+    ],
+    [
+     40.73616,
+     -73.95903
+    ],
+    [
+     40.72607,
+     -73.95741
+    ],
+    [
+     40.73419,
+     -73.95767
+    ],
+    [
+     40.73527,
+     -73.95508
+    ],
+    [
+     40.72124,
+     -73.96072
+    ],
+    [
+     40.73408,
+     -73.95117
+    ],
+    [
+     40.7204,
+     -73.96162
+    ],
+    [
+     40.72559,
+     -73.94464
+    ],
+    [
+     40.71783,
+     -73.96373
+    ],
+    [
+     40.71798,
+     -73.96421
+    ],
+    [
+     40.72124,
+     -73.96072
+    ],
+    [
+     40.71894,
+     -73.96268
+    ],
+    [
+     40.72007,
+     -73.96277
+    ],
+    [
+     40.73107,
+     -73.96016
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.71563,
+     -73.96634
+    ],
+    [
+     40.71016,
+     -73.96851
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.71354,
+     -73.9673
+    ],
+    [
+     40.70437,
+     -73.96726
+    ],
+    [
+     40.71334,
+     -73.96754
+    ],
+    [
+     40.71016,
+     -73.96851
+    ],
+    [
+     40.71275,
+     -73.96765
+    ],
+    [
+     40.71368,
+     -73.9611
+    ],
+    [
+     40.71314,
+     -73.96747
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.71016,
+     -73.96851
+    ],
+    [
+     40.70437,
+     -73.96726
+    ],
+    [
+     40.7132,
+     -73.96747
+    ],
+    [
+     40.7146,
+     -73.9668
+    ],
+    [
+     40.7132,
+     -73.96747
+    ],
+    [
+     40.70356,
+     -73.95022
+    ],
+    [
+     40.72707,
+     -73.95879
+    ],
+    [
+     40.7204,
+     -73.96162
+    ],
+    [
+     40.71785,
+     -73.96439
+    ],
+    [
+     40.71783,
+     -73.96373
+    ],
+    [
+     40.7204,
+     -73.96162
+    ],
+    [
+     40.72369,
+     -73.95809
+    ],
+    [
+     40.72422,
+     -73.94947
+    ],
+    [
+     40.72541,
+     -73.9575
+    ],
+    [
+     40.7204,
+     -73.96162
+    ],
+    [
+     40.71996,
+     -73.96262
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.70851,
+     -73.93858
+    ],
+    [
+     40.7146,
+     -73.9668
+    ],
+    [
+     40.7107,
+     -73.96851
+    ],
+    [
+     40.71354,
+     -73.9673
+    ],
+    [
+     40.71334,
+     -73.96754
+    ],
+    [
+     40.71563,
+     -73.96634
+    ],
+    [
+     40.7132,
+     -73.96747
+    ],
+    [
+     40.71257,
+     -73.96776
+    ],
+    [
+     40.71257,
+     -73.96776
+    ],
+    [
+     40.70437,
+     -73.96726
+    ],
+    [
+     40.70764,
+     -73.9684
+    ],
+    [
+     40.7132,
+     -73.96747
+    ],
+    [
+     40.70692,
+     -73.96787
+    ],
+    [
+     40.70842,
+     -73.96782
+    ],
+    [
+     40.7169,
+     -73.96538
+    ],
+    [
+     40.7079,
+     -73.966
+    ],
+    [
+     40.72473,
+     -73.94245
+    ],
+    [
+     40.73579,
+     -73.95945
+    ],
+    [
+     40.73107,
+     -73.96016
+    ],
+    [
+     40.7204,
+     -73.96162
+    ],
+    [
+     40.72862,
+     -73.95176
+    ],
+    [
+     40.72233,
+     -73.95954
+    ],
+    [
+     40.72369,
+     -73.95809
+    ],
+    [
+     40.73408,
+     -73.95117
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72699,
+     -73.95298
+    ],
+    [
+     40.72539,
+     -73.93969
+    ]
+   ],
+   "q": 4.467154850920807e-06,
+   "ratio": 4.146341463414634,
+   "series": [
+    [
+     "2026-08-26",
+     79
+    ],
+    [
+     "2026-08-27",
+     90
+    ],
+    [
+     "2026-08-28",
+     75
+    ],
+    [
+     "2026-08-29",
+     74
+    ],
+    [
+     "2026-08-30",
+     78
+    ],
+    [
+     "2026-08-31",
+     64
+    ],
+    [
+     "2026-09-01",
+     52
+    ],
+    [
+     "2026-09-02",
+     48
+    ],
+    [
+     "2026-09-03",
+     60
+    ],
+    [
+     "2026-09-04",
+     46
+    ],
+    [
+     "2026-09-05",
+     24
+    ],
+    [
+     "2026-09-06",
+     38
+    ],
+    [
+     "2026-09-07",
+     68
+    ],
+    [
+     "2026-09-08",
+     57
+    ],
+    [
+     "2026-09-09",
+     63
+    ],
+    [
+     "2026-09-10",
+     108
+    ],
+    [
+     "2026-09-11",
+     85
+    ],
+    [
+     "2026-09-12",
+     52
+    ],
+    [
+     "2026-09-13",
+     49
+    ],
+    [
+     "2026-09-14",
+     63
+    ],
+    [
+     "2026-09-15",
+     70
+    ],
+    [
+     "2026-09-16",
+     73
+    ],
+    [
+     "2026-09-17",
+     73
+    ],
+    [
+     "2026-09-18",
+     59
+    ],
+    [
+     "2026-09-19",
+     56
+    ],
+    [
+     "2026-09-20",
+     30
+    ],
+    [
+     "2026-09-21",
+     40
+    ],
+    [
+     "2026-09-22",
+     53
+    ],
+    [
+     "2026-09-23",
+     45
+    ],
+    [
+     "2026-09-24",
+     57
+    ],
+    [
+     "2026-09-25",
+     83
+    ],
+    [
+     "2026-09-26",
+     38
+    ],
+    [
+     "2026-09-27",
+     74
+    ],
+    [
+     "2026-09-28",
+     74
+    ],
+    [
+     "2026-09-29",
+     68
+    ],
+    [
+     "2026-09-30",
+     108
+    ],
+    [
+     "2026-10-01",
+     82
+    ],
+    [
+     "2026-10-02",
+     61
+    ],
+    [
+     "2026-10-03",
+     59
+    ],
+    [
+     "2026-10-04",
+     79
+    ],
+    [
+     "2026-10-05",
+     92
+    ],
+    [
+     "2026-10-06",
+     84
+    ],
+    [
+     "2026-10-07",
+     92
+    ],
+    [
+     "2026-10-08",
+     108
+    ],
+    [
+     "2026-10-09",
+     83
+    ],
+    [
+     "2026-10-10",
+     46
+    ],
+    [
+     "2026-10-11",
+     33
+    ],
+    [
+     "2026-10-12",
+     82
+    ],
+    [
+     "2026-10-13",
+     84
+    ],
+    [
+     "2026-10-14",
+     83
+    ],
+    [
+     "2026-10-15",
+     78
+    ],
+    [
+     "2026-10-16",
+     124
+    ],
+    [
+     "2026-10-17",
+     92
+    ],
+    [
+     "2026-10-18",
+     60
+    ],
+    [
+     "2026-10-19",
+     79
+    ],
+    [
+     "2026-10-20",
+     119
+    ],
+    [
+     "2026-10-21",
+     79
+    ],
+    [
+     "2026-10-22",
+     93
+    ],
+    [
+     "2026-10-23",
+     94
+    ],
+    [
+     "2026-10-24",
+     61
+    ],
+    [
+     "2026-10-25",
+     63
+    ],
+    [
+     "2026-10-26",
+     118
+    ],
+    [
+     "2026-10-27",
+     134
+    ],
+    [
+     "2026-10-28",
+     74
+    ],
+    [
+     "2026-10-29",
+     77
+    ],
+    [
+     "2026-10-30",
+     79
+    ],
+    [
+     "2026-10-31",
+     42
+    ],
+    [
+     "2026-11-01",
+     63
+    ],
+    [
+     "2026-11-02",
+     63
+    ],
+    [
+     "2026-11-03",
+     80
+    ],
+    [
+     "2026-11-04",
+     123
+    ],
+    [
+     "2026-11-05",
+     120
+    ],
+    [
+     "2026-11-06",
+     68
+    ],
+    [
+     "2026-11-07",
+     66
+    ],
+    [
+     "2026-11-08",
+     59
+    ],
+    [
+     "2026-11-09",
+     86
+    ],
+    [
+     "2026-11-10",
+     77
+    ],
+    [
+     "2026-11-11",
+     79
+    ],
+    [
+     "2026-11-12",
+     91
+    ],
+    [
+     "2026-11-13",
+     89
+    ],
+    [
+     "2026-11-14",
+     64
+    ],
+    [
+     "2026-11-15",
+     61
+    ],
+    [
+     "2026-11-16",
+     110
+    ],
+    [
+     "2026-11-17",
+     58
+    ],
+    [
+     "2026-11-18",
+     84
+    ],
+    [
+     "2026-11-19",
+     79
+    ],
+    [
+     "2026-11-20",
+     82
+    ],
+    [
+     "2026-11-21",
+     68
+    ],
+    [
+     "2026-11-22",
+     255
+    ]
+   ],
+   "status": "investigated",
+   "summary": "The 255 Illegal Parking requests on 2026-11-22 were 255 against 68 the day before and were associated with \u201cPosted Parking Sign Violation\u201d (187 of the 255). The spike coincided with dry weather and a high of 15.4\u00b0C in Central Park that day.",
+   "trace": [
+    {
+     "call": 1,
+     "cost": "0.00081125",
+     "finish_reason": "tool_calls",
+     "messages": [
+      {
+       "content": "You look into one unusual day in the public NYC 311 service-request data: one complaint type in one community district had far more requests than the usual for that weekday. Use the tools to look at the day, then write a short finding with submit_finding.\n\nTools: series (daily counts), breakdown (the day's requests split by descriptor, zip code, hour, agency, location type or status), neighbours (the same complaint type that day in other districts), weather (rain and the day's high at Central Park) and events (permitted events that list this district and whose scheduled span covers the day; a long span does not mean activity throughout it).\n\nRules for the finding:\n- Say what the spike is associated with, using only what the tools returned. Use the words \"associated with\" or \"coincided with\". Never write any of these: \"caused\", \"causing\", \"cause of\", \"because of\", \"due to\", \"owing to\", \"led to\", \"leads to\", \"leading to\", \"result of\", \"resulted in\", \"results in\", \"as a result\", \"triggered by\". A submission containing one is refused.\n- Any comparison (above, below, more, fewer, unusual, a surge, a spike) states both numbers it compares, taken from the tool results, such as \"58 against about 19 usual\".\n- If the tools show nothing that goes with the spike, say so plainly. Do not guess.\n- Two to four plain sentences, under 450 characters (a summary over 600 is refused), with the numbers you rely on.\n- Every tool result begins \"ref <n>:\", a number. evidence lists the numbers of the tool calls the summary relies on, for example [1, 3]. You can cite only results you have already read, so call the tools first and submit in a later reply: a submission in the same reply as new tool calls cannot cite them. Set wording_check to true only after you re-read the summary for the banned words.\nEvery reply you send, including errors, uses up one of a small number of calls; when two remain you must submit.",
+       "role": "system"
+      },
+      {
+       "content": "Date 2026-11-22 (Sunday). Illegal Parking in Brooklyn community district 1: 255 requests, against about 61.5 usual for that weekday (4.1 times). You have 5 calls in all; each reply uses one. Read the tool results, then submit in a separate reply.",
+       "role": "user"
+      }
+     ],
+     "reply": {
+      "role": "assistant",
+      "tool_calls": [
+       {
+        "function": {
+         "arguments": "{\"days\": 28}",
+         "name": "series"
+        },
+        "id": "call_uUeoItGMnjL1bFklAH3o31FI",
+        "type": "function"
+       },
+       {
+        "function": {
+         "arguments": "{\"by\": \"descriptor\", \"top\": 6}",
+         "name": "breakdown"
+        },
+        "id": "call_pk4KBeAsL1WLtmDycgqDMJ8c",
+        "type": "function"
+       },
+       {
+        "function": {
+         "arguments": "{}",
+         "name": "neighbours"
+        },
+        "id": "call_qgKjEQD2TTMZhjuinPJr3l86",
+        "type": "function"
+       },
+       {
+        "function": {
+         "arguments": "{}",
+         "name": "weather"
+        },
+        "id": "call_HxnXtU0sjL1fetg7XonudY63",
+        "type": "function"
+       },
+       {
+        "function": {
+         "arguments": "{}",
+         "name": "events"
+        },
+        "id": "call_zO8HzYN3rZLPeC4ORQuSUAm7",
+        "type": "function"
+       }
+      ]
+     },
+     "tool_results": [
+      {
+       "content": "ref 1: {\"series\": [[\"2026-10-26\", 118], [\"2026-10-27\", 134], [\"2026-10-28\", 74], [\"2026-10-29\", 77], [\"2026-10-30\", 79], [\"2026-10-31\", 42], [\"2026-11-01\", 63], [\"2026-11-02\", 63], [\"2026-11-03\", 80], [\"2026-11-04\", 123], [\"2026-11-05\", 120], [\"2026-11-06\", 68], [\"2026-11-07\", 66], [\"2026-11-08\", 59], [\"2026-11-09\", 86], [\"2026-11-10\", 77], [\"2026-11-11\", 79], [\"2026-11-12\", 91], [\"2026-11-13\", 89], [\"2026-11-14\", 64], [\"2026-11-15\", 61], [\"2026-11-16\", 110], [\"2026-11-17\", 58], [\"2026-11-18\", 84], [\"2026-11-19\", 79], [\"2026-11-20\", 82], [\"2026-11-21\", 68], [\"2026-11-22\", 255]]}",
+       "name": "series"
+      },
+      {
+       "content": "ref 2: [[\"Posted Parking Sign Violation\", 187], [\"Blocked Sidewalk\", 35], [\"Blocked Bike Lane\", 7], [\"Blocked Crosswalk\", 7], [\"Blocked Hydrant\", 7], [\"Parking Permit Improper Use\", 7]]",
+       "name": "breakdown"
+      },
+      {
+       "content": "ref 3: {\"this_district\": 255, \"other_districts\": [{\"borough\": \"Brooklyn\", \"board\": 6, \"count\": 317}, {\"borough\": \"Queens\", \"board\": 1, \"count\": 119}, {\"borough\": \"Brooklyn\", \"board\": 2, \"count\": 116}, {\"borough\": \"Queens\", \"board\": 2, \"count\": 106}, {\"borough\": \"Queens\", \"board\": 5, \"count\": 100}, {\"borough\": \"Brooklyn\", \"board\": 11, \"count\": 84}, {\"borough\": \"Brooklyn\", \"board\": 7, \"count\": 72}, {\"borough\": \"Queens\", \"board\": 9, \"count\": 69}, {\"borough\": \"Queens\", \"board\": 3, \"count\": 60}, {\"borough\": \"Brooklyn\", \"board\": 10, \"count\": 59}]}",
+       "name": "neighbours"
+      },
+      {
+       "content": "ref 4: {\"precip_mm\": 0.0, \"tmax_c\": 15.4, \"source\": \"forecast_past_days\"}",
+       "name": "weather"
+      },
+      {
+       "content": "ref 5: {\"scope\": \"permitted events that list this district and whose scheduled span covers the day; a long span does not mean activity throughout it\", \"truncated\": false, \"events\": [{\"name\": \"Religious Event\", \"type\": \"Religious Event\", \"start\": \"2026-11-16T00:01:00.000\", \"end\": \"2026-12-15T13:30:00.000\"}, {\"name\": \"Religious Event\", \"type\": \"Religious Event\", \"start\": \"2026-11-16T00:01:00.000\", \"end\": \"2026-12-15T13:30:00.000\"}]}",
+       "name": "events"
+      }
+     ],
+     "usage": {
+      "input": 1005,
+      "output": 280
+     }
+    },
+    {
+     "call": 2,
+     "cost": "0.001706",
+     "finish_reason": "tool_calls",
+     "messages": [
+      {
+       "content": "You look into one unusual day in the public NYC 311 service-request data: one complaint type in one community district had far more requests than the usual for that weekday. Use the tools to look at the day, then write a short finding with submit_finding.\n\nTools: series (daily counts), breakdown (the day's requests split by descriptor, zip code, hour, agency, location type or status), neighbours (the same complaint type that day in other districts), weather (rain and the day's high at Central Park) and events (permitted events that list this district and whose scheduled span covers the day; a long span does not mean activity throughout it).\n\nRules for the finding:\n- Say what the spike is associated with, using only what the tools returned. Use the words \"associated with\" or \"coincided with\". Never write any of these: \"caused\", \"causing\", \"cause of\", \"because of\", \"due to\", \"owing to\", \"led to\", \"leads to\", \"leading to\", \"result of\", \"resulted in\", \"results in\", \"as a result\", \"triggered by\". A submission containing one is refused.\n- Any comparison (above, below, more, fewer, unusual, a surge, a spike) states both numbers it compares, taken from the tool results, such as \"58 against about 19 usual\".\n- If the tools show nothing that goes with the spike, say so plainly. Do not guess.\n- Two to four plain sentences, under 450 characters (a summary over 600 is refused), with the numbers you rely on.\n- Every tool result begins \"ref <n>:\", a number. evidence lists the numbers of the tool calls the summary relies on, for example [1, 3]. You can cite only results you have already read, so call the tools first and submit in a later reply: a submission in the same reply as new tool calls cannot cite them. Set wording_check to true only after you re-read the summary for the banned words.\nEvery reply you send, including errors, uses up one of a small number of calls; when two remain you must submit.",
+       "role": "system"
+      },
+      {
+       "content": "Date 2026-11-22 (Sunday). Illegal Parking in Brooklyn community district 1: 255 requests, against about 61.5 usual for that weekday (4.1 times). You have 5 calls in all; each reply uses one. Read the tool results, then submit in a separate reply.",
+       "role": "user"
+      },
+      {
+       "role": "assistant",
+       "tool_calls": [
+        {
+         "function": {
+          "arguments": "{\"days\": 28}",
+          "name": "series"
+         },
+         "id": "call_uUeoItGMnjL1bFklAH3o31FI",
+         "type": "function"
+        },
+        {
+         "function": {
+          "arguments": "{\"by\": \"descriptor\", \"top\": 6}",
+          "name": "breakdown"
+         },
+         "id": "call_pk4KBeAsL1WLtmDycgqDMJ8c",
+         "type": "function"
+        },
+        {
+         "function": {
+          "arguments": "{}",
+          "name": "neighbours"
+         },
+         "id": "call_qgKjEQD2TTMZhjuinPJr3l86",
+         "type": "function"
+        },
+        {
+         "function": {
+          "arguments": "{}",
+          "name": "weather"
+         },
+         "id": "call_HxnXtU0sjL1fetg7XonudY63",
+         "type": "function"
+        },
+        {
+         "function": {
+          "arguments": "{}",
+          "name": "events"
+         },
+         "id": "call_zO8HzYN3rZLPeC4ORQuSUAm7",
+         "type": "function"
+        }
+       ]
+      },
+      {
+       "content": "ref 1: {\"series\": [[\"2026-10-26\", 118], [\"2026-10-27\", 134], [\"2026-10-28\", 74], [\"2026-10-29\", 77], [\"2026-10-30\", 79], [\"2026-10-31\", 42], [\"2026-11-01\", 63], [\"2026-11-02\", 63], [\"2026-11-03\", 80], [\"2026-11-04\", 123], [\"2026-11-05\", 120], [\"2026-11-06\", 68], [\"2026-11-07\", 66], [\"2026-11-08\", 59], [\"2026-11-09\", 86], [\"2026-11-10\", 77], [\"2026-11-11\", 79], [\"2026-11-12\", 91], [\"2026-11-13\", 89], [\"2026-11-14\", 64], [\"2026-11-15\", 61], [\"2026-11-16\", 110], [\"2026-11-17\", 58], [\"2026-11-18\", 84], [\"2026-11-19\", 79], [\"2026-11-20\", 82], [\"2026-11-21\", 68], [\"2026-11-22\", 255]]}",
+       "role": "tool",
+       "tool_call_id": "call_uUeoItGMnjL1bFklAH3o31FI"
+      },
+      {
+       "content": "ref 2: [[\"Posted Parking Sign Violation\", 187], [\"Blocked Sidewalk\", 35], [\"Blocked Bike Lane\", 7], [\"Blocked Crosswalk\", 7], [\"Blocked Hydrant\", 7], [\"Parking Permit Improper Use\", 7]]",
+       "role": "tool",
+       "tool_call_id": "call_pk4KBeAsL1WLtmDycgqDMJ8c"
+      },
+      {
+       "content": "ref 3: {\"this_district\": 255, \"other_districts\": [{\"borough\": \"Brooklyn\", \"board\": 6, \"count\": 317}, {\"borough\": \"Queens\", \"board\": 1, \"count\": 119}, {\"borough\": \"Brooklyn\", \"board\": 2, \"count\": 116}, {\"borough\": \"Queens\", \"board\": 2, \"count\": 106}, {\"borough\": \"Queens\", \"board\": 5, \"count\": 100}, {\"borough\": \"Brooklyn\", \"board\": 11, \"count\": 84}, {\"borough\": \"Brooklyn\", \"board\": 7, \"count\": 72}, {\"borough\": \"Queens\", \"board\": 9, \"count\": 69}, {\"borough\": \"Queens\", \"board\": 3, \"count\": 60}, {\"borough\": \"Brooklyn\", \"board\": 10, \"count\": 59}]}",
+       "role": "tool",
+       "tool_call_id": "call_qgKjEQD2TTMZhjuinPJr3l86"
+      },
+      {
+       "content": "ref 4: {\"precip_mm\": 0.0, \"tmax_c\": 15.4, \"source\": \"forecast_past_days\"}",
+       "role": "tool",
+       "tool_call_id": "call_HxnXtU0sjL1fetg7XonudY63"
+      },
+      {
+       "content": "ref 5: {\"scope\": \"permitted events that list this district and whose scheduled span covers the day; a long span does not mean activity throughout it\", \"truncated\": false, \"events\": [{\"name\": \"Religious Event\", \"type\": \"Religious Event\", \"start\": \"2026-11-16T00:01:00.000\", \"end\": \"2026-12-15T13:30:00.000\"}, {\"name\": \"Religious Event\", \"type\": \"Religious Event\", \"start\": \"2026-11-16T00:01:00.000\", \"end\": \"2026-12-15T13:30:00.000\"}]}\nYou have 4 calls left.",
+       "role": "tool",
+       "tool_call_id": "call_zO8HzYN3rZLPeC4ORQuSUAm7"
+      }
+     ],
+     "reply": {
+      "role": "assistant",
+      "tool_calls": [
+       {
+        "function": {
+         "arguments": "{\"summary\":\"The 255 Illegal Parking requests on 2026-11-22 were 255 against 68 the day before and were associated with \u201cPosted Parking Sign Violation\u201d (187 of the 255). The spike coincided with dry weather and a high of 15.4\u00b0C in Central Park that day.\",\"evidence\":[1,2,4],\"wording_check\":true}",
+         "name": "submit_finding"
+        },
+        "id": "call_WLZKwsZHLxGq3HlnD6OEwzBO",
+        "type": "function"
+       }
+      ]
+     },
+     "tool_results": [
+      {
+       "content": "accepted",
+       "name": "submit_finding"
+      }
+     ],
+     "usage": {
+      "input": 1928,
+      "output": 612
+     }
+    }
+   ],
+   "weather": {
+    "precip_mm": 0.0,
+    "source": "forecast_past_days",
+    "tmax_c": 15.4
+   }
+  }
+ ],
+ "skipped_reason": null,
+ "tested": 1442
+}
